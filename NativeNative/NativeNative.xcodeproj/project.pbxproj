@@ -13,6 +13,14 @@
 		D40569751BD853EE00EC02D5 /* tokenizer_test.txt in Resources */ = {isa = PBXBuildFile; fileRef = D40569741BD853EE00EC02D5 /* tokenizer_test.txt */; settings = {ASSET_TAGS = (); }; };
 		D405697A1BD8594300EC02D5 /* NATTokenizer.c in Sources */ = {isa = PBXBuildFile; fileRef = D40569781BD8594300EC02D5 /* NATTokenizer.c */; settings = {ASSET_TAGS = (); }; };
 		D405697B1BD8594300EC02D5 /* NATTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = D40569791BD8594300EC02D5 /* NATTokenizer.h */; settings = {ASSET_TAGS = (); }; };
+		D47916ED1BD922BF000C8FB2 /* NATSymbolTable.c in Sources */ = {isa = PBXBuildFile; fileRef = D47916EB1BD922BF000C8FB2 /* NATSymbolTable.c */; settings = {ASSET_TAGS = (); }; };
+		D47916EE1BD922BF000C8FB2 /* NATSymbolTable.h in Headers */ = {isa = PBXBuildFile; fileRef = D47916EC1BD922BF000C8FB2 /* NATSymbolTable.h */; settings = {ASSET_TAGS = (); }; };
+		D47916F21BD92987000C8FB2 /* NATSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = D47916F01BD92987000C8FB2 /* NATSymbol.h */; settings = {ASSET_TAGS = (); }; };
+		D47916F41BD92B69000C8FB2 /* NATSymbol.c in Sources */ = {isa = PBXBuildFile; fileRef = D47916F31BD92B69000C8FB2 /* NATSymbol.c */; settings = {ASSET_TAGS = (); }; };
+		D488B0961BD945D300D883E1 /* NATScope.c in Sources */ = {isa = PBXBuildFile; fileRef = D488B0941BD945D300D883E1 /* NATScope.c */; settings = {ASSET_TAGS = (); }; };
+		D488B0971BD945D300D883E1 /* NATScope.h in Headers */ = {isa = PBXBuildFile; fileRef = D488B0951BD945D300D883E1 /* NATScope.h */; settings = {ASSET_TAGS = (); }; };
+		D488B09A1BD9585D00D883E1 /* NATProgram.c in Sources */ = {isa = PBXBuildFile; fileRef = D488B0981BD9585D00D883E1 /* NATProgram.c */; settings = {ASSET_TAGS = (); }; };
+		D488B09B1BD9585D00D883E1 /* NATProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = D488B0991BD9585D00D883E1 /* NATProgram.h */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +43,14 @@
 		D40569741BD853EE00EC02D5 /* tokenizer_test.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tokenizer_test.txt; sourceTree = "<group>"; };
 		D40569781BD8594300EC02D5 /* NATTokenizer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATTokenizer.c; sourceTree = "<group>"; };
 		D40569791BD8594300EC02D5 /* NATTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATTokenizer.h; sourceTree = "<group>"; };
+		D47916EB1BD922BF000C8FB2 /* NATSymbolTable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATSymbolTable.c; sourceTree = "<group>"; };
+		D47916EC1BD922BF000C8FB2 /* NATSymbolTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATSymbolTable.h; sourceTree = "<group>"; };
+		D47916F01BD92987000C8FB2 /* NATSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATSymbol.h; sourceTree = "<group>"; };
+		D47916F31BD92B69000C8FB2 /* NATSymbol.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATSymbol.c; sourceTree = "<group>"; };
+		D488B0941BD945D300D883E1 /* NATScope.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATScope.c; sourceTree = "<group>"; };
+		D488B0951BD945D300D883E1 /* NATScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATScope.h; sourceTree = "<group>"; };
+		D488B0981BD9585D00D883E1 /* NATProgram.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATProgram.c; sourceTree = "<group>"; };
+		D488B0991BD9585D00D883E1 /* NATProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATProgram.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,8 +103,16 @@
 		D40569581BD84C2100EC02D5 /* Private */ = {
 			isa = PBXGroup;
 			children = (
-				D40569781BD8594300EC02D5 /* NATTokenizer.c */,
 				D40569791BD8594300EC02D5 /* NATTokenizer.h */,
+				D40569781BD8594300EC02D5 /* NATTokenizer.c */,
+				D47916F01BD92987000C8FB2 /* NATSymbol.h */,
+				D47916F31BD92B69000C8FB2 /* NATSymbol.c */,
+				D47916EC1BD922BF000C8FB2 /* NATSymbolTable.h */,
+				D47916EB1BD922BF000C8FB2 /* NATSymbolTable.c */,
+				D488B0951BD945D300D883E1 /* NATScope.h */,
+				D488B0941BD945D300D883E1 /* NATScope.c */,
+				D488B0991BD9585D00D883E1 /* NATProgram.h */,
+				D488B0981BD9585D00D883E1 /* NATProgram.c */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -111,7 +135,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D405697B1BD8594300EC02D5 /* NATTokenizer.h in Headers */,
+				D488B0971BD945D300D883E1 /* NATScope.h in Headers */,
+				D47916EE1BD922BF000C8FB2 /* NATSymbolTable.h in Headers */,
+				D47916F21BD92987000C8FB2 /* NATSymbol.h in Headers */,
 				D40569511BD84BEC00EC02D5 /* NativeNative.h in Headers */,
+				D488B09B1BD9585D00D883E1 /* NATProgram.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,7 +240,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D47916F41BD92B69000C8FB2 /* NATSymbol.c in Sources */,
+				D47916ED1BD922BF000C8FB2 /* NATSymbolTable.c in Sources */,
 				D405697A1BD8594300EC02D5 /* NATTokenizer.c in Sources */,
+				D488B09A1BD9585D00D883E1 /* NATProgram.c in Sources */,
+				D488B0961BD945D300D883E1 /* NATScope.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

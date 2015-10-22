@@ -9,31 +9,36 @@
 #ifndef NATTokenizer_h
 #define NATTokenizer_h
 
+#include <CoreFoundation/CFBase.h>
 #include <stdlib.h>
 #include <string.h>
+
+CF_EXTERN_C_BEGIN
 
 typedef struct _NATToken {
     const char *start;
     size_t len;
 } NATToken;
 
-static __inline__ __attribute__((always_inline)) const char* NATTokenCreateString(NATToken t)
+CF_INLINE const char* NATTokenCreateString(NATToken t)
 {
     return strndup(t.start, t.len);
 }
 
 typedef struct _NATTokenizer* NATTokenizerRef;
 
-NATTokenizerRef NATTokenizerCreateWithSource(const char *source);
-void NATTokenizerFree(NATTokenizerRef tokenizer);
+CF_EXPORT NATTokenizerRef NATTokenizerCreateWithSource(const char *source);
+CF_EXPORT void NATTokenizerFree(NATTokenizerRef tokenizer);
 
-int NATTokenizerHasTokens(NATTokenizerRef tokenizer);
+CF_EXPORT int NATTokenizerHasTokens(NATTokenizerRef tokenizer);
 
-NATToken NATTokenizerAdvanceLine(NATTokenizerRef tokenizer);
-NATToken NATTokenizerAdvanceWord(NATTokenizerRef tokenizer);
-char     NATTokenizerAdvanceChar(NATTokenizerRef tokenizer);
+CF_EXPORT NATToken NATTokenizerAdvanceLine(NATTokenizerRef tokenizer);
+CF_EXPORT NATToken NATTokenizerAdvanceWord(NATTokenizerRef tokenizer);
+CF_EXPORT char     NATTokenizerAdvanceChar(NATTokenizerRef tokenizer);
 
-NATToken NATTokenizerAdvanceMatching(NATTokenizerRef tokenizer, const char *regex);
-NATToken NATTokenizerAdvanceNonmatching(NATTokenizerRef tokenizer, const char *regex);
+CF_EXPORT NATToken NATTokenizerAdvanceMatching(NATTokenizerRef tokenizer, const char *regex);
+CF_EXPORT NATToken NATTokenizerAdvanceNonmatching(NATTokenizerRef tokenizer, const char *regex);
+
+CF_EXTERN_C_END
 
 #endif
