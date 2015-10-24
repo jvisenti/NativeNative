@@ -2,30 +2,32 @@
 //  NATScope.h
 //  NativeNative
 //
-//  Created by Rob Visentin on 10/22/15.
+//  Created by Rob Visentin on 10/24/15.
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-#ifndef NATScope_h
-#define NATScope_h
+#import "NATValue.h"
 
-#include "NATSymbolTable.h"
+@class NATSymbol;
 
-CF_EXTERN_C_BEGIN
+@interface NATScope : NSObject
 
-typedef const struct _NATScope* NATScopeRef;
++ (NATScope *)globalScope;
++ (NATScope *)currentScope;
 
-struct _NATScope {
-    NATScopeRef enclosing;
-    NATSymbolTableRef symbols;
-};
++ (NATScope *)enter;
++ (void)exit;
 
-CF_EXPORT NATScopeRef NATScopeGetGlobal(void);
-CF_EXPORT NATScopeRef NATScopeGetCurrent(void);
+- (void)addSymbol:(NATSymbol *)symbol;
+- (NATSymbol *)lookupSymbol:(NSString *)symName;
 
-CF_EXPORT NATScopeRef NATScopeEnter(void);
-CF_EXPORT void NATScopeExit(void);
+@end
 
-CF_EXTERN_C_END
+@interface NATSymbol : NSObject
 
-#endif
+@property (copy, nonatomic) NSString *name;
+@property (strong, nonatomic) NATValue *value;
+
+- (instancetype)initWithName:(NSString *)name value:(NATValue *)value;
+
+@end

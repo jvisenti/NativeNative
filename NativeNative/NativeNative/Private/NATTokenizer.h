@@ -2,43 +2,27 @@
 //  NATTokenizer.h
 //  NativeNative
 //
-//  Created by Rob Visentin on 10/21/15.
+//  Created by Rob Visentin on 10/23/15.
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-#ifndef NATTokenizer_h
-#define NATTokenizer_h
+#import "NATRegex.h"
 
-#include <CoreFoundation/CFBase.h>
-#include <stdlib.h>
-#include <string.h>
+@interface NATTokenizer : NSObject
 
-CF_EXTERN_C_BEGIN
+@property (nonatomic, readonly) BOOL hasTokens;
 
-typedef struct _NATToken {
-    const char *start;
-    size_t len;
-} NATToken;
+- (instancetype)initWithString:(NSString *)string;
 
-CF_INLINE const char* NATTokenCreateString(NATToken t)
-{
-    return strndup(t.start, t.len);
-}
+- (char)nextChar;
 
-typedef struct _NATTokenizer* NATTokenizerRef;
+- (char)advanceChar;
+- (NSString *)advanceString:(NSString *)string;
+- (NSString *)advanceExpression:(NSRegularExpression *)expr;
+- (NSString *)advanceUntil:(NSRegularExpression *)expr;
 
-CF_EXPORT NATTokenizerRef NATTokenizerCreateWithSource(const char *source);
-CF_EXPORT void NATTokenizerFree(NATTokenizerRef tokenizer);
+- (char)matchChar:(char)character;
+- (NSString *)matchString:(NSString *)string;
+- (NSString *)matchExpression:(NSRegularExpression *)expr;
 
-CF_EXPORT int NATTokenizerHasTokens(NATTokenizerRef tokenizer);
-
-CF_EXPORT NATToken NATTokenizerAdvanceLine(NATTokenizerRef tokenizer);
-CF_EXPORT NATToken NATTokenizerAdvanceWord(NATTokenizerRef tokenizer);
-CF_EXPORT char     NATTokenizerAdvanceChar(NATTokenizerRef tokenizer);
-
-CF_EXPORT NATToken NATTokenizerAdvanceMatching(NATTokenizerRef tokenizer, const char *regex);
-CF_EXPORT NATToken NATTokenizerAdvanceNonmatching(NATTokenizerRef tokenizer, const char *regex);
-
-CF_EXTERN_C_END
-
-#endif
+@end
