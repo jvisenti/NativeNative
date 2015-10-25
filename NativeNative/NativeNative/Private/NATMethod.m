@@ -17,32 +17,34 @@
     NSArray *_arguments;
 }
 
-- (instancetype)initWithSource:(NSString *)source
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
 {
     if ( (self = [super init]) ) {
-        NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:source];
-
         [tokenizer matchChar:'['];
-
-        NSString *targetString = [tokenizer advanceUntil:kNATRegexWhitespace];
-        assert(targetString.length > 0);
 
         NSMutableArray *args = [NSMutableArray array];
         NSMutableString *methodName = [NSMutableString string];
 
-        [args addObject:[self argumentFromString:targetString]];
+        if ( [tokenizer nextChar] == '[' ) {
+            [args addObject:[[NATMethod alloc] initWithTokenizer:tokenizer]];
+        }
+        else {
+            [args addObject:[[NATExpression alloc] initWithTokenizer:tokenizer]];
+        }
 
         while ( tokenizer.nextChar != ']' ) {
             [methodName appendString:[tokenizer matchExpression:kNATRegexSymName]];
 
             if ( [tokenizer nextChar] == ':' ) {
-                [tokenizer advanceChar];
-                NSString *argString = [tokenizer advanceUntil:kNATRegexMethodArgTerminal];
-                assert(argString.length > 0);
-
-                [args addObject:[self argumentFromString:argString]];
-
                 [methodName appendString:@":"];
+                [tokenizer advanceChar];
+
+                if ( [tokenizer nextChar] == '[' ) {
+                    [args addObject:[[NATMethod alloc] initWithTokenizer:tokenizer]];
+                }
+                else {
+                    [args addObject:[[NATExpression alloc] initWithTokenizer:tokenizer]];
+                }
             }
         }
 
@@ -50,11 +52,11 @@
 
         SEL selector = NSSelectorFromString(methodName);
         NSAssert(selector != NULL, @"Failed to lookup selector: %@", methodName);
-
+        
         _selector = selector;
         _arguments = [args copy];
     }
-
+    
     return self;
 }
 
@@ -95,20 +97,6 @@
 }
 
 #pragma mark - private methods
-
-- (NATExpression *)argumentFromString:(NSString *)string
-{
-    NATExpression *expr = nil;
-
-    if ( [string characterAtIndex:0] == '[' ) {
-        expr = [[NATMethod alloc] initWithSource:string];
-    }
-    else {
-        expr = [[NATExpression alloc] initWithSource:string];
-    }
-
-    return expr;
-}
 
 - (void)prepareInvocation:(NSInvocation *)invocation withArgument:(NATExpression *)argument atIndex:(NSUInteger)index
 {

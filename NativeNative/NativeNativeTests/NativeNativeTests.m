@@ -41,6 +41,16 @@
     return @(f);
 }
 
+- (double)rand48
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        srand48(time(NULL));
+    });
+
+    return drand48();
+}
+
 - (void)testTokenizerLines
 {
     NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:self.source];
@@ -164,12 +174,14 @@
 
     [[NATScope currentScope] addSymbol:sym];
 
-    NATMethod *method = [[NATMethod alloc] initWithSource:@"[self numberFromFloat:3.14f]"];
+    NATMethod *method = [[NATMethod alloc] initWithSource:@"[self numberFromFloat:[self rand48]]"];
     NATValue *retVal = [method evaluate];
 
     [NATScope exit];
 
-    XCTAssert(fabsf([retVal.objectValue floatValue] - 3.14f) < 1e5);
+    NSLog(@"%f", [retVal.objectValue floatValue]);
+
+    XCTAssert([retVal.objectValue floatValue] >= 0.0f && [retVal.objectValue floatValue] <= 1.0f );
 }
 
 @end

@@ -29,34 +29,34 @@
 
 @implementation NATExpression
 
-- (instancetype)initWithSource:(NSString *)string
+- (instancetype)initWithSource:(NSString *)source
+{
+    return [self initWithTokenizer:[[NATTokenizer alloc] initWithString:source]];
+}
+
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
 {
     NATExpression *expression = nil;
-    NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:string];
+    NSString *token = nil;
 
-    while ( tokenizer.hasTokens ) {
-        NSString *token = [tokenizer advanceUntil:kNATRegexWhitespace];
-        if ( token != nil ) {
-            NATValue *tokenValue = nil;
+    while ( (token = [tokenizer advanceUntil:kNATRegexLiteralTerminal]) != nil ) {
+        NATValue *tokenValue = nil;
 
-            if ( [token nat_matches:kNATRegexSymName] ) {
-                expression = [[NATSymbolExpression alloc] initWithName:token];
-            }
-            else if ( [token nat_matches:kNATRegexIntLiteral] ) {
-                long long value = [token longLongValue];
-                tokenValue = [[NATValue alloc] initWithBytes:&value type:kNATTypeLongLong];
-            }
-            else if ( [token nat_matches:kNATRegexFloatLiteral] ) {
-                double value = [token doubleValue];
-                tokenValue = [[NATValue alloc] initWithBytes:&value type:kNATTypeDouble];
-            }
-
-            if ( tokenValue != nil ) {
-                expression = [[NATLiteralExpression alloc] initWithValue:tokenValue];
-            }
-        }
-        else {
+        if ( [token nat_matches:kNATRegexSymName] ) {
+            expression = [[NATSymbolExpression alloc] initWithName:token];
             break;
+        }
+        else if ( [token nat_matches:kNATRegexIntLiteral] ) {
+            long long value = [token longLongValue];
+            tokenValue = [[NATValue alloc] initWithBytes:&value type:kNATTypeLongLong];
+        }
+        else if ( [token nat_matches:kNATRegexFloatLiteral] ) {
+            double value = [token doubleValue];
+            tokenValue = [[NATValue alloc] initWithBytes:&value type:kNATTypeDouble];
+        }
+
+        if ( tokenValue != nil ) {
+            expression = [[NATLiteralExpression alloc] initWithValue:tokenValue];
         }
     }
 
@@ -90,6 +90,11 @@
     return _value;
 }
 
+- (NSString *)description
+{
+    return [_value description];
+}
+
 @end
 
 @implementation NATSymbolExpression {
@@ -110,6 +115,11 @@
     return [[NATScope currentScope] lookupSymbol:_name].value;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@ : %@", _name, [[NATScope currentScope] lookupSymbol:_name]];
+}
+
 @end
 
 @implementation NATUnaryExpression {
@@ -117,7 +127,7 @@
     NATExpression *_operand;
 }
 
-- (instancetype)initWithOperator:(NATUnaryOperator )op operand:(NATExpression *)expr
+- (instancetype)initWithOperator:(NATUnaryOperator)op operand:(NATExpression *)expr
 {
     if ( (self = [super init]) ) {
         _operator = op;

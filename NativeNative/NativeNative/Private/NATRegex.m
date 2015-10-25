@@ -15,25 +15,25 @@ NSRegularExpression *kNATRegexPrimitiveType = nil;
 
 NSRegularExpression *kNATRegexIntLiteral = nil;
 NSRegularExpression *kNATRegexFloatLiteral = nil;
+NSRegularExpression *kNATRegexLiteralTerminal = nil;
 
 NSRegularExpression *kNATRegexSymName = nil;
-NSRegularExpression *kNATRegexMethodArgTerminal = nil;
 
-#define NAT_REGEX(pattern) [NSRegularExpression regularExpressionWithPattern:@#pattern options:kNilOptions error:NULL]
+#define NAT_REGEX(pattern) [NSRegularExpression regularExpressionWithPattern:pattern options:kNilOptions error:NULL]
 
 void _NATRegexConfigure(void) __attribute__((constructor));
 void _NATRegexConfigure(void)
 {
-    kNATRegexNewline = NAT_REGEX([\n\r]+);
-    kNATRegexWhitespace = NAT_REGEX([\\s]+);
+    kNATRegexNewline = NAT_REGEX(@"[\n\r]+");
+    kNATRegexWhitespace = NAT_REGEX(@"[\\s]+");
 
-    kNATRegexPrimitiveType = NAT_REGEX((char|int|float|double));
+    kNATRegexPrimitiveType = NAT_REGEX(@"(char|int|float|double)");
 
-    kNATRegexIntLiteral = NAT_REGEX([\\d]+);
-    kNATRegexFloatLiteral = NAT_REGEX([\\d]*\\.[\\d]+f?);
+    kNATRegexIntLiteral = NAT_REGEX(@"[\\d]+");
+    kNATRegexFloatLiteral = NAT_REGEX(@"[\\d]*\\.[\\d]+f?");
 
-    kNATRegexSymName = NAT_REGEX([_a-zA-Z]+[_\\w]*);
-    kNATRegexMethodArgTerminal = NAT_REGEX([\\s\\]]);
+    kNATRegexSymName = NAT_REGEX(@"[_a-zA-Z]+[_\\w]*");
+    kNATRegexLiteralTerminal = NAT_REGEX(@"[\\s\\];,]");
 }
 
 @implementation NSString (NATExtensions)

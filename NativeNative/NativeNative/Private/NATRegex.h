@@ -15,9 +15,9 @@ OBJC_EXTERN NSRegularExpression *kNATRegexPrimitiveType;
 
 OBJC_EXTERN NSRegularExpression *kNATRegexIntLiteral;
 OBJC_EXTERN NSRegularExpression *kNATRegexFloatLiteral;
+OBJC_EXTERN NSRegularExpression *kNATRegexLiteralTerminal;
 
 OBJC_EXTERN NSRegularExpression *kNATRegexSymName;
-OBJC_EXTERN NSRegularExpression *kNATRegexMethodArgTerminal;
 
 @interface NSString (NATExtensions)
 
