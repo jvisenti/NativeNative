@@ -6,14 +6,7 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "NATExpression.h"
 
-#import "NATValue.h"
-
-@interface NATMethod : NSObject
-
-- (instancetype)initWithSource:(NSString *)source;
-
-- (NATValue *)invoke;
-
+@interface NATMethod : NATExpression
 @end

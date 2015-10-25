@@ -13,7 +13,11 @@ NSRegularExpression *kNATRegexWhitespace = nil;
 
 NSRegularExpression *kNATRegexPrimitiveType = nil;
 
+NSRegularExpression *kNATRegexIntLiteral = nil;
+NSRegularExpression *kNATRegexFloatLiteral = nil;
+
 NSRegularExpression *kNATRegexSymName = nil;
+NSRegularExpression *kNATRegexMethodArgTerminal = nil;
 
 #define NAT_REGEX(pattern) [NSRegularExpression regularExpressionWithPattern:@#pattern options:kNilOptions error:NULL]
 
@@ -22,7 +26,23 @@ void _NATRegexConfigure(void)
 {
     kNATRegexNewline = NAT_REGEX([\n\r]+);
     kNATRegexWhitespace = NAT_REGEX([\\s]+);
+
     kNATRegexPrimitiveType = NAT_REGEX((char|int|float|double));
-    kNATRegexSymName = NAT_REGEX([_\\w]+[_\\w]*);
+
+    kNATRegexIntLiteral = NAT_REGEX([\\d]+);
+    kNATRegexFloatLiteral = NAT_REGEX([\\d]*\\.[\\d]+f?);
+
+    kNATRegexSymName = NAT_REGEX([_a-zA-Z]+[_\\w]*);
+    kNATRegexMethodArgTerminal = NAT_REGEX([\\s\\]]);
 }
 
+@implementation NSString (NATExtensions)
+
+- (BOOL)nat_matches:(NSRegularExpression *)expr
+{
+    NSTextCheckingResult *result = [expr firstMatchInString:self options:NSMatchingAnchored range:NSMakeRange(0, self.length)];
+
+    return (result != nil && result.range.length == self.length);
+}
+
+@end

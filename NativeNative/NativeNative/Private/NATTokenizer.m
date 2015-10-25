@@ -69,7 +69,7 @@
     if ( self.hasTokens ) {
         NSTextCheckingResult *match = [expr firstMatchInString:_string options:NSMatchingAnchored range:NSMakeRange(_index, _string.length - _index)];
 
-        if ( match.range.location != NSNotFound ) {
+        if ( match != nil ) {
             result = [_string substringWithRange:match.range];
             _index = NSMaxRange(match.range);
         }
@@ -87,11 +87,11 @@
     if ( self.hasTokens ) {
         NSTextCheckingResult *match = [expr firstMatchInString:_string options:kNilOptions range:NSMakeRange(_index, _string.length - _index)];
 
-        if ( match.range.location != NSNotFound && match.range.location > _index ) {
+        if ( match.range.location > _index ) {
             result = [_string substringWithRange:NSMakeRange(_index, match.range.location - _index)];
             _index = match.range.location;
         }
-        else if ( match.range.location == NSNotFound ) {
+        else if ( match == nil ) {
             result = [_string substringFromIndex:_index];
             _index = _string.length;
         }

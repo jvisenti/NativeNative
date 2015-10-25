@@ -10,7 +10,7 @@
 
 CF_EXTERN_C_BEGIN
 
-typedef char NATType;
+typedef int NATType;
 
 CF_EXPORT const NATType kNATTypeUnknown;
 CF_EXPORT const NATType kNATTypeObject;
@@ -24,6 +24,10 @@ CF_EXPORT const NATType kNATTypeInt;
 CF_EXPORT const NATType kNATTypeUInt;
 CF_EXPORT const NATType kNATTypeLong;
 CF_EXPORT const NATType kNATTypeULong;
+CF_EXPORT const NATType kNATTypeLongLong;
+CF_EXPORT const NATType kNATTypeULongLong;
+CF_EXPORT const NATType kNATTypeFloat;
+CF_EXPORT const NATType kNATTypeDouble;
 
 CF_EXPORT const char* NATGetEncoding(NATType type);
 CF_EXPORT NATType NATGetType(const char *encoding);

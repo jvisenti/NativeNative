@@ -26,10 +26,19 @@
     self.source = [NSString stringWithContentsOfURL:filePath encoding:NSUTF8StringEncoding error:nil];
 }
 
-- (NSString *)print
+- (void)print
 {
     NSLog(@"REACHED");
-    return @"This is a test";
+}
+
+- (NSString *)stringFromInt:(int)i
+{
+    return [NSString stringWithFormat:@"%i", i];
+}
+
+- (NSNumber *)numberFromFloat:(float)f
+{
+    return @(f);
 }
 
 - (void)testTokenizerLines
@@ -97,6 +106,8 @@
     XCTAssert(NATGetType(@encode(unsigned int)) == kNATTypeUInt);
     XCTAssert(NATGetType(@encode(long)) == kNATTypeLong);
     XCTAssert(NATGetType(@encode(unsigned long)) == kNATTypeULong);
+    XCTAssert(NATGetType(@encode(float)) == kNATTypeFloat);
+    XCTAssert(NATGetType(@encode(double)) == kNATTypeDouble);
 
     XCTAssert(strcmp(NATGetEncoding(kNATTypeObject), @encode(id)) == 0);
     XCTAssert(strcmp(NATGetEncoding(kNATTypeClass), @encode(Class)) == 0);
@@ -109,6 +120,8 @@
     XCTAssert(strcmp(NATGetEncoding(kNATTypeUInt), @encode(unsigned int)) == 0);
     XCTAssert(strcmp(NATGetEncoding(kNATTypeLong), @encode(long)) == 0);
     XCTAssert(strcmp(NATGetEncoding(kNATTypeULong), @encode(unsigned long)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(kNATTypeFloat), @encode(float)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(kNATTypeDouble), @encode(double)) == 0);
 }
 
 - (void)testMethod
@@ -120,11 +133,43 @@
     [[NATScope currentScope] addSymbol:sym];
 
     NATMethod *method = [[NATMethod alloc] initWithSource:@"[self print]"];
-    NATValue *retVal = [method invoke];
+    NATValue *retVal = [method evaluate];
 
     [NATScope exit];
 
-    XCTAssert([retVal.objectValue isKindOfClass:[NSString class]]);
+    XCTAssert(retVal == nil);
+}
+
+- (void)testMethodWithIntArgument
+{
+    [NATScope enter];
+
+    NATSymbol *sym = [[NATSymbol alloc] initWithName:@"self" value:[[NATValue alloc] initWithObject:self]];
+
+    [[NATScope currentScope] addSymbol:sym];
+
+    NATMethod *method = [[NATMethod alloc] initWithSource:@"[self stringFromInt:5]"];
+    NATValue *retVal = [method evaluate];
+
+    [NATScope exit];
+
+    XCTAssert([retVal.objectValue intValue] == 5);
+}
+
+- (void)testMethodWithFloatArgument
+{
+    [NATScope enter];
+
+    NATSymbol *sym = [[NATSymbol alloc] initWithName:@"self" value:[[NATValue alloc] initWithObject:self]];
+
+    [[NATScope currentScope] addSymbol:sym];
+
+    NATMethod *method = [[NATMethod alloc] initWithSource:@"[self numberFromFloat:3.14f]"];
+    NATValue *retVal = [method evaluate];
+
+    [NATScope exit];
+
+    XCTAssert(fabsf([retVal.objectValue floatValue] - 3.14f) < 1e5);
 }
 
 @end

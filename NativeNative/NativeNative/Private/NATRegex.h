@@ -13,4 +13,14 @@ OBJC_EXTERN NSRegularExpression *kNATRegexWhitespace;
 
 OBJC_EXTERN NSRegularExpression *kNATRegexPrimitiveType;
 
+OBJC_EXTERN NSRegularExpression *kNATRegexIntLiteral;
+OBJC_EXTERN NSRegularExpression *kNATRegexFloatLiteral;
+
 OBJC_EXTERN NSRegularExpression *kNATRegexSymName;
+OBJC_EXTERN NSRegularExpression *kNATRegexMethodArgTerminal;
+
+@interface NSString (NATExtensions)
+
+- (BOOL)nat_matches:(NSRegularExpression *)expr;
+
+@end

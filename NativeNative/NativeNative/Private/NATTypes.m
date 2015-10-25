@@ -13,18 +13,22 @@
 static CFDictionaryRef s_TypesToEncodings;
 static CFDictionaryRef s_EncodingsToTypes;
 
-const NATType kNATTypeUnknown   = '\0';
-const NATType kNATTypeObject    = _C_ID;
-const NATType kNATTypeClass     = _C_CLASS;
-const NATType kNATTypeSEL       = _C_SEL;
-const NATType kNATTypeChar      = _C_CHR;
-const NATType kNATTypeUChar     = _C_UCHR;
-const NATType kNATTypeShort     = _C_SHT;
-const NATType kNATTypeUShort    = _C_USHT;
-const NATType kNATTypeInt       = _C_INT;
-const NATType kNATTypeUInt      = _C_UINT;
-const NATType kNATTypeLong      = _C_LNG;
-const NATType kNATTypeULong     = _C_ULNG;
+const NATType kNATTypeUnknown   = 0;
+const NATType kNATTypeObject    = 1;
+const NATType kNATTypeClass     = 2;
+const NATType kNATTypeSEL       = 3;
+const NATType kNATTypeChar      = 4;
+const NATType kNATTypeUChar     = 5;
+const NATType kNATTypeShort     = 6;
+const NATType kNATTypeUShort    = 7;
+const NATType kNATTypeInt       = 8;
+const NATType kNATTypeUInt      = 9;
+const NATType kNATTypeLong      = 10;
+const NATType kNATTypeULong     = 11;
+const NATType kNATTypeLongLong  = 12;
+const NATType kNATTypeULongLong = 13;
+const NATType kNATTypeFloat     = 14;
+const NATType kNATTypeDouble    = 15;
 
 static Boolean _NATTypesEqual(const void *a, const void *b)
 {
@@ -87,10 +91,13 @@ void _NATTypeConfigure(void)
     CFDictionaryAddValue(typesToEncodings, &kNATTypeUInt, @encode(unsigned int));
     CFDictionaryAddValue(typesToEncodings, &kNATTypeLong, @encode(long));
     CFDictionaryAddValue(typesToEncodings, &kNATTypeULong, @encode(unsigned long));
-
-    CFMutableDictionaryRef encodingsToTypes = CFDictionaryCreateMutable(NULL, 0, &encodingKeyCallbacks, NULL);
+    CFDictionaryAddValue(typesToEncodings, &kNATTypeLongLong, @encode(long long));
+    CFDictionaryAddValue(typesToEncodings, &kNATTypeULongLong, @encode(unsigned long long));
+    CFDictionaryAddValue(typesToEncodings, &kNATTypeFloat, @encode(float));
+    CFDictionaryAddValue(typesToEncodings, &kNATTypeDouble, @encode(double));
 
     CFIndex count = CFDictionaryGetCount(typesToEncodings);
+    CFMutableDictionaryRef encodingsToTypes = CFDictionaryCreateMutable(NULL, count, &encodingKeyCallbacks, NULL);
 
     const void **keys = alloca(count * sizeof(void *));
     const void **values = alloca(count * sizeof(void *));
@@ -99,8 +106,6 @@ void _NATTypeConfigure(void)
     for ( CFIndex i = 0; i < count; ++i ) {
         CFDictionaryAddValue(encodingsToTypes, values[i], keys[i]);
     }
-
-    CFDictionaryAddValue(encodingsToTypes, @encode(id), &kNATTypeObject);
 
     s_TypesToEncodings = typesToEncodings;
     s_EncodingsToTypes = encodingsToTypes;
