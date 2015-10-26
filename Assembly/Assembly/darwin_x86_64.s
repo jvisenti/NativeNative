@@ -1,40 +1,62 @@
+//
+//  darwin_x86_64.s
+//
+//  Created by Rob Visentin on 10/25/15.
+//  Copyright © 2015 Raizlabs. All rights reserved.
+//
+
 .file "darwin_x86_64.s"
 
 .text
 
-.align 3
+.align 4
 .globl _nat_call_x86_64
 
 /* void nat_call_x86_64(IMP imp, void *args, size_t bytes) */
+/* NOTE: bytes must be a multiple of 16 */
 _nat_call_x86_64:
-    push %rbp
-    mov %rsp, %rbp
+    push    %rbp                /* save initial frame pointer */
+    push    %rdx                /* save byte count */
 
-    mov %rdi, %r11  /* save function */
+    mov     %rdi, %r11          /* save function */
 
-    /* prepare to copy args to the stack */
-    mov %rdx, %rcx  /* move byte count into rcx, used for rep count below */
-    sub %rcx, %rsp  /* allocate byte count on the stack */
+    mov     %rsp, %rbp          /* finalize local stack frame */
 
-    /* align stack to 16 byte boundary */
-    and $-16, %rsp
+    // prepare to copy args to the stack //
 
-    mov %rsi, %rsi  /* move args into rsi, used as source in mov below */
-    mov %rsp, %rdi  /* move rsp into rdi, used as destination in mov below */
+    mov     $176, %r10          /* 176 is the number of bits that will fit in arg registers */
 
-    /* copy args to stack */
+    mov     %rdx, %rcx          /* move byte count into rcx, rep count below */
+
+    cmp     %r10, %rdx
+    cmovl   %r10, %rdx
+    sub     %rdx, %rsp          /* allocate max(176, bytes) on the stack */
+    and     $-16, %rsp          /* align stack to 16-byte boundary */
+
+    mov     %rsi, %rsi          /* move args into rsi, source in mov below */
+    mov     %rsp, %rdi          /* move rsp into rdi, destination in mov below */
+
+    // copy args to stack //
+
     cld
-    rep movsq
+    rep     movsb
 
-    /* load registers */
-    mov 0(%rsp),  %rdi
-    mov 8(%rsp),  %rsi
-    mov 16(%rsp), %rdx
-    mov 24(%rsp), %rcx
-    mov 32(%rsp), %r8
-    mov 40(%rsp), %r9
+    // load registers //
 
-    /* load SSE registers */
+    mov     0(%rsp),  %rdi
+    mov     8(%rsp),  %rsi
+    mov     16(%rsp), %rdx
+    mov     24(%rsp), %rcx
+    mov     32(%rsp), %r8
+    mov     40(%rsp), %r9
+
+    // skip SSE registers if args fit in standard registers //
+
+    cmpq    $48, (%rbp)
+    jle     Lcall
+
+    // load SSE registers //
+
     movdqa	48(%rsp),  %xmm0
 	movdqa	64(%rsp),  %xmm1
 	movdqa	80(%rsp),  %xmm2
@@ -44,11 +66,15 @@ _nat_call_x86_64:
 	movdqa	144(%rsp), %xmm6
 	movdqa	160(%rsp), %xmm7
 
-    /* dealloc reg arg area */
-    add $16, %rsp
+Lcall:
+    add     %r10, %rsp          /* dealloc reg arg area */
+                                /* note: stack still 16-byte aligned */
 
-    /* call function */
-    call *%r11
+    call    *%r11               /* call function */
 
-    pop %rbp
+    lea     8(%rbp), %rsp       /* deallocate stack args */
+
+    // return //
+
+    pop     %rbp
     ret

@@ -17,9 +17,9 @@ extern void nat_call_x86_64(IMP imp, void *args, size_t bytes);
 
 @implementation TestObj
 
-- (void)print:(int)i
+- (void)printInt:(int)i double:(double)d object:(id)o
 {
-    NSLog(@"Reached! Printing %i", i);
+    NSLog(@"Reached! Printing %i, %g, %@", i, d, o);
 }
 
 @end
@@ -29,15 +29,19 @@ int main(int argc, const char * argv[]) {
         TestObj *obj = [[TestObj alloc] init];
 
         int arg = 10;
+        double arg2 = 3.14;
 
-//        size_t argSize = sizeof(id) + sizeof(SEL) + sizeof(int);
-        void *args = malloc(20);
+        size_t argSize = 176;
+        void *args = calloc(argSize, 1);
 
-        memmove(args, (void*)&obj, sizeof(id));
-        memmove((char *)args + sizeof(id), &@selector(print:), sizeof(SEL));
-        memmove((char *)args + sizeof(id) + sizeof(SEL), &arg, sizeof(int));
+        memcpy(args, (void*)&obj, sizeof(id));
+        memcpy((char *)args + 8, &@selector(printInt:double:object:), sizeof(SEL));
+        memcpy((char *)args + 16, &arg, sizeof(int));
+        memcpy((char *)args + 24, (void*)&obj, sizeof(id));
 
-        nat_call_x86_64((IMP)objc_msgSend, args, 20);
+        memcpy((char *)args + 48, &arg2, sizeof(double));
+
+        nat_call_x86_64((IMP)objc_msgSend, args, argSize);
 
         free(args);
     }
