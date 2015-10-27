@@ -17,6 +17,8 @@
 		D432C8511BDC1A900043AB45 /* NATExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = D432C84F1BDC1A900043AB45 /* NATExpression.m */; settings = {ASSET_TAGS = (); }; };
 		D432C8541BDC1DE80043AB45 /* NATOperators.h in Headers */ = {isa = PBXBuildFile; fileRef = D432C8521BDC1DE80043AB45 /* NATOperators.h */; settings = {ASSET_TAGS = (); }; };
 		D432C8551BDC1DE80043AB45 /* NATOperators.m in Sources */ = {isa = PBXBuildFile; fileRef = D432C8531BDC1DE80043AB45 /* NATOperators.m */; settings = {ASSET_TAGS = (); }; };
+		D4445C1C1BDEF8E30093B2B7 /* NATInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = D4445C1A1BDEF8E30093B2B7 /* NATInvocation.h */; settings = {ASSET_TAGS = (); }; };
+		D4445C1D1BDEF8E30093B2B7 /* NATInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = D4445C1B1BDEF8E30093B2B7 /* NATInvocation.m */; settings = {ASSET_TAGS = (); }; };
 		D474D2FE1BDBF5D500042911 /* NATTokenizer.m in Sources */ = {isa = PBXBuildFile; fileRef = D474D2FD1BDBF5D500042911 /* NATTokenizer.m */; settings = {ASSET_TAGS = (); }; };
 		D474D3011BDBF67700042911 /* NATRegex.h in Headers */ = {isa = PBXBuildFile; fileRef = D474D2FF1BDBF67700042911 /* NATRegex.h */; settings = {ASSET_TAGS = (); }; };
 		D474D3021BDBF67700042911 /* NATRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = D474D3001BDBF67700042911 /* NATRegex.m */; settings = {ASSET_TAGS = (); }; };
@@ -53,6 +55,8 @@
 		D432C84F1BDC1A900043AB45 /* NATExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATExpression.m; sourceTree = "<group>"; };
 		D432C8521BDC1DE80043AB45 /* NATOperators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATOperators.h; sourceTree = "<group>"; };
 		D432C8531BDC1DE80043AB45 /* NATOperators.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATOperators.m; sourceTree = "<group>"; };
+		D4445C1A1BDEF8E30093B2B7 /* NATInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATInvocation.h; sourceTree = "<group>"; };
+		D4445C1B1BDEF8E30093B2B7 /* NATInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATInvocation.m; sourceTree = "<group>"; };
 		D474D2FD1BDBF5D500042911 /* NATTokenizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATTokenizer.m; sourceTree = "<group>"; };
 		D474D2FF1BDBF67700042911 /* NATRegex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATRegex.h; sourceTree = "<group>"; };
 		D474D3001BDBF67700042911 /* NATRegex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATRegex.m; sourceTree = "<group>"; };
@@ -131,6 +135,8 @@
 				D432C84F1BDC1A900043AB45 /* NATExpression.m */,
 				D432C8521BDC1DE80043AB45 /* NATOperators.h */,
 				D432C8531BDC1DE80043AB45 /* NATOperators.m */,
+				D4445C1A1BDEF8E30093B2B7 /* NATInvocation.h */,
+				D4445C1B1BDEF8E30093B2B7 /* NATInvocation.m */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -158,6 +164,7 @@
 				D474D3011BDBF67700042911 /* NATRegex.h in Headers */,
 				D487A86B1BDB124F009DCCBE /* NATValue.h in Headers */,
 				D432C8541BDC1DE80043AB45 /* NATOperators.h in Headers */,
+				D4445C1C1BDEF8E30093B2B7 /* NATInvocation.h in Headers */,
 				D40569511BD84BEC00EC02D5 /* NativeNative.h in Headers */,
 				D4B3E7A31BDAC50C009E6507 /* NATMethod.h in Headers */,
 				D432C84C1BDC08330043AB45 /* NATScope.h in Headers */,
@@ -266,6 +273,7 @@
 				D432C8511BDC1A900043AB45 /* NATExpression.m in Sources */,
 				D4B3E7AC1BDAC824009E6507 /* NATTypes.m in Sources */,
 				D474D2FE1BDBF5D500042911 /* NATTokenizer.m in Sources */,
+				D4445C1D1BDEF8E30093B2B7 /* NATInvocation.m in Sources */,
 				D487A86C1BDB124F009DCCBE /* NATValue.m in Sources */,
 				D4B3E7A41BDAC50C009E6507 /* NATMethod.m in Sources */,
 				D432C8551BDC1DE80043AB45 /* NATOperators.m in Sources */,

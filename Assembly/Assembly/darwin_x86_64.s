@@ -10,11 +10,11 @@
 .text
 
 .align 4
-.globl _nat_call_x86_64
+.globl __nat_invoking__
 
 /* void nat_call_x86_64(IMP imp, void *args, size_t bytes) */
 /* NOTE: bytes must be a multiple of 16 */
-_nat_call_x86_64:
+__nat_invoking__:
     push    %rbp                /* save initial frame pointer */
     push    %rdx                /* save byte count */
 
@@ -27,6 +27,7 @@ _nat_call_x86_64:
     mov     $176, %r10          /* 176 is the number of bits that will fit in arg registers */
 
     mov     %rdx, %rcx          /* move byte count into rcx, rep count below */
+    shr     $3, %rcx            /* convert byte -> qword for fewer reps */
 
     cmp     %r10, %rdx
     cmovl   %r10, %rdx
@@ -39,7 +40,7 @@ _nat_call_x86_64:
     // copy args to stack //
 
     cld
-    rep     movsb
+    rep     movsq
 
     // load registers //
 

@@ -65,9 +65,9 @@ typedef struct _NATLiteralValues {
         _value = malloc(_size);
         memcpy(_value, bytes, _size);
 
-        _primitive = (_type != kNATTypeObject && _type != kNATTypeClass && _type != kNATTypeSEL);
+        _primitive = (_type != NATTypeObject && _type != NATTypeClass && _type != NATTypeSEL);
 
-        if ( _type == kNATTypeObject) {
+        if ( _type == NATTypeObject) {
             CFBridgingRetain(*(const id *)_value);
         }
 
@@ -79,17 +79,17 @@ typedef struct _NATLiteralValues {
 
 - (instancetype)initWithObject:(id)object
 {
-    return [self initWithBytes:&object type:kNATTypeObject];
+    return [self initWithBytes:&object type:NATTypeObject];
 }
 
 - (instancetype)initWithClass:(Class)cls
 {
-    return [self initWithBytes:&cls type:kNATTypeClass];
+    return [self initWithBytes:&cls type:NATTypeClass];
 }
 
 - (void)dealloc
 {
-    if ( _type == kNATTypeObject && _value != NULL ) {
+    if ( _type == NATTypeObject && _value != NULL ) {
         CFRelease(*(CFTypeRef *)_value);
     }
 
@@ -98,7 +98,7 @@ typedef struct _NATLiteralValues {
 
 - (id)objectValue
 {
-    return _type == kNATTypeObject ? *(const id *)_value : NULL;
+    return _type == NATTypeObject ? *(const id *)_value : NULL;
 }
 
 - (Class)classValue
@@ -171,68 +171,55 @@ typedef struct _NATLiteralValues {
     return _literalValues.d;
 }
 
-- (void)assign:(NATValue *)value
+- (void)getValue:(void *)buffer
 {
-    NSAssert(NO, @"assignment not yet implemented");
-
-    if ( _type == kNATTypeObject ) {
-        assert(value.type == kNATTypeObject);
-
-        if ( _value != NULL ) {
-            CFRelease(_value);
-        }
-
-        _value = (void *)CFRetain(value->_value);
-    }
-    else {
-        assert(false);
-    }
+    memcpy(buffer, _value, _size);
 }
 
 - (NSString *)description
 {
     NSString *description = nil;
 
-    if ( _type == kNATTypeObject || _type == kNATTypeObject ) {
+    if ( _type == NATTypeObject || _type == NATTypeObject ) {
         description = [*(const id *)_value description];
     }
-    else if ( _type == kNATTypeSEL ) {
+    else if ( _type == NATTypeSEL ) {
         description = [NSString stringWithFormat:@"SEL: %@", NSStringFromSelector(self.selectorValue)];
     }
-    else if ( _type == kNATTypeChar ) {
+    else if ( _type == NATTypeChar ) {
         description = [NSString stringWithFormat:@"char: %c", self.charValue];
     }
-    else if ( _type == kNATTypeUChar ) {
+    else if ( _type == NATTypeUChar ) {
         description = [NSString stringWithFormat:@"uchar: %uc", self.uCharValue];
     }
-    else if ( _type == kNATTypeShort ) {
+    else if ( _type == NATTypeShort ) {
         description = [NSString stringWithFormat:@"short: %i", self.shortValue];
     }
-    else if ( _type == kNATTypeUShort ) {
+    else if ( _type == NATTypeUShort ) {
         description = [NSString stringWithFormat:@"ushort: %i", self.uShortValue];
     }
-    else if ( _type == kNATTypeInt ) {
+    else if ( _type == NATTypeInt ) {
         description = [NSString stringWithFormat:@"int: %i", self.uIntValue];
     }
-    else if ( _type == kNATTypeUInt ) {
+    else if ( _type == NATTypeUInt ) {
         description = [NSString stringWithFormat:@"uint: %iu", self.uIntValue];
     }
-    else if ( _type == kNATTypeLong ) {
+    else if ( _type == NATTypeLong ) {
         description = [NSString stringWithFormat:@"long: %ld", self.longValue];
     }
-    else if ( _type == kNATTypeULong ) {
+    else if ( _type == NATTypeULong ) {
         description = [NSString stringWithFormat:@"ulong: %lu", self.uLongValue];
     }
-    else if ( _type == kNATTypeLongLong ) {
+    else if ( _type == NATTypeLongLong ) {
         description = [NSString stringWithFormat:@"long long: %lld", self.longLongValue];
     }
-    else if ( _type == kNATTypeULongLong ) {
+    else if ( _type == NATTypeULongLong ) {
         description = [NSString stringWithFormat:@"ulong long: %llu", self.uLongLongValue];
     }
-    else if ( _type == kNATTypeFloat ) {
+    else if ( _type == NATTypeFloat ) {
         description = [NSString stringWithFormat:@"float: %g", self.floatValue];
     }
-    else if ( _type == kNATTypeDouble ) {
+    else if ( _type == NATTypeDouble ) {
         description = [NSString stringWithFormat:@"double: %g", self.doubleValue];
     }
     else {
@@ -250,40 +237,40 @@ typedef struct _NATLiteralValues {
     memset(&literalValues, 0, sizeof(literalValues));
 
     if ( self.isPrimitive ) {
-        if ( _type == kNATTypeChar ) {
+        if ( _type == NATTypeChar ) {
             NAT_CVT_ALL(_value, char, literalValues);
         }
-        else if ( _type == kNATTypeUChar ) {
+        else if ( _type == NATTypeUChar ) {
             NAT_CVT_ALL(_value, unsigned char, literalValues);
         }
-        else if ( _type == kNATTypeShort ) {
+        else if ( _type == NATTypeShort ) {
             NAT_CVT_ALL(_value, short, literalValues);
         }
-        else if ( _type == kNATTypeUShort ) {
+        else if ( _type == NATTypeUShort ) {
             NAT_CVT_ALL(_value, unsigned short, literalValues);
         }
-        else if ( _type == kNATTypeInt ) {
+        else if ( _type == NATTypeInt ) {
             NAT_CVT_ALL(_value, int, literalValues);
         }
-        else if ( _type == kNATTypeUInt ) {
+        else if ( _type == NATTypeUInt ) {
             NAT_CVT_ALL(_value, unsigned int, literalValues);
         }
-        else if ( _type == kNATTypeLong ) {
+        else if ( _type == NATTypeLong ) {
             NAT_CVT_ALL(_value, long, literalValues);
         }
-        else if ( _type == kNATTypeULong ) {
+        else if ( _type == NATTypeULong ) {
             NAT_CVT_ALL(_value, unsigned long, literalValues);
         }
-        else if ( _type == kNATTypeLongLong ) {
+        else if ( _type == NATTypeLongLong ) {
             NAT_CVT_ALL(_value, long long, literalValues);
         }
-        else if ( _type == kNATTypeULongLong ) {
+        else if ( _type == NATTypeULongLong ) {
             NAT_CVT_ALL(_value, unsigned long long, literalValues);
         }
-        else if ( _type == kNATTypeFloat ) {
+        else if ( _type == NATTypeFloat ) {
             NAT_CVT_ALL(_value, float, literalValues);
         }
-        else if ( _type == kNATTypeDouble ) {
+        else if ( _type == NATTypeDouble ) {
             NAT_CVT_ALL(_value, double, literalValues);
         }
     }

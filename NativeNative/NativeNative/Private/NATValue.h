@@ -11,7 +11,7 @@
 @interface NATValue : NSObject
 
 @property (nonatomic, readonly) NATType type;
-@property (nonatomic, readonly) const char *encoding;
+@property (nonatomic, readonly) const char *encoding NS_RETURNS_INNER_POINTER;
 @property (nonatomic, readonly) size_t size;
 
 @property (nonatomic, readonly, getter=isPrimitive) BOOL primitive;
@@ -38,6 +38,6 @@
 - (float)floatValue;
 - (double)doubleValue;
 
-- (void)assign:(NATValue *)value;
+- (void)getValue:(void *)buffer;
 
 @end
