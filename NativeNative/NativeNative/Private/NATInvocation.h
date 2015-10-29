@@ -15,6 +15,13 @@
     [invocation invoke]; \
 })
 
+#define NAT_INVOKE_SUPER(target, selector, args...) ({ \
+    NSMethodSignature *sig = [target methodSignatureForSelector:selector]; \
+    NATInvocation *invocation = [[NATInvocation alloc] initWithMethodSignature:sig]; \
+    [invocation setArguments:&target, &selector, args, nil]; \
+    [invocation invokeSuper]; \
+})
+
 #define NAT_INVOKE_C(function, encoding, args...) ({ \
     NSMethodSignature *sig = [NSMethodSignature signatureWithObjCTypes:(encoding)]; \
     NATInvocation *invocation = [[NATInvocation alloc] initWithMethodSignature:sig]; \

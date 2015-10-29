@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D42155951BE0591900835A42 /* NATMethodDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D42155941BE0591900835A42 /* NATMethodDescriptor.m */; settings = {ASSET_TAGS = (); }; };
+		D421559E1BE113CE00835A42 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D421559D1BE113CE00835A42 /* main.m */; };
+		D42155A11BE113CE00835A42 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D42155A01BE113CE00835A42 /* AppDelegate.m */; };
+		D42155A41BE113CE00835A42 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D42155A31BE113CE00835A42 /* ViewController.m */; };
+		D42155A71BE113CE00835A42 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D42155A51BE113CE00835A42 /* Main.storyboard */; };
+		D42155A91BE113CE00835A42 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D42155A81BE113CE00835A42 /* Assets.xcassets */; };
+		D42155AC1BE113CE00835A42 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D42155AA1BE113CE00835A42 /* LaunchScreen.storyboard */; };
+		D42155B21BE1141A00835A42 /* NATMethodDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D42155941BE0591900835A42 /* NATMethodDescriptor.m */; settings = {ASSET_TAGS = (); }; };
+		D42155B31BE1141A00835A42 /* NATValue.m in Sources */ = {isa = PBXBuildFile; fileRef = D45F91AC1BDF95D400C4F9AD /* NATValue.m */; settings = {ASSET_TAGS = (); }; };
+		D42155B41BE1141A00835A42 /* NATTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = D45F91AF1BDF974000C4F9AD /* NATTypes.m */; settings = {ASSET_TAGS = (); }; };
+		D42155B71BE1194500835A42 /* arm64.s in Sources */ = {isa = PBXBuildFile; fileRef = D42155B61BE1194500835A42 /* arm64.s */; settings = {ASSET_TAGS = (); }; };
+		D42155BC1BE19DD800835A42 /* NATInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = D4445C1F1BDEF90D0093B2B7 /* NATInvocation.m */; settings = {ASSET_TAGS = (); }; };
+		D42155BD1BE19DDB00835A42 /* arm64.s in Sources */ = {isa = PBXBuildFile; fileRef = D42155B61BE1194500835A42 /* arm64.s */; settings = {ASSET_TAGS = (); }; };
 		D4445C0F1BDDA0400093B2B7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D4445C0E1BDDA0400093B2B7 /* main.m */; };
 		D4445C161BDDA0700093B2B7 /* darwin_x86_64.s in Sources */ = {isa = PBXBuildFile; fileRef = D4445C151BDDA0700093B2B7 /* darwin_x86_64.s */; settings = {ASSET_TAGS = (); }; };
 		D4445C201BDEF90D0093B2B7 /* NATInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = D4445C1F1BDEF90D0093B2B7 /* NATInvocation.m */; settings = {ASSET_TAGS = (); }; };
@@ -27,6 +40,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D42155931BE0591900835A42 /* NATMethodDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NATMethodDescriptor.h; path = ../../NativeNative/NativeNative/Private/NATMethodDescriptor.h; sourceTree = "<group>"; };
+		D42155941BE0591900835A42 /* NATMethodDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NATMethodDescriptor.m; path = ../../NativeNative/NativeNative/Private/NATMethodDescriptor.m; sourceTree = "<group>"; };
+		D421559A1BE113CE00835A42 /* iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D421559D1BE113CE00835A42 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D421559F1BE113CE00835A42 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		D42155A01BE113CE00835A42 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		D42155A21BE113CE00835A42 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		D42155A31BE113CE00835A42 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		D42155A61BE113CE00835A42 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D42155A81BE113CE00835A42 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D42155AB1BE113CE00835A42 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		D42155AD1BE113CE00835A42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D42155B61BE1194500835A42 /* arm64.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = arm64.s; sourceTree = "<group>"; };
 		D4445C0B1BDDA0400093B2B7 /* Assembly */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Assembly; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4445C0E1BDDA0400093B2B7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D4445C151BDDA0700093B2B7 /* darwin_x86_64.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = darwin_x86_64.s; sourceTree = "<group>"; };
@@ -39,6 +65,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D42155971BE113CE00835A42 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D4445C081BDDA0400093B2B7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -49,10 +82,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D421559B1BE113CE00835A42 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				D421559F1BE113CE00835A42 /* AppDelegate.h */,
+				D42155A01BE113CE00835A42 /* AppDelegate.m */,
+				D42155A21BE113CE00835A42 /* ViewController.h */,
+				D42155A31BE113CE00835A42 /* ViewController.m */,
+				D42155A51BE113CE00835A42 /* Main.storyboard */,
+				D42155A81BE113CE00835A42 /* Assets.xcassets */,
+				D42155AA1BE113CE00835A42 /* LaunchScreen.storyboard */,
+				D42155AD1BE113CE00835A42 /* Info.plist */,
+				D421559C1BE113CE00835A42 /* Supporting Files */,
+			);
+			path = iOS;
+			sourceTree = "<group>";
+		};
+		D421559C1BE113CE00835A42 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D421559D1BE113CE00835A42 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		D4445C021BDDA0400093B2B7 = {
 			isa = PBXGroup;
 			children = (
 				D4445C0D1BDDA0400093B2B7 /* Assembly */,
+				D421559B1BE113CE00835A42 /* iOS */,
 				D4445C0C1BDDA0400093B2B7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				D4445C0B1BDDA0400093B2B7 /* Assembly */,
+				D421559A1BE113CE00835A42 /* iOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,8 +129,11 @@
 			children = (
 				D4445C0E1BDDA0400093B2B7 /* main.m */,
 				D4445C151BDDA0700093B2B7 /* darwin_x86_64.s */,
+				D42155B61BE1194500835A42 /* arm64.s */,
 				D4445C1E1BDEF90D0093B2B7 /* NATInvocation.h */,
 				D4445C1F1BDEF90D0093B2B7 /* NATInvocation.m */,
+				D42155931BE0591900835A42 /* NATMethodDescriptor.h */,
+				D42155941BE0591900835A42 /* NATMethodDescriptor.m */,
 				D45F91AB1BDF95D400C4F9AD /* NATValue.h */,
 				D45F91AC1BDF95D400C4F9AD /* NATValue.m */,
 				D45F91AE1BDF974000C4F9AD /* NATTypes.h */,
@@ -83,6 +145,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		D42155991BE113CE00835A42 /* iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D42155AE1BE113CE00835A42 /* Build configuration list for PBXNativeTarget "iOS" */;
+			buildPhases = (
+				D42155961BE113CE00835A42 /* Sources */,
+				D42155971BE113CE00835A42 /* Frameworks */,
+				D42155981BE113CE00835A42 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iOS;
+			productName = iOS;
+			productReference = D421559A1BE113CE00835A42 /* iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
 		D4445C0A1BDDA0400093B2B7 /* Assembly */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D4445C121BDDA0400093B2B7 /* Build configuration list for PBXNativeTarget "Assembly" */;
@@ -109,6 +188,9 @@
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = Raizlabs;
 				TargetAttributes = {
+					D42155991BE113CE00835A42 = {
+						CreatedOnToolsVersion = 7.0.1;
+					};
 					D4445C0A1BDDA0400093B2B7 = {
 						CreatedOnToolsVersion = 7.0.1;
 					};
@@ -120,6 +202,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = D4445C021BDDA0400093B2B7;
 			productRefGroup = D4445C0C1BDDA0400093B2B7 /* Products */;
@@ -127,11 +210,40 @@
 			projectRoot = "";
 			targets = (
 				D4445C0A1BDDA0400093B2B7 /* Assembly */,
+				D42155991BE113CE00835A42 /* iOS */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		D42155981BE113CE00835A42 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D42155AC1BE113CE00835A42 /* LaunchScreen.storyboard in Resources */,
+				D42155A91BE113CE00835A42 /* Assets.xcassets in Resources */,
+				D42155A71BE113CE00835A42 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		D42155961BE113CE00835A42 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D42155B21BE1141A00835A42 /* NATMethodDescriptor.m in Sources */,
+				D42155B41BE1141A00835A42 /* NATTypes.m in Sources */,
+				D42155BD1BE19DDB00835A42 /* arm64.s in Sources */,
+				D42155A41BE113CE00835A42 /* ViewController.m in Sources */,
+				D42155A11BE113CE00835A42 /* AppDelegate.m in Sources */,
+				D421559E1BE113CE00835A42 /* main.m in Sources */,
+				D42155BC1BE19DD800835A42 /* NATInvocation.m in Sources */,
+				D42155B31BE1141A00835A42 /* NATValue.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D4445C071BDDA0400093B2B7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -139,6 +251,8 @@
 				D4445C0F1BDDA0400093B2B7 /* main.m in Sources */,
 				D45F91AD1BDF95D400C4F9AD /* NATValue.m in Sources */,
 				D4445C161BDDA0700093B2B7 /* darwin_x86_64.s in Sources */,
+				D42155B71BE1194500835A42 /* arm64.s in Sources */,
+				D42155951BE0591900835A42 /* NATMethodDescriptor.m in Sources */,
 				D4445C201BDEF90D0093B2B7 /* NATInvocation.m in Sources */,
 				D45F91B01BDF974000C4F9AD /* NATTypes.m in Sources */,
 			);
@@ -146,7 +260,55 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		D42155A51BE113CE00835A42 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D42155A61BE113CE00835A42 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		D42155AA1BE113CE00835A42 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D42155AB1BE113CE00835A42 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		D42155AF1BE113CE00835A42 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				INFOPLIST_FILE = iOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.iOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		D42155B01BE113CE00835A42 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				INFOPLIST_FILE = iOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.iOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		D4445C101BDDA0400093B2B7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -241,6 +403,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D42155AE1BE113CE00835A42 /* Build configuration list for PBXNativeTarget "iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D42155AF1BE113CE00835A42 /* Debug */,
+				D42155B01BE113CE00835A42 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		D4445C061BDDA0400093B2B7 /* Build configuration list for PBXProject "Assembly" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

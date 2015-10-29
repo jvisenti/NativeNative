@@ -6,43 +6,18 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-#import <objc/runtime.h>
 #import <objc/message.h>
 
 #import "NATInvocation.h"
+#import "NATMethodDescriptor.h"
 
-#if __LP64__
-#define NAT_REG_SIZE        8
-#define NAT_MAX_REG_AREA    48
-#define NAT_MAX_SIMD_AREA   128
-#else
-#define NAT_REG_SIZE        4
-#define NAT_MAX_REG_AREA    0
-#define NAT_MAX_SIMD_AREA   0
-#endif
-
-#define NAT_SIMD_SIZE       16
-#define NAT_STACK_ALIGNMENT 16
-
-OBJC_EXTERN void _nat_invoking__(IMP imp, void *args, size_t bytes);
-
-typedef struct _NATArgInfo {
-    off_t offset;
-    size_t size;
-
-    struct {
-        BOOL isFloat    : 1;
-        BOOL isStruct   : 1;
-    } flags;
-} NATArgInfo;
+OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes);
 
 @implementation NATInvocation {
     NSMethodSignature *_methodSignature;
+    NATMethodDescriptor *_methodDescriptor;
 
     void *_frame;
-    size_t _frameLength;
-
-    NATArgInfo *_argInfo;
 }
 
 @synthesize methodSignature = _methodSignature;
@@ -66,9 +41,9 @@ typedef struct _NATArgInfo {
 {
     if ( self = [super init] ) {
         _methodSignature = sig;
-        [self computeFrameLength:&_frameLength argInfo:&_argInfo];
+        _methodDescriptor = [NATMethodDescriptor descriptorForMethodSignature:sig];
 
-        _frame = calloc(_frameLength, 1);
+        _frame = calloc(_methodDescriptor.frameLength, 1);
     }
 
     return self;
@@ -77,7 +52,6 @@ typedef struct _NATArgInfo {
 - (void)dealloc
 {
     free(_frame);
-    free(_argInfo);
 }
 
 - (void)setTarget:(id)target
@@ -107,19 +81,19 @@ typedef struct _NATArgInfo {
 {
     NSAssert(idx < _methodSignature.numberOfArguments, @"%@ failed to get argument at index %i because the method only has %i arguments", [self class], (int)idx, (int)_methodSignature.numberOfArguments);
 
-    NATArgInfo argInfo = _argInfo[idx];
-    memcpy(argBuffer, (char *)_frame + argInfo.offset, argInfo.size);
+    NATArgInfo argInfo = [_methodDescriptor infoForArgumentAtIndex:idx];
+    memcpy(argBuffer, (char *)_frame + argInfo.frameOffset, argInfo.size + argInfo.sizeAdjustment);
 }
 
 - (void)setArgument:(const void *)argPtr atIndex:(NSInteger)idx
 {
     NSAssert(idx < _methodSignature.numberOfArguments, @"%@ failed to set argument at index %i because the method only has %i arguments", [self class], (int)idx, (int)_methodSignature.numberOfArguments);
 
-    NATArgInfo argInfo = _argInfo[idx];
-    memcpy((char *)_frame + argInfo.offset, argPtr, argInfo.size);
+    NATArgInfo argInfo = [_methodDescriptor infoForArgumentAtIndex:idx];
+    memcpy((char *)_frame + argInfo.frameOffset, argPtr, argInfo.size + argInfo.sizeAdjustment);
 }
 
-- (void)setArguments:(const void *)arg0, ...
+- (void)setArguments:(const void *)arg0, ... NS_REQUIRES_NIL_TERMINATION
 {
     va_list args;
     va_start(args, arg0);
@@ -151,77 +125,17 @@ typedef struct _NATArgInfo {
 
 - (void)invoke
 {
-    _nat_invoking__(objc_msgSend, _frame, _frameLength);
+    __nat_invoking__(objc_msgSend, _frame, _methodDescriptor.frameLength);
 }
 
 - (void)invokeSuper
 {
-    _nat_invoking__(objc_msgSendSuper, _frame, _frameLength);
+    __nat_invoking__(objc_msgSendSuper, _frame, _methodDescriptor.frameLength);
 }
 
 - (void)invokeIMP:(IMP)imp
 {
-    _nat_invoking__(imp, _frame, _frameLength);
-}
-
-#pragma mark - private
-
-- (void)computeFrameLength:(size_t *)frameLength argInfo:(NATArgInfo **)argInfo
-{
-    size_t reg   = 0;
-    size_t simd  = NAT_MAX_REG_AREA;
-    size_t stack = NAT_MAX_REG_AREA + NAT_MAX_SIMD_AREA;
-
-    size_t maxOffset = 0;
-
-    NATArgInfo *args = malloc(_methodSignature.numberOfArguments * sizeof(NATArgInfo));
-
-    for ( NSUInteger i = 0; i < _methodSignature.numberOfArguments; ++i ) {
-        const char *argEncoding = [_methodSignature getArgumentTypeAtIndex:i];
-
-        size_t argSize;
-        NSGetSizeAndAlignment(argEncoding, &argSize, NULL);
-
-        NATArgInfo argInfo;
-
-        argInfo.flags.isStruct = (argEncoding[0] == _C_STRUCT_B);
-        argInfo.flags.isFloat = !argInfo.flags.isStruct && (strcmp(argEncoding, @encode(float)) == 0 || strcmp(argEncoding, @encode(double)) == 0);
-
-        // TODO: handle structs and unions
-
-        if ( (argInfo.flags.isFloat && simd < NAT_MAX_SIMD_AREA) || (argSize <= NAT_REG_SIZE && reg < NAT_MAX_REG_AREA) ) {
-            if ( argInfo.flags.isFloat ) {
-                argInfo.offset = simd;
-                argInfo.size = NAT_SIMD_SIZE;
-
-                simd += NAT_SIMD_SIZE;
-            }
-            else {
-                argInfo.offset = reg;
-                argInfo.size = NAT_REG_SIZE;
-
-                reg += NAT_REG_SIZE;
-            }
-        }
-        else {
-            argInfo.offset = stack;
-            argInfo.size = argSize;
-            
-            stack += argSize;
-        }
-
-        maxOffset = MAX(maxOffset, argInfo.offset + argInfo.size);
-
-        args[i] = argInfo;
-    }
-
-    if ( frameLength != NULL ) {
-        *frameLength = ceil((double)maxOffset / NAT_STACK_ALIGNMENT) * NAT_STACK_ALIGNMENT;
-    }
-
-    if ( argInfo != NULL ) {
-        *argInfo = args;
-    }
+    __nat_invoking__(imp, _frame, _methodDescriptor.frameLength);
 }
 
 @end

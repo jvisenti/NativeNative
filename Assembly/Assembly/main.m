@@ -10,6 +10,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 
 #import "NATInvocation.h"
+#import "NATMethodDescriptor.h"
 
 OBJC_EXTERN void _nat_invoking__(IMP imp, void *args, size_t bytes);
 
@@ -28,7 +29,7 @@ static void test_function(int a, id  b)
     NSLog(@"Reached! Printing %i, %g, %@", i, d, o);
 }
 
-- (void)test:(struct { int a; double d; })r
+- (void)test:(struct { struct { long a[2]; }; })f
 {
 
 }
@@ -39,7 +40,7 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         TestObj *obj = [[TestObj alloc] init];
 
-        NSMethodSignature *sig = [obj methodSignatureForSelector:@selector(printInt:double:object:)];
+        NSMethodSignature *sig = [obj methodSignatureForSelector:@selector(test:)];
 
         int arg = 10;
         double arg2 = 3.14;

@@ -12,8 +12,8 @@
 .align 4
 .globl __nat_invoking__
 
-/* void nat_call_x86_64(IMP imp, void *args, size_t bytes) */
-/* NOTE: bytes must be a multiple of 16 */
+/* void __nat_invoking__(IMP imp, void *args, size_t bytes) */
+/* NOTE: bytes must be a multiple of 16 if greater than 176 */
 __nat_invoking__:
     push    %rbp                /* save initial frame pointer */
     push    %rdx                /* save byte count */
