@@ -21,6 +21,7 @@
 #define NAT_SIMD_RET_OFFSET 16
 #define NAT_MAX_REG_STRUCT  16
 #define NAT_STRUCTS_BY_REF  0
+#define NAT_RET_BUFFER_LEN  48
 #elif __arm64__
 #define NAT_REG_SIZE        8
 #define NAT_MAX_REG_AREA    64
@@ -29,6 +30,7 @@
 #define NAT_SIMD_RET_OFFSET 80
 #define NAT_MAX_REG_STRUCT  16
 #define NAT_STRUCTS_BY_REF  1
+#define NAT_RET_BUFFER_LEN  208
 #endif
 
 #define NAT_SIMD_SIZE       16
@@ -90,6 +92,7 @@
         }
 
         _frameLength = NAT_ALIGN_16(_frameLength);
+        _returnBufferLength = NAT_RET_BUFFER_LEN;
 
         [self getReturnInfo:&_returnInfo ForEncoding:signature.methodReturnType];
     }

@@ -63,12 +63,14 @@ typedef struct _NATLiteralValues {
         NSGetSizeAndAlignment(encoding, &_size, NULL);
 
         _value = malloc(_size);
-        memcpy(_value, bytes, _size);
 
         _primitive = (_type != NATTypeObject && _type != NATTypeClass && _type != NATTypeSEL);
 
-        if ( _type == NATTypeObject && *(const id *)_value != nil ) {
-            CFBridgingRetain(*(const id *)_value);
+        if ( _type == NATTypeObject && *(const id *)bytes != nil ) {
+            *(CFTypeRef *)_value = CFRetain(*(CFTypeRef *)bytes);
+        }
+        else {
+            memcpy(_value, bytes, _size);
         }
 
         [self computeLiteralValues];
@@ -98,7 +100,7 @@ typedef struct _NATLiteralValues {
 
 - (id)objectValue
 {
-    return _type == NATTypeObject ? *(const id *)_value : NULL;
+    return _type == NATTypeObject ? *(const id *)_value : nil;
 }
 
 - (Class)classValue
@@ -180,8 +182,11 @@ typedef struct _NATLiteralValues {
 {
     NSString *description = nil;
 
-    if ( _type == NATTypeObject || _type == NATTypeObject ) {
-        description = [*(const id *)_value description];
+    if ( _type == NATTypeObject ) {
+        description = [NSString stringWithFormat:@"object: %@", [*(const id *)_value description]];
+    }
+    else if ( _type == NATTypeClass ) {
+        description = [NSString stringWithFormat:@"class: %@", [*(Class *)_value description]];
     }
     else if ( _type == NATTypeSEL ) {
         description = [NSString stringWithFormat:@"SEL: %@", NSStringFromSelector(self.selectorValue)];

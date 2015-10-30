@@ -41,14 +41,14 @@
     return @(f);
 }
 
-- (double)rand48
+- (double)randDouble
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         srand48(time(NULL));
     });
 
-    return drand48();
+    return 1.0 + drand48();
 }
 
 - (void)testTokenizerLines
@@ -174,14 +174,14 @@
 
     [[NATScope currentScope] addSymbol:sym];
 
-    NATMethod *method = [[NATMethod alloc] initWithSource:@"[self numberFromFloat:[self rand48]]"];
+    NATMethod *method = [[NATMethod alloc] initWithSource:@"[self numberFromFloat:[self randDouble]]"];
     NATValue *retVal = [method evaluate];
-
-    [NATScope exit];
 
     NSLog(@"%f", [retVal.objectValue floatValue]);
 
-    XCTAssert([retVal.objectValue floatValue] >= 0.0f && [retVal.objectValue floatValue] <= 1.0f );
+    XCTAssert([retVal.objectValue floatValue] >= 1.0f && [retVal.objectValue floatValue] <= 2.0f );
+
+    [NATScope exit];
 }
 
 @end

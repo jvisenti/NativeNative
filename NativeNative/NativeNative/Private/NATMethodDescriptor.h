@@ -34,6 +34,7 @@ struct _NATArgInfo {
 
 @property (nonatomic, readonly) NSUInteger frameLength;
 @property (nonatomic, readonly) NSUInteger numberOfArguments;
+@property (nonatomic, readonly) NSUInteger returnBufferLength; //!!!: Platform dependent
 
 @property (nonatomic, readonly) NATArgInfo returnTypeInfo;
 

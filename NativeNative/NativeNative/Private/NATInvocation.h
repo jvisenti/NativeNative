@@ -39,6 +39,8 @@
 @property (assign, nonatomic) id target;
 @property (assign, nonatomic) SEL selector;
 
+@property (nonatomic, readonly) BOOL argumentsRetained;
+
 @property (nonatomic, readonly) NATValue *returnValue;
 
 + (instancetype)invocationWithTarget:(id)target selector:(SEL)selector;
@@ -53,6 +55,8 @@
 - (void)setObjectArgument:(id)obj atIndex:(NSInteger)idx;
 
 - (void)setArguments:(const void *)arg0, ... NS_REQUIRES_NIL_TERMINATION;
+
+- (void)retainArgumentsIfNeeded;
 
 - (void)invoke;
 - (void)invokeSuper;

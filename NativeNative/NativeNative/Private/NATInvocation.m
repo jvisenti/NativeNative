@@ -59,7 +59,7 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
         _methodDescriptor = [NATMethodDescriptor descriptorForMethodSignature:sig];
 
         _frame = calloc(_methodDescriptor.frameLength, 1);
-        _returnBuffer = calloc(_methodDescriptor.returnTypeInfo.size, 1);
+        _returnBuffer = calloc(_methodDescriptor.returnBufferLength, 1);
     }
 
     return self;
@@ -67,6 +67,8 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
 
 - (void)dealloc
 {
+    [self releaseArgumentsIfNeeded];
+
     free(_frame);
     free(_returnBuffer);
 }
@@ -107,7 +109,26 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
     NSAssert(idx < _methodSignature.numberOfArguments, @"%@ argument %i out of range 0..%i", [self class], (int)idx, (int)_methodSignature.numberOfArguments);
 
     NATArgInfo argInfo = [_methodDescriptor infoForArgumentAtIndex:idx];
-    memcpy((char *)_frame + argInfo.frameOffset, argPtr, argInfo.size + argInfo.sizeAdjustment);
+
+    void *framePtr = (char *)_frame + argInfo.frameOffset;
+
+    if ( _argumentsRetained && *[_methodSignature getArgumentTypeAtIndex:idx] == _C_ID ) {
+        CFTypeRef *currentArg = (CFTypeRef *)framePtr;
+
+        if ( *currentArg != NULL ) {
+            CFRelease(*currentArg);
+        }
+
+        if ( *(CFTypeRef *)argPtr != NULL ) {
+            *currentArg = CFRetain(*(CFTypeRef *)argPtr);
+        }
+        else {
+            memset(framePtr, 0, sizeof(void *));
+        }
+    }
+    else {
+        memcpy(framePtr, argPtr, argInfo.size + argInfo.sizeAdjustment);
+    }
 }
 
 - (void)setArguments:(const void *)arg0, ... NS_REQUIRES_NIL_TERMINATION
@@ -123,14 +144,30 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
     }
 }
 
+- (void)retainArgumentsIfNeeded
+{
+    if ( !_argumentsRetained ) {
+        for ( NSUInteger i = 0; i < _methodSignature.numberOfArguments; ++i ) {
+            if ( *[_methodSignature getArgumentTypeAtIndex:i] == _C_ID ) {
+                NATArgInfo argInfo = [_methodDescriptor infoForArgumentAtIndex:i];
+                CFTypeRef *arg = (CFTypeRef *)((char *)_frame + argInfo.frameOffset);
+
+                if ( *arg != NULL ) {
+                    *arg = CFRetain(*arg);
+                }
+            }
+        }
+    }
+}
+
 - (id)objectArgumentAtIndex:(NSInteger)idx
 {
     NSAssert(strcmp([_methodSignature getArgumentTypeAtIndex:idx], @encode(id)) == 0, @"%@ failed to retrieve object argument at index %i because argument is non-object type '%s'", [self class], (int)idx, [_methodSignature getArgumentTypeAtIndex:idx]);
 
-    id arg;
+    void *arg = NULL;
     [self getArgument:&arg atIndex:idx];
 
-    return arg;
+    return (__bridge id)arg;
 }
 
 - (void)setObjectArgument:(id)obj atIndex:(NSInteger)idx
@@ -152,6 +189,8 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
 
 - (void)invokeIMP:(IMP)imp
 {
+    [self retainArgumentsIfNeeded];
+    
     __nat_invoking__(imp, _frame, _methodDescriptor.frameLength, _returnBuffer);
 
     NATArgInfo returnInfo = _methodDescriptor.returnTypeInfo;
@@ -159,6 +198,24 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
     if (returnInfo.size > 0 ) {
         void *retBuffer = (char *)_returnBuffer + returnInfo.frameOffset;
         _returnValue = [[NATValue alloc] initWithBytes:retBuffer encoding:_methodSignature.methodReturnType];
+    }
+}
+
+#pragma mark - private methods
+
+- (void)releaseArgumentsIfNeeded
+{
+    if ( _argumentsRetained ) {
+        for ( NSUInteger i = 0; i < _methodSignature.numberOfArguments; ++i ) {
+            if ( *[_methodSignature getArgumentTypeAtIndex:i] == _C_ID ) {
+                NATArgInfo argInfo = [_methodDescriptor infoForArgumentAtIndex:i];
+                CFTypeRef *arg = (CFTypeRef *)((char *)_frame + argInfo.frameOffset);
+
+                if ( *arg != NULL ) {
+                    CFRelease(*arg);
+                }
+            }
+        }
     }
 }
 
