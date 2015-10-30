@@ -11,6 +11,7 @@
 #import "NATTokenizer.h"
 #import "NATScope.h"
 #import "NATExpression.h"
+#import "NATInvocation.h"
 
 @implementation NATMethod {
     SEL _selector;
@@ -62,19 +63,17 @@
 
 - (NATValue *)evaluate
 {
-    NATValue *retValue = nil;
-
     NATValue *targetValue = [(NATExpression *)_arguments[0] evaluate];
-    assert(targetValue.type == kNATTypeObject || targetValue.type == kNATTypeClass);
+    assert(targetValue.type == NATTypeObject || targetValue.type == NATTypeClass);
 
-    id target = (targetValue.type == kNATTypeObject) ? targetValue.objectValue : targetValue.classValue;
+    id target = (targetValue.type == NATTypeObject) ? targetValue.objectValue : targetValue.classValue;
 
     NSMethodSignature *methodSig = [target methodSignatureForSelector:_selector];
 
     NSAssert(methodSig != nil, @"Encountered nil signature for %@ of object", NSStringFromSelector(_selector), target);
     NSAssert(_arguments.count + 1 == methodSig.numberOfArguments, @"Mismatched argument count. Expected: %i, found %i", (int)methodSig.numberOfArguments, (int)_arguments.count);
 
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSig];
+    NATInvocation *invocation = [NATInvocation invocationWithMethodSignature:methodSig];
     invocation.target = target;
     invocation.selector = _selector;
 
@@ -84,76 +83,67 @@
 
     [invocation invoke];
 
-    NSUInteger returnSize = invocation.methodSignature.methodReturnLength;
-
-    if ( returnSize > 0 ) {
-        void *ret = alloca(returnSize);
-        [invocation getReturnValue:ret];
-
-        retValue = [[NATValue alloc] initWithBytes:ret encoding:invocation.methodSignature.methodReturnType];
-    }
-
-    return retValue;
+    return invocation.returnValue;
 }
 
 #pragma mark - private methods
 
-- (void)prepareInvocation:(NSInvocation *)invocation withArgument:(NATExpression *)argument atIndex:(NSUInteger)index
+- (void)prepareInvocation:(NATInvocation *)invocation withArgument:(NATExpression *)argument atIndex:(NSUInteger)index
 {
     NATValue *value = [argument evaluate];
 
     const char *encoding = [invocation.methodSignature getArgumentTypeAtIndex:index];
     NATType type = NATGetType(encoding);
 
-    if ( type == kNATTypeObject || type == kNATTypeClass ) {
+    if ( type == NATTypeObject || type == NATTypeClass ) {
         void *val = (__bridge void *)(value.objectValue);
         [invocation setArgument:&val atIndex:index];
     }
-    else if ( type == kNATTypeSEL ) {
+    else if ( type == NATTypeSEL ) {
         SEL val = value.selectorValue;
         [invocation setArgument:&val atIndex:index];
     }
-    else if ( type == kNATTypeChar ) {
+    else if ( type == NATTypeChar ) {
         char val = value.charValue;
         [invocation setArgument:&val atIndex:index];
     }
-    else if ( type == kNATTypeUChar ) {
+    else if ( type == NATTypeUChar ) {
         unsigned char val = value.uCharValue;
         [invocation setArgument:&val atIndex:index];
     }
-    else if ( type == kNATTypeUChar ) {
+    else if ( type == NATTypeUChar ) {
         unsigned char val = value.uCharValue;
         [invocation setArgument:&val atIndex:index];
     }
-    else if ( type == kNATTypeShort ) {
+    else if ( type == NATTypeShort ) {
         short val = value.shortValue;
         [invocation setArgument:&val atIndex:index];
     }
-    else if ( type == kNATTypeUShort ) {
+    else if ( type == NATTypeUShort ) {
         unsigned short val = value.uShortValue;
         [invocation setArgument:&val atIndex:index];
     }
-    else if ( type == kNATTypeInt ) {
+    else if ( type == NATTypeInt ) {
         int val = value.intValue;
         [invocation setArgument:&val atIndex:index];
     }
-    else if ( type == kNATTypeInt ) {
+    else if ( type == NATTypeInt ) {
         unsigned int val = value.uIntValue;
         [invocation setArgument:&val atIndex:index];
     }
-    else if ( type == kNATTypeLong ) {
+    else if ( type == NATTypeLong ) {
         long val = value.longValue;
         [invocation setArgument:&val atIndex:index];
     }
-    else if ( type == kNATTypeULong ) {
+    else if ( type == NATTypeULong ) {
         unsigned long val = value.uLongValue;
         [invocation setArgument:&val atIndex:index];
     }
-    else if ( type == kNATTypeFloat ) {
+    else if ( type == NATTypeFloat ) {
         float val = value.floatValue;
         [invocation setArgument:&val atIndex:index];
     }
-    else if ( type == kNATTypeDouble ) {
+    else if ( type == NATTypeDouble ) {
         double val = value.floatValue;
         [invocation setArgument:&val atIndex:index];
     }

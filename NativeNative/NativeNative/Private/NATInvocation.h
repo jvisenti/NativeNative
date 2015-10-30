@@ -6,13 +6,14 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "NATValue.h"
 
 #define NAT_INVOKE(target, selector, args...) ({ \
     NSMethodSignature *sig = [target methodSignatureForSelector:selector]; \
     NATInvocation *invocation = [[NATInvocation alloc] initWithMethodSignature:sig]; \
     [invocation setArguments:&target, &selector, args, nil]; \
     [invocation invoke]; \
+    invocation.returnValue; \
 })
 
 #define NAT_INVOKE_SUPER(target, selector, args...) ({ \
@@ -20,6 +21,7 @@
     NATInvocation *invocation = [[NATInvocation alloc] initWithMethodSignature:sig]; \
     [invocation setArguments:&target, &selector, args, nil]; \
     [invocation invokeSuper]; \
+    invocation.returnValue; \
 })
 
 #define NAT_INVOKE_C(function, encoding, args...) ({ \
@@ -27,6 +29,7 @@
     NATInvocation *invocation = [[NATInvocation alloc] initWithMethodSignature:sig]; \
     [invocation setArguments:args, nil]; \
     [invocation invokeIMP:(IMP)(function)]; \
+    invocation.returnValue; \
 })
 
 @interface NATInvocation : NSObject
@@ -36,7 +39,10 @@
 @property (assign, nonatomic) id target;
 @property (assign, nonatomic) SEL selector;
 
-- (instancetype)initWithTarget:(id)target selector:(SEL)selector;
+@property (nonatomic, readonly) NATValue *returnValue;
+
++ (instancetype)invocationWithTarget:(id)target selector:(SEL)selector;
++ (instancetype)invocationWithMethodSignature:(NSMethodSignature *)sig;
 
 - (instancetype)initWithMethodSignature:(NSMethodSignature *)sig NS_DESIGNATED_INITIALIZER;
 

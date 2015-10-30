@@ -17,12 +17,16 @@ struct _NATArgInfo {
     size_t size;
     off_t sizeAdjustment;
 
-    NATArgInfo *subInfo;
+    size_t align;
+
+    NATArgInfo *subInfo;        // array of sub arg info
 
     struct {
         BOOL isFloat    : 1;
         BOOL isStruct   : 1;
         BOOL isArray    : 1;
+        BOOL isPointer  : 1;
+        BOOL isString   : 1;
     } flags;
 };
 

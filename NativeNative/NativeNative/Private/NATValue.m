@@ -67,7 +67,7 @@ typedef struct _NATLiteralValues {
 
         _primitive = (_type != NATTypeObject && _type != NATTypeClass && _type != NATTypeSEL);
 
-        if ( _type == NATTypeObject) {
+        if ( _type == NATTypeObject && *(const id *)_value != nil ) {
             CFBridgingRetain(*(const id *)_value);
         }
 
@@ -89,7 +89,7 @@ typedef struct _NATLiteralValues {
 
 - (void)dealloc
 {
-    if ( _type == NATTypeObject && _value != NULL ) {
+    if ( _type == NATTypeObject && *(CFTypeRef *)_value != NULL ) {
         CFRelease(*(CFTypeRef *)_value);
     }
 

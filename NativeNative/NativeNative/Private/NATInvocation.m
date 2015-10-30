@@ -11,16 +11,31 @@
 #import "NATInvocation.h"
 #import "NATMethodDescriptor.h"
 
-OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes);
+OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
 
 @implementation NATInvocation {
     NSMethodSignature *_methodSignature;
     NATMethodDescriptor *_methodDescriptor;
 
     void *_frame;
+    void *_returnBuffer;
 }
 
 @synthesize methodSignature = _methodSignature;
+
++ (instancetype)invocationWithTarget:(id)target selector:(SEL)selector
+{
+    NATInvocation *invocation = [self invocationWithMethodSignature:[target methodSignatureForSelector:selector]];
+    invocation.target = target;
+    invocation.selector = selector;
+
+    return invocation;
+}
+
++ (instancetype)invocationWithMethodSignature:(NSMethodSignature *)sig
+{
+    return [[self alloc] initWithMethodSignature:sig];
+}
 
 - (instancetype)init
 {
@@ -44,6 +59,7 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes);
         _methodDescriptor = [NATMethodDescriptor descriptorForMethodSignature:sig];
 
         _frame = calloc(_methodDescriptor.frameLength, 1);
+        _returnBuffer = calloc(_methodDescriptor.returnTypeInfo.size, 1);
     }
 
     return self;
@@ -52,6 +68,7 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes);
 - (void)dealloc
 {
     free(_frame);
+    free(_returnBuffer);
 }
 
 - (void)setTarget:(id)target
@@ -79,7 +96,7 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes);
 
 - (void)getArgument:(void *)argBuffer atIndex:(NSInteger)idx
 {
-    NSAssert(idx < _methodSignature.numberOfArguments, @"%@ failed to get argument at index %i because the method only has %i arguments", [self class], (int)idx, (int)_methodSignature.numberOfArguments);
+    NSAssert(idx < _methodSignature.numberOfArguments, @"%@ argument %i out of range 0..%i", [self class], (int)idx, (int)_methodSignature.numberOfArguments);
 
     NATArgInfo argInfo = [_methodDescriptor infoForArgumentAtIndex:idx];
     memcpy(argBuffer, (char *)_frame + argInfo.frameOffset, argInfo.size + argInfo.sizeAdjustment);
@@ -87,7 +104,7 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes);
 
 - (void)setArgument:(const void *)argPtr atIndex:(NSInteger)idx
 {
-    NSAssert(idx < _methodSignature.numberOfArguments, @"%@ failed to set argument at index %i because the method only has %i arguments", [self class], (int)idx, (int)_methodSignature.numberOfArguments);
+    NSAssert(idx < _methodSignature.numberOfArguments, @"%@ argument %i out of range 0..%i", [self class], (int)idx, (int)_methodSignature.numberOfArguments);
 
     NATArgInfo argInfo = [_methodDescriptor infoForArgumentAtIndex:idx];
     memcpy((char *)_frame + argInfo.frameOffset, argPtr, argInfo.size + argInfo.sizeAdjustment);
@@ -125,17 +142,24 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes);
 
 - (void)invoke
 {
-    __nat_invoking__(objc_msgSend, _frame, _methodDescriptor.frameLength);
+    [self invokeIMP:objc_msgSend];
 }
 
 - (void)invokeSuper
 {
-    __nat_invoking__(objc_msgSendSuper, _frame, _methodDescriptor.frameLength);
+    [self invokeIMP:objc_msgSendSuper];
 }
 
 - (void)invokeIMP:(IMP)imp
 {
-    __nat_invoking__(imp, _frame, _methodDescriptor.frameLength);
+    __nat_invoking__(imp, _frame, _methodDescriptor.frameLength, _returnBuffer);
+
+    NATArgInfo returnInfo = _methodDescriptor.returnTypeInfo;
+
+    if (returnInfo.size > 0 ) {
+        void *retBuffer = (char *)_returnBuffer + returnInfo.frameOffset;
+        _returnValue = [[NATValue alloc] initWithBytes:retBuffer encoding:_methodSignature.methodReturnType];
+    }
 }
 
 @end

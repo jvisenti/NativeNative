@@ -29,6 +29,9 @@
 		D4B3E7AB1BDAC824009E6507 /* NATTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B3E7A91BDAC824009E6507 /* NATTypes.h */; settings = {ASSET_TAGS = (); }; };
 		D4B3E7AC1BDAC824009E6507 /* NATTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B3E7AA1BDAC824009E6507 /* NATTypes.m */; settings = {ASSET_TAGS = (); }; };
 		D4B3E7AF1BDAD5CE009E6507 /* NATTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B3E7AD1BDAD5CE009E6507 /* NATTokenizer.h */; settings = {ASSET_TAGS = (); }; };
+		D4C895091BE2F68B0003404F /* nat_invoking.S in Sources */ = {isa = PBXBuildFile; fileRef = D4C895081BE2F68B0003404F /* nat_invoking.S */; settings = {ASSET_TAGS = (); }; };
+		D4C8950C1BE2F6A00003404F /* NATMethodDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = D4C8950A1BE2F6A00003404F /* NATMethodDescriptor.h */; settings = {ASSET_TAGS = (); }; };
+		D4C8950D1BE2F6A00003404F /* NATMethodDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C8950B1BE2F6A00003404F /* NATMethodDescriptor.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +70,9 @@
 		D4B3E7A91BDAC824009E6507 /* NATTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATTypes.h; sourceTree = "<group>"; };
 		D4B3E7AA1BDAC824009E6507 /* NATTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATTypes.m; sourceTree = "<group>"; };
 		D4B3E7AD1BDAD5CE009E6507 /* NATTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATTokenizer.h; sourceTree = "<group>"; };
+		D4C895081BE2F68B0003404F /* nat_invoking.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = nat_invoking.S; sourceTree = "<group>"; };
+		D4C8950A1BE2F6A00003404F /* NATMethodDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATMethodDescriptor.h; sourceTree = "<group>"; };
+		D4C8950B1BE2F6A00003404F /* NATMethodDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATMethodDescriptor.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +143,9 @@
 				D432C8531BDC1DE80043AB45 /* NATOperators.m */,
 				D4445C1A1BDEF8E30093B2B7 /* NATInvocation.h */,
 				D4445C1B1BDEF8E30093B2B7 /* NATInvocation.m */,
+				D4C8950A1BE2F6A00003404F /* NATMethodDescriptor.h */,
+				D4C8950B1BE2F6A00003404F /* NATMethodDescriptor.m */,
+				D4C895081BE2F68B0003404F /* nat_invoking.S */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -160,6 +169,7 @@
 			files = (
 				D432C8501BDC1A900043AB45 /* NATExpression.h in Headers */,
 				D4B3E7AF1BDAD5CE009E6507 /* NATTokenizer.h in Headers */,
+				D4C8950C1BE2F6A00003404F /* NATMethodDescriptor.h in Headers */,
 				D4B3E7AB1BDAC824009E6507 /* NATTypes.h in Headers */,
 				D474D3011BDBF67700042911 /* NATRegex.h in Headers */,
 				D487A86B1BDB124F009DCCBE /* NATValue.h in Headers */,
@@ -274,8 +284,10 @@
 				D4B3E7AC1BDAC824009E6507 /* NATTypes.m in Sources */,
 				D474D2FE1BDBF5D500042911 /* NATTokenizer.m in Sources */,
 				D4445C1D1BDEF8E30093B2B7 /* NATInvocation.m in Sources */,
+				D4C8950D1BE2F6A00003404F /* NATMethodDescriptor.m in Sources */,
 				D487A86C1BDB124F009DCCBE /* NATValue.m in Sources */,
 				D4B3E7A41BDAC50C009E6507 /* NATMethod.m in Sources */,
+				D4C895091BE2F68B0003404F /* nat_invoking.S in Sources */,
 				D432C8551BDC1DE80043AB45 /* NATOperators.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

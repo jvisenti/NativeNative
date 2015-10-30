@@ -48,11 +48,11 @@
         }
         else if ( [token nat_matches:kNATRegexIntLiteral] ) {
             long long value = [token longLongValue];
-            tokenValue = [[NATValue alloc] initWithBytes:&value type:kNATTypeLongLong];
+            tokenValue = [[NATValue alloc] initWithBytes:&value type:NATTypeLongLong];
         }
         else if ( [token nat_matches:kNATRegexFloatLiteral] ) {
             double value = [token doubleValue];
-            tokenValue = [[NATValue alloc] initWithBytes:&value type:kNATTypeDouble];
+            tokenValue = [[NATValue alloc] initWithBytes:&value type:NATTypeDouble];
         }
 
         if ( tokenValue != nil ) {

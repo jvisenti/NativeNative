@@ -17,14 +17,13 @@
 		D42155B21BE1141A00835A42 /* NATMethodDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D42155941BE0591900835A42 /* NATMethodDescriptor.m */; settings = {ASSET_TAGS = (); }; };
 		D42155B31BE1141A00835A42 /* NATValue.m in Sources */ = {isa = PBXBuildFile; fileRef = D45F91AC1BDF95D400C4F9AD /* NATValue.m */; settings = {ASSET_TAGS = (); }; };
 		D42155B41BE1141A00835A42 /* NATTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = D45F91AF1BDF974000C4F9AD /* NATTypes.m */; settings = {ASSET_TAGS = (); }; };
-		D42155B71BE1194500835A42 /* arm64.s in Sources */ = {isa = PBXBuildFile; fileRef = D42155B61BE1194500835A42 /* arm64.s */; settings = {ASSET_TAGS = (); }; };
 		D42155BC1BE19DD800835A42 /* NATInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = D4445C1F1BDEF90D0093B2B7 /* NATInvocation.m */; settings = {ASSET_TAGS = (); }; };
-		D42155BD1BE19DDB00835A42 /* arm64.s in Sources */ = {isa = PBXBuildFile; fileRef = D42155B61BE1194500835A42 /* arm64.s */; settings = {ASSET_TAGS = (); }; };
 		D4445C0F1BDDA0400093B2B7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D4445C0E1BDDA0400093B2B7 /* main.m */; };
-		D4445C161BDDA0700093B2B7 /* darwin_x86_64.s in Sources */ = {isa = PBXBuildFile; fileRef = D4445C151BDDA0700093B2B7 /* darwin_x86_64.s */; settings = {ASSET_TAGS = (); }; };
 		D4445C201BDEF90D0093B2B7 /* NATInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = D4445C1F1BDEF90D0093B2B7 /* NATInvocation.m */; settings = {ASSET_TAGS = (); }; };
 		D45F91AD1BDF95D400C4F9AD /* NATValue.m in Sources */ = {isa = PBXBuildFile; fileRef = D45F91AC1BDF95D400C4F9AD /* NATValue.m */; settings = {ASSET_TAGS = (); }; };
 		D45F91B01BDF974000C4F9AD /* NATTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = D45F91AF1BDF974000C4F9AD /* NATTypes.m */; settings = {ASSET_TAGS = (); }; };
+		D4C8950F1BE2FB0C0003404F /* nat_invoking.S in Sources */ = {isa = PBXBuildFile; fileRef = D4C8950E1BE2FB0C0003404F /* nat_invoking.S */; settings = {ASSET_TAGS = (); }; };
+		D4C895101BE2FB0C0003404F /* nat_invoking.S in Sources */ = {isa = PBXBuildFile; fileRef = D4C8950E1BE2FB0C0003404F /* nat_invoking.S */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -52,16 +51,15 @@
 		D42155A81BE113CE00835A42 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D42155AB1BE113CE00835A42 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D42155AD1BE113CE00835A42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D42155B61BE1194500835A42 /* arm64.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = arm64.s; sourceTree = "<group>"; };
 		D4445C0B1BDDA0400093B2B7 /* Assembly */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Assembly; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4445C0E1BDDA0400093B2B7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D4445C151BDDA0700093B2B7 /* darwin_x86_64.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = darwin_x86_64.s; sourceTree = "<group>"; };
 		D4445C1E1BDEF90D0093B2B7 /* NATInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NATInvocation.h; path = ../../NativeNative/NativeNative/Private/NATInvocation.h; sourceTree = "<group>"; };
 		D4445C1F1BDEF90D0093B2B7 /* NATInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NATInvocation.m; path = ../../NativeNative/NativeNative/Private/NATInvocation.m; sourceTree = "<group>"; };
 		D45F91AB1BDF95D400C4F9AD /* NATValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NATValue.h; path = ../../NativeNative/NativeNative/Private/NATValue.h; sourceTree = "<group>"; };
 		D45F91AC1BDF95D400C4F9AD /* NATValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NATValue.m; path = ../../NativeNative/NativeNative/Private/NATValue.m; sourceTree = "<group>"; };
 		D45F91AE1BDF974000C4F9AD /* NATTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NATTypes.h; path = ../../NativeNative/NativeNative/Private/NATTypes.h; sourceTree = "<group>"; };
 		D45F91AF1BDF974000C4F9AD /* NATTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NATTypes.m; path = ../../NativeNative/NativeNative/Private/NATTypes.m; sourceTree = "<group>"; };
+		D4C8950E1BE2FB0C0003404F /* nat_invoking.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = nat_invoking.S; path = ../../NativeNative/NativeNative/Private/nat_invoking.S; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,8 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				D4445C0E1BDDA0400093B2B7 /* main.m */,
-				D4445C151BDDA0700093B2B7 /* darwin_x86_64.s */,
-				D42155B61BE1194500835A42 /* arm64.s */,
+				D4C8950E1BE2FB0C0003404F /* nat_invoking.S */,
 				D4445C1E1BDEF90D0093B2B7 /* NATInvocation.h */,
 				D4445C1F1BDEF90D0093B2B7 /* NATInvocation.m */,
 				D42155931BE0591900835A42 /* NATMethodDescriptor.h */,
@@ -235,11 +232,11 @@
 			files = (
 				D42155B21BE1141A00835A42 /* NATMethodDescriptor.m in Sources */,
 				D42155B41BE1141A00835A42 /* NATTypes.m in Sources */,
-				D42155BD1BE19DDB00835A42 /* arm64.s in Sources */,
 				D42155A41BE113CE00835A42 /* ViewController.m in Sources */,
 				D42155A11BE113CE00835A42 /* AppDelegate.m in Sources */,
 				D421559E1BE113CE00835A42 /* main.m in Sources */,
 				D42155BC1BE19DD800835A42 /* NATInvocation.m in Sources */,
+				D4C895101BE2FB0C0003404F /* nat_invoking.S in Sources */,
 				D42155B31BE1141A00835A42 /* NATValue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -250,8 +247,7 @@
 			files = (
 				D4445C0F1BDDA0400093B2B7 /* main.m in Sources */,
 				D45F91AD1BDF95D400C4F9AD /* NATValue.m in Sources */,
-				D4445C161BDDA0700093B2B7 /* darwin_x86_64.s in Sources */,
-				D42155B71BE1194500835A42 /* arm64.s in Sources */,
+				D4C8950F1BE2FB0C0003404F /* nat_invoking.S in Sources */,
 				D42155951BE0591900835A42 /* NATMethodDescriptor.m in Sources */,
 				D4445C201BDEF90D0093B2B7 /* NATInvocation.m in Sources */,
 				D45F91B01BDF974000C4F9AD /* NATTypes.m in Sources */,
@@ -410,6 +406,7 @@
 				D42155B01BE113CE00835A42 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D4445C061BDDA0400093B2B7 /* Build configuration list for PBXProject "Assembly" */ = {
 			isa = XCConfigurationList;

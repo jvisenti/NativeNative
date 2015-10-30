@@ -13,6 +13,25 @@
 static CFDictionaryRef s_TypesToEncodings;
 static CFDictionaryRef s_EncodingsToTypes;
 
+const NATType NATTypeUnknown   = 0;
+const NATType NATTypeObject    = 1;
+const NATType NATTypeClass     = 2;
+const NATType NATTypeSEL       = 3;
+const NATType NATTypeChar      = 4;
+const NATType NATTypeUChar     = 5;
+const NATType NATTypeShort     = 6;
+const NATType NATTypeUShort    = 7;
+const NATType NATTypeInt       = 8;
+const NATType NATTypeUInt      = 9;
+const NATType NATTypeLong      = 10;
+const NATType NATTypeULong     = 11;
+const NATType NATTypeLongLong  = 12;
+const NATType NATTypeULongLong = 13;
+const NATType NATTypeFloat     = 14;
+const NATType NATTypeDouble    = 15;
+const NATType NATTypeStruct = 16;;
+const NATType NATTypeUnion = 17;
+
 static Boolean _NATTypesEqual(const void *a, const void *b)
 {
     return *(NATType *)a == *(NATType *)b;
@@ -62,38 +81,22 @@ void _NATTypeConfigure(void)
         .hash = _NATEncodingHash
     };
 
-    NATType object = NATTypeObject;
-    NATType cls = NATTypeClass;
-    NATType sel = NATTypeSEL;
-    NATType chr = NATTypeChar;
-    NATType uchr = NATTypeUChar;
-    NATType sht = NATTypeShort;
-    NATType usht = NATTypeUShort;
-    NATType integer = NATTypeInt;
-    NATType uinteger = NATTypeUInt;
-    NATType lng = NATTypeLong;
-    NATType ulng = NATTypeULong;
-    NATType lnglng = NATTypeLongLong;
-    NATType ulnglng = NATTypeULongLong;
-    NATType flt = NATTypeFloat;
-    NATType dbl = NATTypeDouble;
-
     CFMutableDictionaryRef typesToEncodings = CFDictionaryCreateMutable(NULL, 0, &typeKeyCallbacks, NULL);
-    CFDictionaryAddValue(typesToEncodings, &object, @encode(id));
-    CFDictionaryAddValue(typesToEncodings, &cls, @encode(Class));
-    CFDictionaryAddValue(typesToEncodings, &sel, @encode(SEL));
-    CFDictionaryAddValue(typesToEncodings, &chr, @encode(char));
-    CFDictionaryAddValue(typesToEncodings, &uchr, @encode(unsigned char));
-    CFDictionaryAddValue(typesToEncodings, &sht, @encode(short));
-    CFDictionaryAddValue(typesToEncodings, &usht, @encode(unsigned short));
-    CFDictionaryAddValue(typesToEncodings, &integer, @encode(int));
-    CFDictionaryAddValue(typesToEncodings, &uinteger, @encode(unsigned int));
-    CFDictionaryAddValue(typesToEncodings, &lng, @encode(long));
-    CFDictionaryAddValue(typesToEncodings, &ulng, @encode(unsigned long));
-    CFDictionaryAddValue(typesToEncodings, &lnglng, @encode(long long));
-    CFDictionaryAddValue(typesToEncodings, &ulnglng, @encode(unsigned long long));
-    CFDictionaryAddValue(typesToEncodings, &flt, @encode(float));
-    CFDictionaryAddValue(typesToEncodings, &dbl, @encode(double));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeObject, @encode(id));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeClass, @encode(Class));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeSEL, @encode(SEL));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeChar, @encode(char));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeUChar, @encode(unsigned char));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeShort, @encode(short));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeUShort, @encode(unsigned short));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeInt, @encode(int));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeUInt, @encode(unsigned int));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeLong, @encode(long));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeULong, @encode(unsigned long));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeLongLong, @encode(long long));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeULongLong, @encode(unsigned long long));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeFloat, @encode(float));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeDouble, @encode(double));
 
     CFIndex count = CFDictionaryGetCount(typesToEncodings);
     CFMutableDictionaryRef encodingsToTypes = CFDictionaryCreateMutable(NULL, count, &encodingKeyCallbacks, NULL);
@@ -146,7 +149,7 @@ NATType NATGetType(const char *encoding)
             CFDictionaryGetValueIfPresent(s_EncodingsToTypes, encoding, &lookup);
 
             if ( lookup != NULL ) {
-                type = *(NATType *)type;
+                type = *(NATType *)lookup;
             }
         }
     }

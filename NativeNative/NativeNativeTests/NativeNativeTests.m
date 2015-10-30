@@ -105,33 +105,33 @@
 
 - (void)testTypes
 {
-    XCTAssert(NATGetType(@encode(id)) == kNATTypeObject);
-    XCTAssert(NATGetType(@encode(Class)) == kNATTypeClass);
-    XCTAssert(NATGetType(@encode(SEL)) == kNATTypeSEL);
-    XCTAssert(NATGetType(@encode(char)) == kNATTypeChar);
-    XCTAssert(NATGetType(@encode(unsigned char)) == kNATTypeUChar);
-    XCTAssert(NATGetType(@encode(short)) == kNATTypeShort);
-    XCTAssert(NATGetType(@encode(unsigned short)) == kNATTypeUShort);
-    XCTAssert(NATGetType(@encode(int)) == kNATTypeInt);
-    XCTAssert(NATGetType(@encode(unsigned int)) == kNATTypeUInt);
-    XCTAssert(NATGetType(@encode(long)) == kNATTypeLong);
-    XCTAssert(NATGetType(@encode(unsigned long)) == kNATTypeULong);
-    XCTAssert(NATGetType(@encode(float)) == kNATTypeFloat);
-    XCTAssert(NATGetType(@encode(double)) == kNATTypeDouble);
+    XCTAssert(NATGetType(@encode(id)) == NATTypeObject);
+    XCTAssert(NATGetType(@encode(Class)) == NATTypeClass);
+    XCTAssert(NATGetType(@encode(SEL)) == NATTypeSEL);
+    XCTAssert(NATGetType(@encode(char)) == NATTypeChar);
+    XCTAssert(NATGetType(@encode(unsigned char)) == NATTypeUChar);
+    XCTAssert(NATGetType(@encode(short)) == NATTypeShort);
+    XCTAssert(NATGetType(@encode(unsigned short)) == NATTypeUShort);
+    XCTAssert(NATGetType(@encode(int)) == NATTypeInt);
+    XCTAssert(NATGetType(@encode(unsigned int)) == NATTypeUInt);
+    XCTAssert(NATGetType(@encode(long)) == NATTypeLong);
+    XCTAssert(NATGetType(@encode(unsigned long)) == NATTypeULong);
+    XCTAssert(NATGetType(@encode(float)) == NATTypeFloat);
+    XCTAssert(NATGetType(@encode(double)) == NATTypeDouble);
 
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeObject), @encode(id)) == 0);
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeClass), @encode(Class)) == 0);
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeSEL), @encode(SEL)) == 0);
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeChar), @encode(char)) == 0);
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeUChar), @encode(unsigned char)) == 0);
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeShort), @encode(short)) == 0);
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeUShort), @encode(unsigned short)) == 0);
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeInt), @encode(int)) == 0);
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeUInt), @encode(unsigned int)) == 0);
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeLong), @encode(long)) == 0);
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeULong), @encode(unsigned long)) == 0);
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeFloat), @encode(float)) == 0);
-    XCTAssert(strcmp(NATGetEncoding(kNATTypeDouble), @encode(double)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeObject), @encode(id)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeClass), @encode(Class)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeSEL), @encode(SEL)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeChar), @encode(char)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeUChar), @encode(unsigned char)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeShort), @encode(short)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeUShort), @encode(unsigned short)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeInt), @encode(int)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeUInt), @encode(unsigned int)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeLong), @encode(long)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeULong), @encode(unsigned long)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeFloat), @encode(float)) == 0);
+    XCTAssert(strcmp(NATGetEncoding(NATTypeDouble), @encode(double)) == 0);
 }
 
 - (void)testMethod

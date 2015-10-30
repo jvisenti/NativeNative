@@ -24,14 +24,15 @@ static void test_function(int a, id  b)
 
 @implementation TestObj
 
-- (void)printInt:(int)i double:(double)d object:(id)o
+- (id)printInt:(int)i double:(double)d object:(id)o rect:(CGRect)rect
 {
-    NSLog(@"Reached! Printing %i, %g, %@", i, d, o);
+    NSLog(@"Reached! Printing %i, %g, %@, %@", i, d, o, NSStringFromRect((NSRect)rect));
+    return @"This is a test!";
 }
 
-- (void)test:(struct { struct { long a[2]; }; })f
+- (void)test:(struct { long a[50]; })f
 {
-
+    
 }
 
 @end
@@ -40,10 +41,12 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         TestObj *obj = [[TestObj alloc] init];
 
-        NSMethodSignature *sig = [obj methodSignatureForSelector:@selector(test:)];
+//        NSMethodSignature *sig = [obj methodSignatureForSelector:@selector(test:)];
 
         int arg = 10;
         double arg2 = 3.14;
+        CGRect arg3 = CGRectMake(5.0, 10.0, 500.0, 25000.0);
+
 //        CGRect arg3 = CGRectMake(5.0, 10.0, 300.0, 50000.0);
 //
 //        size_t argSize = 208;
@@ -62,7 +65,7 @@ int main(int argc, const char * argv[]) {
 //
 //        free(args);
 
-        NAT_INVOKE(obj, @selector(printInt:double:object:), &arg, &arg2, &obj);
+        id test = NAT_INVOKE(obj, @selector(printInt:double:object:rect:), &arg, &arg2, &obj, &arg3).objectValue;
         NAT_INVOKE_C(test_function, "vi@", &arg, &obj);
     }
     return 0;

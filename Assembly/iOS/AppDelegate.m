@@ -20,14 +20,15 @@ static void test_function(int a, id  b)
 
 @implementation TestObj
 
-- (void)printInt:(int)i double:(double)d object:(id)o rect:(CGRect)rect
+- (double)printInt:(int)i double:(double)d object:(id)o
 {
-    NSLog(@"Reached! Printing %i, %g, %@ %@", i, d, o, NSStringFromCGRect(rect));
+    NSLog(@"Reached! Printing %i, %g, %@", i, d, o);
+    return 3.1415;
 }
 
-- (void)test:(struct { long a, b, c, d })f
+- (void)test:( struct { long a, b, c; } )f
 {
-
+    NSLog(@"%ld, %ld, %ld", f.a, f.b, f.c);
 }
 
 @end
@@ -42,16 +43,21 @@ static void test_function(int a, id  b)
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     TestObj *obj = [[TestObj alloc] init];
 
-    NSMethodSignature *sig = [NSMethodSignature signatureWithObjCTypes:"vqqqqqqqqq"];
+//    NSMethodSignature *sig2 = [NSMethodSignature signatureWithObjCTypes:"v@:{?=qqqq}"];
 
     int arg = 10;
     double arg2 = 3.14;
-    CGRect arg3 = CGRectMake(5.0, 10.0, 500.0, 25000.0);
+//    CGRect arg3 = CGRectMake(5.0, 10.0, 500.0, 25000.0);
 
-    NAT_INVOKE(obj, @selector(printInt:double:object:rect:), &arg, &arg2, &obj, &arg3);
-    NAT_INVOKE_C(test_function, "vi@", &arg, &obj);
+//    long *test = malloc(3 * sizeof(long));
+//    test[0] = 500;
+//    test[1] = 125;
+//    test[2] = -80;
+    
+    double test = NAT_INVOKE(obj, @selector(printInt:double:object:), &arg, &arg2, &obj).doubleValue;
+//    NAT_INVOKE_C(test_function, "vi@", &arg, &obj);
 
-//    NSInvocation *test = [NSInvocation invocationWithMethodSignature:[obj methodSignatureForSelector:@selector(printInt:double:object:)]];
+//    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[obj methodSignatureForSelector:@selector(test:)]];
 //    test.target = obj;
 //    test.selector = @selector(printInt:double:object:);
 //
