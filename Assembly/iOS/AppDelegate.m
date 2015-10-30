@@ -41,12 +41,12 @@ static void test_function(int a, id  b)
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    TestObj *obj = [[TestObj alloc] init];
-
+//    TestObj *obj = [[TestObj alloc] init];
+//
 //    NSMethodSignature *sig2 = [NSMethodSignature signatureWithObjCTypes:"v@:{?=qqqq}"];
-
-    int arg = 10;
-    double arg2 = 3.14;
+//
+//    int arg = 10;
+//    double arg2 = 3.14;
 //    CGRect arg3 = CGRectMake(5.0, 10.0, 500.0, 25000.0);
 
 //    long *test = malloc(3 * sizeof(long));
@@ -54,7 +54,7 @@ static void test_function(int a, id  b)
 //    test[1] = 125;
 //    test[2] = -80;
     
-    double test = NAT_INVOKE(obj, @selector(printInt:double:object:), &arg, &arg2, &obj).doubleValue;
+//    double test = NAT_INVOKE(obj, @selector(printInt:double:object:), &arg, &arg2, &obj).doubleValue;
 //    NAT_INVOKE_C(test_function, "vi@", &arg, &obj);
 
 //    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[obj methodSignatureForSelector:@selector(test:)]];

@@ -29,8 +29,9 @@ const NATType NATTypeLongLong  = 12;
 const NATType NATTypeULongLong = 13;
 const NATType NATTypeFloat     = 14;
 const NATType NATTypeDouble    = 15;
-const NATType NATTypeStruct = 16;;
-const NATType NATTypeUnion = 17;
+const NATType NATTypeBool      = 16;
+const NATType NATTypeStruct    = 16;
+const NATType NATTypeUnion     = 17;
 
 static Boolean _NATTypesEqual(const void *a, const void *b)
 {
@@ -97,6 +98,7 @@ void _NATTypeConfigure(void)
     CFDictionaryAddValue(typesToEncodings, &NATTypeULongLong, @encode(unsigned long long));
     CFDictionaryAddValue(typesToEncodings, &NATTypeFloat, @encode(float));
     CFDictionaryAddValue(typesToEncodings, &NATTypeDouble, @encode(double));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeBool, @encode(BOOL));
 
     CFIndex count = CFDictionaryGetCount(typesToEncodings);
     CFMutableDictionaryRef encodingsToTypes = CFDictionaryCreateMutable(NULL, count, &encodingKeyCallbacks, NULL);

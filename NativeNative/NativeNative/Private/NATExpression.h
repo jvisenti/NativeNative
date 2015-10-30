@@ -11,8 +11,8 @@
 
 @interface NATExpression : NSObject
 
-- (instancetype)initWithSource:(NSString *)source;
-- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
++ (instancetype)expressionWithSource:(NSString *)source;
++ (instancetype)expressionWithTokenizer:(NATTokenizer *)tokenizer;
 
 - (NATValue *)evaluate;
 

@@ -8,20 +8,50 @@
 
 #import "ViewController.h"
 
+#import "NATScope.h"
+#import "NATProgram.h"
+
 @interface ViewController ()
+
+@property (weak, nonatomic) IBOutlet UILabel *programLabel;
+@property (weak, nonatomic) IBOutlet UITextView *consoleView;
 
 @end
 
 @implementation ViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    self.programLabel.text = @"";
+    self.consoleView.text = @"";
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
+    [[NATScope enter] addSymbol:[[NATSymbol alloc] initWithName:@"self" value:[[NATValue alloc] initWithObject:self]]];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+
+    [NATScope exit];
+}
+
+- (IBAction)executePressed:(id)sender
+{
+    NSString *source = self.consoleView.text;
+
+    self.programLabel.text = [[self.programLabel.text stringByAppendingFormat:@"\n%@", source] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    self.consoleView.text = nil;
+
+    NATProgram *program = [[NATProgram alloc] initWithSource:source];
+
+    [program execute];
 }
 
 @end

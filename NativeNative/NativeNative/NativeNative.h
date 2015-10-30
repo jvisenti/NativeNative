@@ -13,3 +13,5 @@ FOUNDATION_EXPORT double NativeNativeVersionNumber;
 
 //! Project version string for NativeNative.
 FOUNDATION_EXPORT const unsigned char NativeNativeVersionString[];
+
+#import <NativeNative/NATProgram.h>

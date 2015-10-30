@@ -15,9 +15,13 @@ NSRegularExpression *kNATRegexPrimitiveType = nil;
 
 NSRegularExpression *kNATRegexIntLiteral = nil;
 NSRegularExpression *kNATRegexFloatLiteral = nil;
+
 NSRegularExpression *kNATRegexLiteralTerminal = nil;
+NSRegularExpression *kNATRegexStatementTerminal = nil;
 
 NSRegularExpression *kNATRegexSymName = nil;
+
+NSRegularExpression *kNATRegexAssignment = nil;
 
 #define NAT_REGEX(pattern) [NSRegularExpression regularExpressionWithPattern:pattern options:kNilOptions error:NULL]
 
@@ -32,8 +36,12 @@ void _NATRegexConfigure(void)
     kNATRegexIntLiteral = NAT_REGEX(@"[\\d]+");
     kNATRegexFloatLiteral = NAT_REGEX(@"[\\d]*\\.[\\d]+f?");
 
-    kNATRegexSymName = NAT_REGEX(@"[_a-zA-Z]+[_\\w]*");
     kNATRegexLiteralTerminal = NAT_REGEX(@"[\\s\\];,]");
+    kNATRegexStatementTerminal = NAT_REGEX(@";+");
+
+    kNATRegexSymName = NAT_REGEX(@"[_a-zA-Z]+[_\\w]*");
+
+    kNATRegexAssignment = NAT_REGEX(@"([_a-zA-Z]+[_\\w]*[\\s]+\\*?)?[_a-zA-Z]+[_\\w]*[\\s]*=[\\s]*.+;?\\)?");
 }
 
 @implementation NSString (NATExtensions)
@@ -43,6 +51,13 @@ void _NATRegexConfigure(void)
     NSTextCheckingResult *result = [expr firstMatchInString:self options:NSMatchingAnchored range:NSMakeRange(0, self.length)];
 
     return (result != nil && result.range.length == self.length);
+}
+
+- (BOOL)nat_beginsWith:(NSRegularExpression *)expr
+{
+    NSTextCheckingResult *result = [expr firstMatchInString:self options:NSMatchingAnchored range:NSMakeRange(0, self.length)];
+
+    return (result != nil);
 }
 
 @end

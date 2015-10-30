@@ -70,6 +70,16 @@ static NSString* const kNATCurrentScopeKey = @"_NATCurrentScope";
         scope = scope->_enclosingScope;
     }
 
+    if ( symbol == nil ) {
+        // Try looking for a class
+        Class cls = NSClassFromString(symName);
+
+        if ( cls != nil ) {
+            symbol = [[NATSymbol alloc] initWithName:symName value:[[NATValue alloc] initWithClass:cls]];
+            [[NATScope globalScope] addSymbol:symbol];
+        }
+    }
+
     return symbol;
 }
 

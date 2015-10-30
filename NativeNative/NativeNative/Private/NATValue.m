@@ -21,6 +21,7 @@ typedef struct _NATLiteralValues {
     unsigned long long ull;
     float f;
     double d;
+    BOOL b;
 } NATLiteralValues;
 
 #define NAT_CVT(value, FROM_TYPE, TO_TYPE) ({ \
@@ -42,6 +43,7 @@ typedef struct _NATLiteralValues {
     literal_values.ull  = NAT_CVT(value, FROM_TYPE, unsigned long long); \
     literal_values.f    = NAT_CVT(value, FROM_TYPE, float); \
     literal_values.d    = NAT_CVT(value, FROM_TYPE, double); \
+    literal_values.b    = NAT_CVT(value, FROM_TYPE, BOOL); \
 } while (0)
 
 @implementation NATValue {
@@ -173,6 +175,11 @@ typedef struct _NATLiteralValues {
     return _literalValues.d;
 }
 
+- (BOOL)boolValue
+{
+    return _literalValues.b;
+}
+
 - (void)getValue:(void *)buffer
 {
     memcpy(buffer, _value, _size);
@@ -227,6 +234,9 @@ typedef struct _NATLiteralValues {
     else if ( _type == NATTypeDouble ) {
         description = [NSString stringWithFormat:@"double: %g", self.doubleValue];
     }
+    else if ( _type == NATTypeBool ) {
+        description = [NSString stringWithFormat:@"bool: %i", self.boolValue];
+    }
     else {
         description = [super description];
     }
@@ -277,6 +287,9 @@ typedef struct _NATLiteralValues {
         }
         else if ( _type == NATTypeDouble ) {
             NAT_CVT_ALL(_value, double, literalValues);
+        }
+        else if ( _type == NATTypeBool) {
+            NAT_CVT_ALL(_value, BOOL, literalValues);
         }
     }
 

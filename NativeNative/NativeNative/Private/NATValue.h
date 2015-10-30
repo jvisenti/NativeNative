@@ -37,6 +37,7 @@
 - (unsigned long long)uLongLongValue;
 - (float)floatValue;
 - (double)doubleValue;
+- (BOOL)boolValue;
 
 - (void)getValue:(void *)buffer;
 

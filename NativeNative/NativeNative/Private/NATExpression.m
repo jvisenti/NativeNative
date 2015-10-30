@@ -10,6 +10,7 @@
 
 #import "NATTokenizer.h"
 #import "NATScope.h"
+#import "NATMethod.h"
 
 @interface NATLiteralExpression : NATExpression
 - (instancetype)initWithValue:(NATValue *)literal;
@@ -17,6 +18,10 @@
 
 @interface NATSymbolExpression : NATExpression
 - (instancetype)initWithName:(NSString *)name;
+@end
+
+@interface NATAssignmentExpression : NATExpression
+- (instancetype)initWithSymName:(NSString *)symName expression:(NATExpression *)expr;
 @end
 
 @interface NATUnaryExpression : NATExpression
@@ -29,38 +34,49 @@
 
 @implementation NATExpression
 
-- (instancetype)initWithSource:(NSString *)source
++ (instancetype)expressionWithSource:(NSString *)source
 {
-    return [self initWithTokenizer:[[NATTokenizer alloc] initWithString:source]];
+    return [self expressionWithTokenizer:[[NATTokenizer alloc] initWithString:source]];
 }
 
-- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
++ (instancetype)expressionWithTokenizer:(NATTokenizer *)tokenizer
 {
     NATExpression *expression = nil;
-    NSString *token = nil;
 
-    while ( (token = [tokenizer advanceUntil:kNATRegexLiteralTerminal]) != nil ) {
-        NATValue *tokenValue = nil;
+    if ( [tokenizer nextChar] == '[' ) {
+        // TODO: this sucks...
+        expression = [NATMethod expressionWithTokenizer:tokenizer];
+    }
+    else {
+        NSString *token = nil;
 
-        if ( [token nat_matches:kNATRegexSymName] ) {
-            expression = [[NATSymbolExpression alloc] initWithName:token];
-            break;
-        }
-        else if ( [token nat_matches:kNATRegexIntLiteral] ) {
-            long long value = [token longLongValue];
-            tokenValue = [[NATValue alloc] initWithBytes:&value type:NATTypeLongLong];
-        }
-        else if ( [token nat_matches:kNATRegexFloatLiteral] ) {
-            double value = [token doubleValue];
-            tokenValue = [[NATValue alloc] initWithBytes:&value type:NATTypeDouble];
-        }
+        while ( (token = [tokenizer advanceExpression:kNATRegexAssignment]) != nil || (token = [tokenizer advanceUntil:kNATRegexLiteralTerminal]) != nil ) {
+            NATValue *tokenValue = nil;
 
-        if ( tokenValue != nil ) {
-            expression = [[NATLiteralExpression alloc] initWithValue:tokenValue];
+            if ( [token nat_beginsWith:kNATRegexAssignment] ) {
+                expression = [NATAssignmentExpression expressionWithSource:token];
+                break;
+            }
+            if ( [token nat_matches:kNATRegexSymName] ) {
+                expression = [[NATSymbolExpression alloc] initWithName:token];
+                break;
+            }
+            else if ( [token nat_matches:kNATRegexIntLiteral] ) {
+                long long value = [token longLongValue];
+                tokenValue = [[NATValue alloc] initWithBytes:&value type:NATTypeLongLong];
+            }
+            else if ( [token nat_matches:kNATRegexFloatLiteral] ) {
+                double value = [token doubleValue];
+                tokenValue = [[NATValue alloc] initWithBytes:&value type:NATTypeDouble];
+            }
+
+            if ( tokenValue != nil ) {
+                expression = [[NATLiteralExpression alloc] initWithValue:tokenValue];
+            }
         }
     }
 
-    // TODO
+    // TODO: more expression types
     return expression;
 }
 
@@ -118,6 +134,59 @@
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"%@ : %@", _name, [[NATScope currentScope] lookupSymbol:_name]];
+}
+
+@end
+
+@implementation NATAssignmentExpression {
+    NSString *_symName;
+    NATExpression *_expr;
+}
+
++ (instancetype)expressionWithTokenizer:(NATTokenizer *)tokenizer
+{
+    [tokenizer matchExpression:kNATRegexSymName];
+
+    if ( [tokenizer nextChar] == '*' ) {
+        [tokenizer advanceChar];
+    }
+
+    NSString *symName = [tokenizer matchExpression:kNATRegexSymName];
+
+    [tokenizer matchChar:'='];
+
+    NATExpression *assignment = [NATExpression expressionWithTokenizer:tokenizer];
+
+    return [[self alloc] initWithSymName:symName expression:assignment];
+}
+
+- (instancetype)initWithSymName:(NSString *)symName expression:(NATExpression *)expr
+{
+    if ( (self = [super init]) ) {
+        _symName = [symName copy];
+        _expr = expr;
+    }
+
+    return self;
+}
+
+- (NATValue *)evaluate
+{
+    NATSymbol *symbol = [[NATScope currentScope] lookupSymbol:_symName];
+
+    if ( symbol == nil ) {
+        symbol = [[NATSymbol alloc] initWithName:_symName value:nil];
+    }
+
+    symbol.value = [_expr evaluate];
+    [[NATScope currentScope] addSymbol:symbol];
+
+    return symbol.value;
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"assignment to %@", _symName];
 }
 
 @end

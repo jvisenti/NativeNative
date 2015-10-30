@@ -28,6 +28,7 @@ CF_EXPORT const NATType NATTypeLongLong;
 CF_EXPORT const NATType NATTypeULongLong;
 CF_EXPORT const NATType NATTypeFloat;
 CF_EXPORT const NATType NATTypeDouble;
+CF_EXPORT const NATType NATTypeBool;
 CF_EXPORT const NATType NATTypeStruct;
 CF_EXPORT const NATType NATTypeUnion;
 

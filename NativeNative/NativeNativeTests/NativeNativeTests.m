@@ -142,7 +142,7 @@
 
     [[NATScope currentScope] addSymbol:sym];
 
-    NATMethod *method = [[NATMethod alloc] initWithSource:@"[self print]"];
+    NATMethod *method = [NATMethod expressionWithSource:@"[self print]"];
     NATValue *retVal = [method evaluate];
 
     [NATScope exit];
@@ -158,7 +158,7 @@
 
     [[NATScope currentScope] addSymbol:sym];
 
-    NATMethod *method = [[NATMethod alloc] initWithSource:@"[self stringFromInt:5]"];
+    NATMethod *method = [NATMethod expressionWithSource:@"[self stringFromInt:5]"];
     NATValue *retVal = [method evaluate];
 
     [NATScope exit];
@@ -171,15 +171,29 @@
     [NATScope enter];
 
     NATSymbol *sym = [[NATSymbol alloc] initWithName:@"self" value:[[NATValue alloc] initWithObject:self]];
-
     [[NATScope currentScope] addSymbol:sym];
 
-    NATMethod *method = [[NATMethod alloc] initWithSource:@"[self numberFromFloat:[self randDouble]]"];
+    NATMethod *method = [NATMethod expressionWithSource:@"[self numberFromFloat:[self randDouble]]"];
     NATValue *retVal = [method evaluate];
 
     NSLog(@"%f", [retVal.objectValue floatValue]);
 
     XCTAssert([retVal.objectValue floatValue] >= 1.0f && [retVal.objectValue floatValue] <= 2.0f );
+
+    [NATScope exit];
+}
+
+- (void)testAssignment
+{
+    [NATScope enter];
+
+    NATSymbol *sym = [[NATSymbol alloc] initWithName:@"self" value:[[NATValue alloc] initWithObject:self]];
+    [[NATScope currentScope] addSymbol:sym];
+
+    NATExpression *assignment = [NATExpression expressionWithSource:@"UIViewController *c = [self randDouble];"];
+    [assignment evaluate];
+
+    XCTAssert([[NATScope currentScope] lookupSymbol:@"c"].value.type == NATTypeDouble);
 
     [NATScope exit];
 }
