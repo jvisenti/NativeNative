@@ -20,7 +20,40 @@
 
 + (instancetype)expressionWithTokenizer:(NATTokenizer *)tokenizer
 {
-    return [[self alloc] initWithTokenizer:tokenizer];
+    [tokenizer matchChar:'['];
+
+    NSMutableArray *args = [NSMutableArray array];
+    NSMutableString *methodName = [NSMutableString string];
+
+    [args addObject:[NATExpression expressionWithTokenizer:tokenizer]];
+
+    while ( tokenizer.nextChar != ']' ) {
+        [methodName appendString:[tokenizer matchExpression:kNATRegexSymName]];
+
+        if ( [tokenizer nextChar] == ':' ) {
+            [methodName appendString:@":"];
+            [tokenizer advanceChar];
+
+            [args addObject:[NATExpression expressionWithTokenizer:tokenizer]];
+        }
+    }
+
+    [tokenizer matchChar:']'];
+
+    SEL selector = NSSelectorFromString(methodName);
+    NSAssert(selector != NULL, @"Failed to lookup selector: %@", methodName);
+
+    return [[self alloc] initWithSelector:selector arguments:args];
+}
+
+- (instancetype)initWithSelector:(SEL)selector arguments:(NSArray<id<NATExpression>> *)arguments;
+{
+    if ( (self = [super init]) ) {
+        _selector = selector;
+        _arguments = [arguments copy];
+    }
+
+    return self;
 }
 
 - (NATValue *)evaluate
@@ -54,49 +87,6 @@
 }
 
 #pragma mark - private methods
-
-- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
-{
-    if ( (self = [super init]) ) {
-        [tokenizer matchChar:'['];
-
-        NSMutableArray *args = [NSMutableArray array];
-        NSMutableString *methodName = [NSMutableString string];
-
-        if ( [tokenizer nextChar] == '[' ) {
-            [args addObject:[[NATMethod alloc] initWithTokenizer:tokenizer]];
-        }
-        else {
-            [args addObject:[NATExpression expressionWithTokenizer:tokenizer]];
-        }
-
-        while ( tokenizer.nextChar != ']' ) {
-            [methodName appendString:[tokenizer matchExpression:kNATRegexSymName]];
-
-            if ( [tokenizer nextChar] == ':' ) {
-                [methodName appendString:@":"];
-                [tokenizer advanceChar];
-
-                if ( [tokenizer nextChar] == '[' ) {
-                    [args addObject:[[NATMethod alloc] initWithTokenizer:tokenizer]];
-                }
-                else {
-                    [args addObject:[NATExpression expressionWithTokenizer:tokenizer]];
-                }
-            }
-        }
-
-        [tokenizer matchChar:']'];
-
-        SEL selector = NSSelectorFromString(methodName);
-        NSAssert(selector != NULL, @"Failed to lookup selector: %@", methodName);
-
-        _selector = selector;
-        _arguments = [args copy];
-    }
-    
-    return self;
-}
 
 - (void)prepareInvocation:(NATInvocation *)invocation withArgument:(NATExpression *)argument atIndex:(NSUInteger)index
 {

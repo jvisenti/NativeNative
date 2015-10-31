@@ -6,7 +6,9 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-#import "NATValue.h"
+#import <Foundation/Foundation.h>
+
+@class NATValue;
 
 typedef NATValue* (^NATUnaryOperator)(NATValue *operand);
 typedef NATValue* (^NATBinaryOperator)(NATValue *lhs, NATValue *rhs);

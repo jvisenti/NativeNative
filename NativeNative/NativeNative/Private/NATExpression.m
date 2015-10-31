@@ -11,10 +11,7 @@
 #import "NATTokenizer.h"
 #import "NATScope.h"
 #import "NATMethod.h"
-
-@interface NATLiteralExpression : NATExpression
-- (instancetype)initWithValue:(NATValue *)literal;
-@end
+#import "NATPropertyChain.h"
 
 @interface NATSymbolExpression : NATExpression
 - (instancetype)initWithName:(NSString *)name;
@@ -34,14 +31,14 @@
 
 @implementation NATExpression
 
-+ (instancetype)expressionWithSource:(NSString *)source
++ (id<NATExpression>)expressionWithSource:(NSString *)source
 {
     return [self expressionWithTokenizer:[[NATTokenizer alloc] initWithString:source]];
 }
 
-+ (instancetype)expressionWithTokenizer:(NATTokenizer *)tokenizer
++ (id<NATExpression>)expressionWithTokenizer:(NATTokenizer *)tokenizer
 {
-    NATExpression *expression = nil;
+    id<NATExpression> expression = nil;
 
     if ( [tokenizer nextChar] == '[' ) {
         // TODO: this sucks...
@@ -53,11 +50,21 @@
         while ( (token = [tokenizer advanceExpression:kNATRegexAssignment]) != nil || (token = [tokenizer advanceUntil:kNATRegexLiteralTerminal]) != nil ) {
             NATValue *tokenValue = nil;
 
-            if ( [token nat_beginsWith:kNATRegexAssignment] ) {
-                expression = [NATAssignmentExpression expressionWithSource:token];
+            if ( [token nat_matches:kNATRegexAssignment] ) {
+                if ( [token nat_beginsWith:kNATRegexPropertyChain] ) {
+                    expression = [NATPropertyChain expressionWithSource:token];
+                }
+                else {
+                    expression = [NATAssignmentExpression expressionWithSource:token];
+                }
+
                 break;
             }
-            if ( [token nat_matches:kNATRegexSymName] ) {
+            else if ( [token nat_matches:kNATRegexPropertyChain] ) {
+                expression = [NATPropertyChain expressionWithSource:token];
+                break;
+            }
+            else if ( [token nat_matches:kNATRegexSymName] ) {
                 expression = [[NATSymbolExpression alloc] initWithName:token];
                 break;
             }
@@ -71,7 +78,7 @@
             }
 
             if ( tokenValue != nil ) {
-                expression = [[NATLiteralExpression alloc] initWithValue:tokenValue];
+                expression = tokenValue;
             }
         }
     }
@@ -84,31 +91,6 @@
 {
     NSAssert(NO, @"Invalid invocation of method %@ on abstract class %@.", NSStringFromSelector(_cmd), [self class]);
     return nil;
-}
-
-@end
-
-@implementation NATLiteralExpression {
-    NATValue *_value;
-}
-
-- (instancetype)initWithValue:(NATValue *)literal
-{
-    if ( (self = [super init]) ) {
-        _value = literal;
-    }
-
-    return self;
-}
-
-- (NATValue *)evaluate
-{
-    return _value;
-}
-
-- (NSString *)description
-{
-    return [_value description];
 }
 
 @end
@@ -233,6 +215,15 @@
 - (NATValue *)evaluate
 {
     return _operator([_lhs evaluate], [_rhs evaluate]);
+}
+
+@end
+
+@implementation NSObject (NATExpression)
+
+- (NATValue *)evaluate
+{
+    return [[NATValue alloc] initWithObject:self];
 }
 
 @end

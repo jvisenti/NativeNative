@@ -22,6 +22,7 @@ NSRegularExpression *kNATRegexStatementTerminal = nil;
 NSRegularExpression *kNATRegexSymName = nil;
 
 NSRegularExpression *kNATRegexAssignment = nil;
+NSRegularExpression *kNATRegexPropertyChain = nil;
 
 #define NAT_REGEX(pattern) [NSRegularExpression regularExpressionWithPattern:pattern options:kNilOptions error:NULL]
 
@@ -41,7 +42,12 @@ void _NATRegexConfigure(void)
 
     kNATRegexSymName = NAT_REGEX(@"[_a-zA-Z]+[_\\w]*");
 
-    kNATRegexAssignment = NAT_REGEX(@"([_a-zA-Z]+[_\\w]*[\\s]+\\*?)?[_a-zA-Z]+[_\\w]*[\\s]*=[\\s]*.+;?\\)?");
+    kNATRegexAssignment = NAT_REGEX(@"([_a-zA-Z]+[_\\w]*[\\s]+\\*?)?[_a-zA-Z]+[_\\w]*[\\s]*(\\.[\\s]*[_a-zA-Z]+[_\\w]*[\\s]*)*=[\\s]*.+;?\\)?");
+    kNATRegexPropertyChain = NAT_REGEX(@"([\\s]*[_a-zA-Z]+[_\\w]*\\.[\\s]*)+[_a-zA-Z]+[_\\w]*");
+
+
+//    kNATRegexAssignment = NAT_REGEX(@"([_a-zA-Z]+[_\\w]*[\\s]+\\*?)?([_a-zA-Z]+[_\\w]*[\\s]*\\.?[_a-zA-Z]+[_\\w]*[\\s]*)+=[\\s]*.+;?\\)?");
+
 }
 
 @implementation NSString (NATExtensions)

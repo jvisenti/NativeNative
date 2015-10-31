@@ -12,12 +12,17 @@
 #import "NATScope.h"
 #import "NATMethod.h"
 #import "NATProperty.h"
+#import "NATProgram.h"
+#import "NATPropertyChain.h"
 
 @interface NativeNativeTests : XCTestCase
 
 @property (copy, nonatomic) NSString *source;
 
 @property (assign, nonatomic, readonly, getter=getTestProp) CGFloat testProp;
+
+@property (assign, nonatomic) CGFloat testFloat;
+@property (strong, nonatomic) id testObj;
 
 @end
 
@@ -216,6 +221,31 @@
     XCTAssert(prop.getter == @selector(getTestProp));
     XCTAssert(prop.setter == nil);
     XCTAssert(prop.isReadonly == YES);
+}
+
+- (void)testPropertyExpressions
+{
+    [NATScope enter];
+
+    NATSymbol *sym = [[NATSymbol alloc] initWithName:@"self" value:[[NATValue alloc] initWithObject:self]];
+    [[NATScope currentScope] addSymbol:sym];
+
+    NATProgram *program = [[NATProgram alloc] initWithSource:@"self.testFloat = 10.0f;"];
+    [program execute];
+
+    XCTAssertEqual(self.testFloat, 10.0);
+
+    program = [[NATProgram alloc] initWithSource:@"self.testObj = self.source;"];
+    [program execute];
+    
+    XCTAssertEqual(self.testObj, self.source);
+
+    NATPropertyChain *propChain = [NATPropertyChain expressionWithSource:@"self.source.length;"];
+    NATValue *result = propChain.evaluate;
+
+    XCTAssertEqual(result.longValue, self.source.length);
+
+    [NATScope exit];
 }
 
 @end

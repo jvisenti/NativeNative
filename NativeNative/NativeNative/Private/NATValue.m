@@ -244,6 +244,13 @@ typedef struct _NATLiteralValues {
     return description;
 }
 
+#pragma mark - NATExpression
+
+- (NATValue *)evaluate
+{
+    return self;
+}
+
 #pragma mark - private
 
 - (void)computeLiteralValues

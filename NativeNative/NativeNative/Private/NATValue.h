@@ -7,8 +7,9 @@
 //
 
 #import "NATTypes.h"
+#import "NATExpression.h"
 
-@interface NATValue : NSObject
+@interface NATValue : NSObject <NATExpression>
 
 @property (nonatomic, readonly) NATType type;
 @property (nonatomic, readonly) const char *encoding NS_RETURNS_INNER_POINTER;

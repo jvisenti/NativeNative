@@ -9,11 +9,18 @@
 #import "NATTokenizer.h"
 #import "NATOperators.h"
 
-@interface NATExpression : NSObject
-
-+ (instancetype)expressionWithSource:(NSString *)source;
-+ (instancetype)expressionWithTokenizer:(NATTokenizer *)tokenizer;
+@protocol NATExpression <NSObject>
 
 - (NATValue *)evaluate;
 
+@end
+
+@interface NATExpression : NSObject <NATExpression>
+
++ (id<NATExpression>)expressionWithSource:(NSString *)source;
++ (id<NATExpression>)expressionWithTokenizer:(NATTokenizer *)tokenizer;
+
+@end
+
+@interface NSObject (NATExpression) <NATExpression>
 @end

@@ -8,6 +8,14 @@
 
 #import "NATTokenizer.h"
 
+NS_INLINE void NATConsumeWhitespace(NSString *string, NSUInteger *idx)
+{
+    char c = '\0';
+    while ( *idx < string.length && ((c =[string characterAtIndex:*idx]) == '\n' || c == '\r' || c == ' ' || c == '\t' || c == '\v' || c == '\f') ) {
+        ++(*idx);
+    }
+}
+
 @implementation NATTokenizer {
     NSString *_string;
     NSUInteger _index;
@@ -30,13 +38,13 @@
 
 - (char)nextChar
 {
-    [self consumeWhitespace];
+    NATConsumeWhitespace(_string, &_index);
     return self.hasTokens ? [_string characterAtIndex:_index] : '\0';
 }
 
 - (char)advanceChar
 {
-    [self consumeWhitespace];
+    NATConsumeWhitespace(_string, &_index);
     return self.hasTokens ? [_string characterAtIndex:_index++] : '\0';
 }
 
@@ -44,7 +52,7 @@
 {
     NSString *result = nil;
 
-    [self consumeWhitespace];
+    NATConsumeWhitespace(_string, &_index);
 
     if ( _index + string.length < _string.length ) {
         result = [_string substringWithRange:NSMakeRange(_index, string.length)];
@@ -64,7 +72,7 @@
 {
     NSString *result = nil;
 
-    [self consumeWhitespace];
+    NATConsumeWhitespace(_string, &_index);
 
     if ( self.hasTokens ) {
         NSTextCheckingResult *match = [expr firstMatchInString:_string options:NSMatchingAnchored range:NSMakeRange(_index, _string.length - _index)];
@@ -82,7 +90,7 @@
 {
     NSString *result = nil;
 
-    [self consumeWhitespace];
+    NATConsumeWhitespace(_string, &_index);
 
     if ( self.hasTokens ) {
         NSTextCheckingResult *match = [expr firstMatchInString:_string options:kNilOptions range:NSMakeRange(_index, _string.length - _index)];
@@ -125,16 +133,6 @@
     NSAssert(result != nil, @"%@ unable to match expression: %@", [self class], expr.pattern);
 
     return result;
-}
-
-#pragma mark - private
-
-- (void)consumeWhitespace
-{
-    char c = '\0';
-    while ( self.hasTokens && ((c =[_string characterAtIndex:_index]) == '\n' || c == '\r' || c == ' ' || c == '\t' || c == '\v' || c == '\f') ) {
-        ++_index;
-    }
 }
 
 @end

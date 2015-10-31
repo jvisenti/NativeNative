@@ -9,4 +9,8 @@
 #import "NATExpression.h"
 
 @interface NATMethod : NATExpression
+
+// NOTE: The first object in the arguments array is the target
+- (instancetype)initWithSelector:(SEL)selector arguments:(NSArray<id<NATExpression>> *)arguments;
+
 @end
