@@ -11,10 +11,13 @@
 #import "NATTokenizer.h"
 #import "NATScope.h"
 #import "NATMethod.h"
+#import "NATProperty.h"
 
 @interface NativeNativeTests : XCTestCase
 
 @property (copy, nonatomic) NSString *source;
+
+@property (assign, nonatomic, readonly, getter=getTestProp) CGFloat testProp;
 
 @end
 
@@ -196,6 +199,23 @@
     XCTAssert([[NATScope currentScope] lookupSymbol:@"c"].value.type == NATTypeDouble);
 
     [NATScope exit];
+}
+
+- (void)testProperties
+{
+    NATProperty *prop = [[self class] nat_propertyForKey:@"source"];
+    XCTAssert([prop.name isEqualToString:@"source"]);
+    XCTAssert([prop.typeEncoding isEqualToString:@"@"]);
+    XCTAssert(prop.getter == @selector(source));
+    XCTAssert(prop.setter == @selector(setSource:));
+    XCTAssert(prop.isReadonly == NO);
+
+    prop = [[self class] nat_propertyForKey:@"testProp"];
+    XCTAssert([prop.name isEqualToString:@"testProp"]);
+    XCTAssert(strcmp(prop.typeEncoding.UTF8String, @encode(CGFloat)) == 0);
+    XCTAssert(prop.getter == @selector(getTestProp));
+    XCTAssert(prop.setter == nil);
+    XCTAssert(prop.isReadonly == YES);
 }
 
 @end

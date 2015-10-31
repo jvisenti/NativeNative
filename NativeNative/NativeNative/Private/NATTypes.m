@@ -120,7 +120,7 @@ void _NATTypeConfigure(void)
 
 const char* NATGetEncoding(NATType type)
 {
-    const void *encoding = NULL;
+    const char *encoding = NULL;
 
     if ( type == NATTypeStruct ) {
         encoding = "{?=}";
@@ -129,10 +129,10 @@ const char* NATGetEncoding(NATType type)
         encoding = "(?=)";
     }
     else {
-        CFDictionaryGetValueIfPresent(s_TypesToEncodings, &type, &encoding);
+        encoding = CFDictionaryGetValue(s_TypesToEncodings, &type);
     }
 
-    return (const char *)encoding;
+    return encoding;
 }
 
 NATType NATGetType(const char *encoding)
@@ -147,8 +147,7 @@ NATType NATGetType(const char *encoding)
             type = NATTypeUnion;
         }
         else {
-            const void *lookup = NULL;
-            CFDictionaryGetValueIfPresent(s_EncodingsToTypes, encoding, &lookup);
+            const void *lookup = CFDictionaryGetValue(s_EncodingsToTypes, encoding);
 
             if ( lookup != NULL ) {
                 type = *(NATType *)lookup;

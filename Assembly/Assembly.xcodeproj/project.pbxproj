@@ -28,6 +28,7 @@
 		D45477A81BE3F95600DF16BD /* NATTokenizer.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477911BE3F95600DF16BD /* NATTokenizer.m */; settings = {ASSET_TAGS = (); }; };
 		D45477A91BE3F95600DF16BD /* NATTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477931BE3F95600DF16BD /* NATTypes.m */; settings = {ASSET_TAGS = (); }; };
 		D45477AA1BE3F95600DF16BD /* NATValue.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477951BE3F95600DF16BD /* NATValue.m */; settings = {ASSET_TAGS = (); }; };
+		D45477AD1BE4FAAE00DF16BD /* NATProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477AC1BE4FAAE00DF16BD /* NATProperty.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -82,6 +83,8 @@
 		D45477931BE3F95600DF16BD /* NATTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATTypes.m; sourceTree = "<group>"; };
 		D45477941BE3F95600DF16BD /* NATValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATValue.h; sourceTree = "<group>"; };
 		D45477951BE3F95600DF16BD /* NATValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATValue.m; sourceTree = "<group>"; };
+		D45477AB1BE4FAAE00DF16BD /* NATProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATProperty.h; sourceTree = "<group>"; };
+		D45477AC1BE4FAAE00DF16BD /* NATProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATProperty.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +195,8 @@
 				D45477931BE3F95600DF16BD /* NATTypes.m */,
 				D45477941BE3F95600DF16BD /* NATValue.h */,
 				D45477951BE3F95600DF16BD /* NATValue.m */,
+				D45477AB1BE4FAAE00DF16BD /* NATProperty.h */,
+				D45477AC1BE4FAAE00DF16BD /* NATProperty.m */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -311,6 +316,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D45477AD1BE4FAAE00DF16BD /* NATProperty.m in Sources */,
 				D4445C0F1BDDA0400093B2B7 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

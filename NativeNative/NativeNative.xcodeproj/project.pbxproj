@@ -21,6 +21,8 @@
 		D4445C1D1BDEF8E30093B2B7 /* NATInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = D4445C1B1BDEF8E30093B2B7 /* NATInvocation.m */; settings = {ASSET_TAGS = (); }; };
 		D45477661BE3F81100DF16BD /* NATProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = D45477641BE3F81100DF16BD /* NATProgram.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D45477671BE3F81100DF16BD /* NATProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477651BE3F81100DF16BD /* NATProgram.m */; settings = {ASSET_TAGS = (); }; };
+		D45477B01BE4FCF500DF16BD /* NATProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = D45477AE1BE4FCF500DF16BD /* NATProperty.h */; settings = {ASSET_TAGS = (); }; };
+		D45477B11BE4FCF500DF16BD /* NATProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477AF1BE4FCF500DF16BD /* NATProperty.m */; settings = {ASSET_TAGS = (); }; };
 		D474D2FE1BDBF5D500042911 /* NATTokenizer.m in Sources */ = {isa = PBXBuildFile; fileRef = D474D2FD1BDBF5D500042911 /* NATTokenizer.m */; settings = {ASSET_TAGS = (); }; };
 		D474D3011BDBF67700042911 /* NATRegex.h in Headers */ = {isa = PBXBuildFile; fileRef = D474D2FF1BDBF67700042911 /* NATRegex.h */; settings = {ASSET_TAGS = (); }; };
 		D474D3021BDBF67700042911 /* NATRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = D474D3001BDBF67700042911 /* NATRegex.m */; settings = {ASSET_TAGS = (); }; };
@@ -66,6 +68,8 @@
 		D4445C1B1BDEF8E30093B2B7 /* NATInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATInvocation.m; sourceTree = "<group>"; };
 		D45477641BE3F81100DF16BD /* NATProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATProgram.h; sourceTree = "<group>"; };
 		D45477651BE3F81100DF16BD /* NATProgram.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATProgram.m; sourceTree = "<group>"; };
+		D45477AE1BE4FCF500DF16BD /* NATProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATProperty.h; sourceTree = "<group>"; };
+		D45477AF1BE4FCF500DF16BD /* NATProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATProperty.m; sourceTree = "<group>"; };
 		D474D2FD1BDBF5D500042911 /* NATTokenizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATTokenizer.m; sourceTree = "<group>"; };
 		D474D2FF1BDBF67700042911 /* NATRegex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATRegex.h; sourceTree = "<group>"; };
 		D474D3001BDBF67700042911 /* NATRegex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATRegex.m; sourceTree = "<group>"; };
@@ -149,6 +153,8 @@
 				D4D854981BE3C4F900E3683D /* NATStatement.m */,
 				D4B3E7A11BDAC50C009E6507 /* NATMethod.h */,
 				D4B3E7A21BDAC50C009E6507 /* NATMethod.m */,
+				D45477AE1BE4FCF500DF16BD /* NATProperty.h */,
+				D45477AF1BE4FCF500DF16BD /* NATProperty.m */,
 				D432C84E1BDC1A900043AB45 /* NATExpression.h */,
 				D432C84F1BDC1A900043AB45 /* NATExpression.m */,
 				D432C8521BDC1DE80043AB45 /* NATOperators.h */,
@@ -188,6 +194,7 @@
 				D487A86B1BDB124F009DCCBE /* NATValue.h in Headers */,
 				D4D854991BE3C4F900E3683D /* NATStatement.h in Headers */,
 				D432C8541BDC1DE80043AB45 /* NATOperators.h in Headers */,
+				D45477B01BE4FCF500DF16BD /* NATProperty.h in Headers */,
 				D4445C1C1BDEF8E30093B2B7 /* NATInvocation.h in Headers */,
 				D40569511BD84BEC00EC02D5 /* NativeNative.h in Headers */,
 				D4B3E7A31BDAC50C009E6507 /* NATMethod.h in Headers */,
@@ -302,6 +309,7 @@
 				D4D8549A1BE3C4F900E3683D /* NATStatement.m in Sources */,
 				D4C8950D1BE2F6A00003404F /* NATMethodDescriptor.m in Sources */,
 				D487A86C1BDB124F009DCCBE /* NATValue.m in Sources */,
+				D45477B11BE4FCF500DF16BD /* NATProperty.m in Sources */,
 				D4B3E7A41BDAC50C009E6507 /* NATMethod.m in Sources */,
 				D4C895091BE2F68B0003404F /* nat_invoking.S in Sources */,
 				D432C8551BDC1DE80043AB45 /* NATOperators.m in Sources */,
