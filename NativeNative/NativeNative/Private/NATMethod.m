@@ -58,27 +58,32 @@
 
 - (NATValue *)evaluate
 {
-    NATValue *targetValue = [(NATExpression *)_arguments[0] evaluate];
-    assert(targetValue.type == NATTypeObject || targetValue.type == NATTypeClass);
+    NATValue *targetValue = [(id<NATExpression>)_arguments[0] evaluate];
+    assert(targetValue == nil || targetValue.type == NATTypeObject || targetValue.type == NATTypeClass);
 
     id target = (targetValue.type == NATTypeObject) ? targetValue.objectValue : targetValue.classValue;
 
-    NSMethodSignature *methodSig = [target methodSignatureForSelector:_selector];
+    if ( target != nil ) {
+        NSMethodSignature *methodSig = [target methodSignatureForSelector:_selector];
 
-    NSAssert(methodSig != nil, @"Encountered nil signature for %@ of object", NSStringFromSelector(_selector), target);
-    NSAssert(_arguments.count + 1 == methodSig.numberOfArguments, @"Mismatched argument count. Expected: %i, found %i", (int)methodSig.numberOfArguments, (int)_arguments.count);
+        NSAssert(methodSig != nil, @"Encountered nil signature for %@ of object", NSStringFromSelector(_selector), target);
+        NSAssert(_arguments.count + 1 == methodSig.numberOfArguments, @"Mismatched argument count. Expected: %i, found %i", (int)methodSig.numberOfArguments, (int)_arguments.count);
 
-    NATInvocation *invocation = [NATInvocation invocationWithMethodSignature:methodSig];
-    invocation.target = target;
-    invocation.selector = _selector;
+        NATInvocation *invocation = [NATInvocation invocationWithMethodSignature:methodSig];
+        invocation.target = target;
+        invocation.selector = _selector;
 
-    for ( NSUInteger i = 2; i < invocation.methodSignature.numberOfArguments; ++i ) {
-        [self prepareInvocation:invocation withArgument:_arguments[i - 1] atIndex:i];
+        for ( NSUInteger i = 2; i < invocation.methodSignature.numberOfArguments; ++i ) {
+            [self prepareInvocation:invocation withArgument:_arguments[i - 1] atIndex:i];
+        }
+
+        [invocation invoke];
+        
+        return invocation.returnValue;
     }
-
-    [invocation invoke];
-
-    return invocation.returnValue;
+    else {
+        return nil;
+    }
 }
 
 - (NSString *)description
@@ -88,7 +93,7 @@
 
 #pragma mark - private methods
 
-- (void)prepareInvocation:(NATInvocation *)invocation withArgument:(NATExpression *)argument atIndex:(NSUInteger)index
+- (void)prepareInvocation:(NATInvocation *)invocation withArgument:(id<NATExpression>)argument atIndex:(NSUInteger)index
 {
     NATValue *value = [argument evaluate];
 

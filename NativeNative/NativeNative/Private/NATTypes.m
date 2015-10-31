@@ -30,8 +30,8 @@ const NATType NATTypeULongLong = 13;
 const NATType NATTypeFloat     = 14;
 const NATType NATTypeDouble    = 15;
 const NATType NATTypeBool      = 16;
-const NATType NATTypeStruct    = 16;
-const NATType NATTypeUnion     = 17;
+const NATType NATTypeStruct    = 17;
+const NATType NATTypeUnion     = 18;
 
 static Boolean _NATTypesEqual(const void *a, const void *b)
 {
