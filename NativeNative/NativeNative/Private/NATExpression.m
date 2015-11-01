@@ -14,19 +14,19 @@
 #import "NATPropertyChain.h"
 #import "NATStrings.h"
 
-@interface NATSymbolExpression : NATExpression
+@interface NATSymbolExpression : NSObject <NATExpression>
 - (instancetype)initWithName:(NSString *)name;
 @end
 
-@interface NATAssignmentExpression : NATExpression
-- (instancetype)initWithSymName:(NSString *)symName expression:(NATExpression *)expr;
+@interface NATAssignmentExpression : NSObject <NATExpression>
+- (instancetype)initWithSource:(NSString *)source;
 @end
 
-@interface NATUnaryExpression : NATExpression
+@interface NATUnaryExpression : NSObject <NATExpression>
 - (instancetype)initWithOperator:(NATUnaryOperator)op operand:(NATExpression *)expr;
 @end
 
-@interface NATBinaryExpression : NATExpression
+@interface NATBinaryExpression : NSObject <NATExpression>
 - (instancetype)initWithLHS:(NATExpression *)lhs operator:(NATBinaryOperator)op RHS:(NATExpression *)rhs;
 @end
 
@@ -49,11 +49,10 @@
     }
 
     if ( [tokenizer nextChar] == '[' ) {
-        // TODO: this sucks...
-        expression = [NATMethod expressionWithTokenizer:tokenizer];
+        expression = [[NATMethod alloc] initWithTokenizer:tokenizer];
     }
     else if ( (token = [tokenizer advanceExpression:kNATRegexCFunction]) != nil ) {
-        expression = [NATCFunction expressionWithSource:token];
+        expression = [[NATCFunction alloc] initWithSource:token];
     }
     else if ( (token = [tokenizer advanceExpression:kNATRegexStringLiteral]) != nil ) {
         if ( [token characterAtIndex:0] == '@' ) {
@@ -82,20 +81,27 @@
 
             if ( [token nat_matches:kNATRegexAssignment] ) {
                 if ( [token nat_beginsWith:kNATRegexPropertyChain] ) {
-                    expression = [NATPropertyChain expressionWithSource:token];
+                    expression = [[NATPropertyChain alloc] initWithSource:token];
                 }
                 else {
-                    expression = [NATAssignmentExpression expressionWithSource:token];
+                    expression = [[NATAssignmentExpression alloc] initWithSource:token];
                 }
 
                 break;
             }
             else if ( [token nat_matches:kNATRegexPropertyChain] ) {
-                expression = [NATPropertyChain expressionWithSource:token];
+                expression = [[NATPropertyChain alloc] initWithSource:token];
                 break;
             }
             else if ( [token nat_matches:kNATRegexSymName] ) {
-                expression = [[NATSymbolExpression alloc] initWithName:token];
+                if ( [token hasSuffix:@"."] ) {
+                    expression = [[NATSymbolExpression alloc] initWithName:[token substringToIndex:token.length - 1]];
+                    expression = [[NATPropertyChain alloc] initWithRootExpression:expression tokenizer:tokenizer];
+                }
+                else {
+                    expression = [[NATSymbolExpression alloc] initWithName:token];
+                }
+
                 break;
             }
             else if ( [token nat_matches:kNATRegexIntLiteral] ) {
@@ -159,8 +165,9 @@
     NATExpression *_expr;
 }
 
-+ (instancetype)expressionWithTokenizer:(NATTokenizer *)tokenizer
+- (instancetype)initWithSource:(NSString *)source
 {
+    NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:source];
     NSString *typeSym = [tokenizer matchExpression:kNATRegexSymName];
 
     if ( [tokenizer nextChar] == '*' ) {
@@ -178,7 +185,7 @@
 
     NATExpression *assignment = [NATExpression expressionWithTokenizer:tokenizer];
 
-    return [[self alloc] initWithSymName:symName expression:assignment];
+    return [self initWithSymName:symName expression:assignment];
 }
 
 - (instancetype)initWithSymName:(NSString *)symName expression:(NATExpression *)expr

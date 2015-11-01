@@ -25,7 +25,12 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     NSArray<id<NATExpression>> *_arguments;
 }
 
-+ (instancetype)expressionWithTokenizer:(NATTokenizer *)tokenizer
+- (instancetype)initWithSource:(NSString *)source
+{
+    return [self initWithTokenizer:[[NATTokenizer alloc] initWithString:source]];
+}
+
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
 {
     [tokenizer matchChar:'['];
 
@@ -50,7 +55,7 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     SEL selector = NSSelectorFromString(methodName);
     NSAssert(selector != NULL, @"Failed to lookup selector: %@", methodName);
 
-    return [[self alloc] initWithSelector:selector arguments:args];
+    return [self initWithSelector:selector arguments:args];
 }
 
 - (instancetype)initWithSelector:(SEL)selector arguments:(NSArray<id<NATExpression>> *)arguments;
@@ -108,13 +113,18 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     NSArray<id<NATExpression>> *_arguments;
 }
 
-+ (id<NATExpression>)expressionWithTokenizer:(NATTokenizer *)tokenizer
+- (instancetype)initWithSource:(NSString *)source
+{
+    return [self initWithTokenizer:[[NATTokenizer alloc] initWithString:source]];
+}
+
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
 {
     NSString *returnType = [tokenizer advanceExpression:kNATRegexTypeCast];
     NSString *functionName = [tokenizer matchExpression:kNATRegexSymName];
     [tokenizer matchChar:'('];
 
-    IMP imp = (IMP)[self lookupSymbol:functionName];
+    IMP imp = (IMP)[NATCFunction lookupSymbol:functionName];
     assert(imp != NULL);
 
     NSMutableArray *args = [NSMutableArray array];
@@ -130,7 +140,7 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     returnType = [returnType substringWithRange:NSMakeRange(1, returnType.length - 2)];
     returnType = [returnType stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-    return [[self alloc] initWithIMP:imp arguments:args returnType:returnType];
+    return [self initWithIMP:imp arguments:args returnType:returnType];
 }
 
 - (instancetype)initWithIMP:(IMP)imp arguments:(NSArray<id<NATExpression>> *)arguments returnType:(NSString *)returnType

@@ -8,7 +8,9 @@
 
 #import "NATExpression.h"
 
-@interface NATPropertyChain : NATExpression
+@interface NATPropertyChain : NSObject <NATExpression>
+
+- (instancetype)initWithSource:(NSString *)source;
 
 - (instancetype)initWithRootExpression:(NATExpression *)rootExpr tokenizer:(NATTokenizer *)tokenizer;
 

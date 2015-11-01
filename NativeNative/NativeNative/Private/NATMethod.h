@@ -8,14 +8,20 @@
 
 #import "NATExpression.h"
 
-@interface NATMethod : NATExpression
+@interface NATMethod : NSObject <NATExpression>
+
+- (instancetype)initWithSource:(NSString *)source;
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
 
 // NOTE: The first object in the arguments array is the target
 - (instancetype)initWithSelector:(SEL)selector arguments:(NSArray<id<NATExpression>> *)arguments;
 
 @end
 
-@interface NATCFunction : NATExpression
+@interface NATCFunction : NSObject <NATExpression>
+
+- (instancetype)initWithSource:(NSString *)source;
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
 
 - (instancetype)initWithIMP:(IMP)imp arguments:(NSArray<id<NATExpression>> *)arguments returnType:(NSString *)returnType;
 

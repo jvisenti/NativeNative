@@ -151,7 +151,7 @@
 
     [[NATScope currentScope] addSymbol:sym];
 
-    NATMethod *method = [NATMethod expressionWithSource:@"[self print]"];
+    NATMethod *method = [[NATMethod alloc] initWithSource:@"[self print]"];
     NATValue *retVal = [method evaluate];
 
     [NATScope exit];
@@ -167,7 +167,7 @@
 
     [[NATScope currentScope] addSymbol:sym];
 
-    NATMethod *method = [NATMethod expressionWithSource:@"[self stringFromInt:5]"];
+    NATMethod *method = [[NATMethod alloc] initWithSource:@"[self stringFromInt:5]"];
     NATValue *retVal = [method evaluate];
 
     [NATScope exit];
@@ -182,7 +182,7 @@
     NATSymbol *sym = [[NATSymbol alloc] initWithName:@"self" value:[[NATValue alloc] initWithObject:self]];
     [[NATScope currentScope] addSymbol:sym];
 
-    NATMethod *method = [NATMethod expressionWithSource:@"[self numberFromFloat:[self randDouble]]"];
+    NATMethod *method = [[NATMethod alloc] initWithSource:@"[self numberFromFloat:[self randDouble]]"];
     NATValue *retVal = [method evaluate];
 
     NSLog(@"%f", [retVal.objectValue floatValue]);
@@ -241,7 +241,7 @@
     
     XCTAssertEqual(self.testObj, self.source);
 
-    NATPropertyChain *propChain = [NATPropertyChain expressionWithSource:@"self.source.length;"];
+    NATPropertyChain *propChain = [[NATPropertyChain alloc] initWithSource:@"self.source.length;"];
     NATValue *result = propChain.evaluate;
 
     XCTAssertEqual(result.longValue, self.source.length);

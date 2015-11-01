@@ -18,9 +18,9 @@
     NATExpression *_assignment;
 }
 
-+ (instancetype)expressionWithTokenizer:(NATTokenizer *)tokenizer
+- (instancetype)initWithSource:(NSString *)source
 {
-    return [[self alloc] initWithRootExpression:nil tokenizer:tokenizer];
+    return [self initWithRootExpression:nil tokenizer:[[NATTokenizer alloc] initWithString:source]];
 }
 
 - (instancetype)initWithRootExpression:(NATExpression *)rootExpr tokenizer:(NATTokenizer *)tokenizer
