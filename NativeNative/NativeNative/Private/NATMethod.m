@@ -6,6 +6,8 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
+#import <dlfcn.h>
+
 #import "NATMethod.h"
 
 #import "NATTokenizer.h"
@@ -13,9 +15,13 @@
 #import "NATExpression.h"
 #import "NATInvocation.h"
 
+void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger index);
+
+#pragma mark - NATMethod implementation
+
 @implementation NATMethod {
     SEL _selector;
-    NSArray *_arguments;
+    NSArray<id<NATExpression>> *_arguments;
 }
 
 + (instancetype)expressionWithTokenizer:(NATTokenizer *)tokenizer
@@ -67,14 +73,14 @@
         NSMethodSignature *methodSig = [target methodSignatureForSelector:_selector];
 
         NSAssert(methodSig != nil, @"Encountered nil signature for %@ of object", NSStringFromSelector(_selector), target);
-        NSAssert(_arguments.count + 1 == methodSig.numberOfArguments, @"Mismatched argument count. Expected: %i, found %i", (int)methodSig.numberOfArguments, (int)_arguments.count);
+        NSAssert(_arguments.count + 1 == methodSig.numberOfArguments, @"Mismatched argument count. Expected: %i, found %i", (int)methodSig.numberOfArguments, (int)_arguments.count + 1);
 
         NATInvocation *invocation = [NATInvocation invocationWithMethodSignature:methodSig];
         invocation.target = target;
         invocation.selector = _selector;
 
         for ( NSUInteger i = 2; i < invocation.methodSignature.numberOfArguments; ++i ) {
-            [self prepareInvocation:invocation withArgument:_arguments[i - 1] atIndex:i];
+            NATPrepareInvocation(invocation, [_arguments[i - 1] evaluate], i);
         }
 
         [invocation invoke];
@@ -91,12 +97,85 @@
     return NSStringFromSelector(_selector);
 }
 
-#pragma mark - private methods
+@end
 
-- (void)prepareInvocation:(NATInvocation *)invocation withArgument:(id<NATExpression>)argument atIndex:(NSUInteger)index
+#pragma mark - NATCFunction implementation
+
+@implementation NATCFunction {
+    IMP _imp;
+    NSArray<id<NATExpression>> *_arguments;
+}
+
++ (id<NATExpression>)expressionWithTokenizer:(NATTokenizer *)tokenizer
 {
-    NATValue *value = [argument evaluate];
+    NSString *functionName = [tokenizer matchExpression:kNATRegexSymName];
+    [tokenizer matchChar:'('];
 
+    void *handle = dlopen(NULL, RTLD_NOW);
+    IMP imp = (IMP)dlsym(handle, functionName.UTF8String);
+    assert(imp != NULL);
+    dlclose(handle);
+
+    NSMutableArray *args = [NSMutableArray array];
+
+    while ( [tokenizer nextChar] != ')' ) {
+        [args addObject:[NATExpression expressionWithTokenizer:tokenizer]];
+
+        if ( [tokenizer nextChar] == ',' ) {
+            [tokenizer advanceChar];
+        }
+    }
+
+    return [[self alloc] initWithIMP:imp arguments:args];
+}
+
+- (instancetype)initWithIMP:(IMP)imp arguments:(NSArray<id<NATExpression>> *)arguments
+{
+    if ( (self = [super init]) ) {
+        _imp = imp;
+        _arguments = [arguments copy];
+    }
+
+    return self;
+}
+
+- (NATValue *)evaluate
+{
+    NSArray *argValues = [_arguments valueForKey:@"evaluate"];
+
+    // TODO: support more than void return values
+    NSMutableString *encoding = [NSMutableString stringWithUTF8String:@encode(void)];
+
+    for ( NATValue *argValue in argValues ) {
+        [encoding appendFormat:@"%s", argValue.encoding];
+    }
+
+    NSMethodSignature *methodSig = [NSMethodSignature signatureWithObjCTypes:encoding.UTF8String];
+
+    NSAssert(_arguments.count == methodSig.numberOfArguments, @"Mismatched argument count. Expected: %i, found %i", (int)methodSig.numberOfArguments, (int)_arguments.count);
+
+    NATInvocation *invocation = [NATInvocation invocationWithMethodSignature:methodSig];
+
+    for ( NSUInteger i = 0; i < invocation.methodSignature.numberOfArguments; ++i ) {
+        NATPrepareInvocation(invocation, argValues[i], i);
+    }
+
+    [invocation invokeIMP:_imp];
+
+    return invocation.returnValue;
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"C function : %p", _imp];
+}
+
+@end
+
+#pragma mark - NATPrepareInvocation
+
+void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger index)
+{
     const char *encoding = [invocation.methodSignature getArgumentTypeAtIndex:index];
     NATType type = NATGetType(encoding);
 
@@ -161,5 +240,3 @@
         [invocation setArgument:&val atIndex:index];
     }
 }
-
-@end

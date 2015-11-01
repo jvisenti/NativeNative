@@ -15,11 +15,13 @@ OBJC_EXTERN NSRegularExpression *kNATRegexPrimitiveType;
 
 OBJC_EXTERN NSRegularExpression *kNATRegexIntLiteral;
 OBJC_EXTERN NSRegularExpression *kNATRegexFloatLiteral;
+OBJC_EXTERN NSRegularExpression *kNATRegexStringLiteral;
 
 OBJC_EXTERN NSRegularExpression *kNATRegexLiteralTerminal;
 OBJC_EXTERN NSRegularExpression *kNATRegexStatementTerminal;
 
 OBJC_EXTERN NSRegularExpression *kNATRegexSymName;
+OBJC_EXTERN NSRegularExpression *kNATRegexCFunction;
 
 OBJC_EXTERN NSRegularExpression *kNATRegexAssignment;
 OBJC_EXPORT NSRegularExpression *kNATRegexPropertyChain;

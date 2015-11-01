@@ -14,3 +14,9 @@
 - (instancetype)initWithSelector:(SEL)selector arguments:(NSArray<id<NATExpression>> *)arguments;
 
 @end
+
+@interface NATCFunction : NATExpression
+
+- (instancetype)initWithIMP:(IMP)imp arguments:(NSArray<id<NATExpression>> *)arguments;
+
+@end

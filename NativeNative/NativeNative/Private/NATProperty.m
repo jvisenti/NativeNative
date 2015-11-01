@@ -93,6 +93,7 @@ static SEL NATReadSelector(const char *encoding)
                 capName[0] = toupper(capName[0]);
 
                 _setter = NSSelectorFromString([NSString stringWithFormat:@"set%s:", capName]);
+                free(capName);
             }
             
             _readonly = NO;

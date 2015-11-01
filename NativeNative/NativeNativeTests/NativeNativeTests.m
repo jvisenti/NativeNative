@@ -248,4 +248,17 @@
     [NATScope exit];
 }
 
+- (void)testCFunction
+{
+    [NATScope enter];
+
+    NATSymbol *sym = [[NATSymbol alloc] initWithName:@"self" value:[[NATValue alloc] initWithObject:self]];
+    [[NATScope currentScope] addSymbol:sym];
+
+    NATProgram *program = [[NATProgram alloc] initWithSource:@"NSLog(@\"PRINTING: %@\", self);"];
+    [program execute];
+
+    [NATScope exit];
+}
+
 @end

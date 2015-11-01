@@ -39,16 +39,28 @@
 + (id<NATExpression>)expressionWithTokenizer:(NATTokenizer *)tokenizer
 {
     id<NATExpression> expression = nil;
+    NSString *token = nil;
 
     if ( [tokenizer nextChar] == '[' ) {
         // TODO: this sucks...
         expression = [NATMethod expressionWithTokenizer:tokenizer];
     }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexCFunction]) != nil ) {
+        expression = [NATCFunction expressionWithSource:token];
+    }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexStringLiteral]) != nil ) {
+        if ( [token characterAtIndex:0] == '@' ) {
+            // Skip starting @" and ending "
+            expression = [token substringWithRange:NSMakeRange(2, token.length - 3)];
+        }
+        else {
+            //TOO: support C strings
+            NSAssert(NO, @"C strings not yet supported.");
+        }
+    }
     else {
-        NSString *token = nil;
-
-        while ( (token = [tokenizer advanceExpression:kNATRegexAssignment]) != nil || (token = [tokenizer advanceUntil:kNATRegexLiteralTerminal]) != nil ) {
-            NATValue *tokenValue = nil;
+        while ( (token = [tokenizer advanceExpression:kNATRegexAssignment]) != nil ||
+                (token = [tokenizer advanceUntil:kNATRegexLiteralTerminal]) != nil ) {
 
             if ( [token nat_matches:kNATRegexAssignment] ) {
                 if ( [token nat_beginsWith:kNATRegexPropertyChain] ) {
@@ -70,15 +82,11 @@
             }
             else if ( [token nat_matches:kNATRegexIntLiteral] ) {
                 long long value = [token longLongValue];
-                tokenValue = [[NATValue alloc] initWithBytes:&value type:NATTypeLongLong];
+                expression = [[NATValue alloc] initWithBytes:&value type:NATTypeLongLong];
             }
             else if ( [token nat_matches:kNATRegexFloatLiteral] ) {
                 double value = [token doubleValue];
-                tokenValue = [[NATValue alloc] initWithBytes:&value type:NATTypeDouble];
-            }
-
-            if ( tokenValue != nil ) {
-                expression = tokenValue;
+                expression = [[NATValue alloc] initWithBytes:&value type:NATTypeDouble];
             }
         }
     }

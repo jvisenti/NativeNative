@@ -27,12 +27,7 @@
     NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:source];
 
     // TODO: more types of statements...
-    if ( [tokenizer nextChar] == '[' ) {
-        statement = [[NATExpressionStatement alloc] initWithExpression:[NATMethod expressionWithTokenizer:tokenizer]];
-    }
-    else {
-        statement = [[NATExpressionStatement alloc] initWithExpression:[NATExpression expressionWithTokenizer:tokenizer]];
-    }
+    statement = [[NATExpressionStatement alloc] initWithExpression:[NATExpression expressionWithTokenizer:tokenizer]];
 
     return statement;
 }
