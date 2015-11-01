@@ -41,7 +41,7 @@ void _NATRegexConfigure(void)
     kNATRegexFloatLiteral = NAT_REGEX(@"[\\d]*\\.[\\d]+f?");
     kNATRegexStringLiteral = NAT_REGEX(@"@?\"([^\"]|[^\\\"])*\"");
 
-    kNATRegexLiteralTerminal = NAT_REGEX(@"[\\s\\];,\\)]");
+    kNATRegexLiteralTerminal = NAT_REGEX(@"[\\s\\];,\\)\\.]");
     kNATRegexStatementTerminal = NAT_REGEX(@";+");
 
     kNATRegexSymName = NAT_REGEX(@"[_a-zA-Z]+[_\\w]*");

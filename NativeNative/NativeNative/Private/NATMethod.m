@@ -114,10 +114,8 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     NSString *functionName = [tokenizer matchExpression:kNATRegexSymName];
     [tokenizer matchChar:'('];
 
-    void *handle = dlopen(NULL, RTLD_NOW);
-    IMP imp = (IMP)dlsym(handle, functionName.UTF8String);
+    IMP imp = (IMP)[self lookupSymbol:functionName];
     assert(imp != NULL);
-    dlclose(handle);
 
     NSMutableArray *args = [NSMutableArray array];
 
@@ -216,6 +214,19 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"C function : %p", _imp];
+}
+
+#pragma mark - private methods
+
++ (void *)lookupSymbol:(NSString *)symbol
+{
+    static void *s_Handle = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_Handle = dlopen(NULL, RTLD_LAZY);
+    });
+
+    return dlsym(s_Handle, symbol.UTF8String);
 }
 
 @end
