@@ -16,6 +16,7 @@ OBJC_EXTERN NSRegularExpression *kNATRegexPrimitiveType;
 OBJC_EXTERN NSRegularExpression *kNATRegexIntLiteral;
 OBJC_EXTERN NSRegularExpression *kNATRegexFloatLiteral;
 OBJC_EXTERN NSRegularExpression *kNATRegexStringLiteral;
+OBJC_EXTERN NSRegularExpression *kNATRegexSelectorLiteral;
 
 OBJC_EXTERN NSRegularExpression *kNATRegexLiteralTerminal;
 OBJC_EXTERN NSRegularExpression *kNATRegexStatementTerminal;

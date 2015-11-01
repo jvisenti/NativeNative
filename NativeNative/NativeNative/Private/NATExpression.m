@@ -55,7 +55,6 @@
     else if ( (token = [tokenizer advanceExpression:kNATRegexCFunction]) != nil ) {
         expression = [NATCFunction expressionWithSource:token];
     }
-    // TODO: can't currently use properties on string literals
     else if ( (token = [tokenizer advanceExpression:kNATRegexStringLiteral]) != nil ) {
         if ( [token characterAtIndex:0] == '@' ) {
             // Skip starting @" and ending "
@@ -69,6 +68,13 @@
             const char *CString = [NATStrings getCStringForLiteral:literal];
             expression = [[NATValue alloc] initWithBytes:&CString type:NATTypeCharPointer];
         }
+    }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexSelectorLiteral]) ) {
+        // Skip @selector( and closing )
+        NSString *selName = [token substringWithRange:NSMakeRange(10, token.length - 11)];
+        SEL selector = NSSelectorFromString(selName);
+
+        expression = [[NATValue alloc] initWithBytes:&selector type:NATTypeSEL];
     }
     else {
         while ( (token = [tokenizer advanceExpression:kNATRegexAssignment]) != nil ||

@@ -16,6 +16,7 @@ NSRegularExpression *kNATRegexPrimitiveType = nil;
 NSRegularExpression *kNATRegexIntLiteral = nil;
 NSRegularExpression *kNATRegexFloatLiteral = nil;
 NSRegularExpression *kNATRegexStringLiteral = nil;
+NSRegularExpression *kNATRegexSelectorLiteral;
 
 NSRegularExpression *kNATRegexLiteralTerminal = nil;
 NSRegularExpression *kNATRegexStatementTerminal = nil;
@@ -40,6 +41,7 @@ void _NATRegexConfigure(void)
     kNATRegexIntLiteral = NAT_REGEX(@"[\\d]+");
     kNATRegexFloatLiteral = NAT_REGEX(@"[\\d]*\\.[\\d]+f?");
     kNATRegexStringLiteral = NAT_REGEX(@"@?\"([^\"]|[^\\\"])*\"");
+    kNATRegexSelectorLiteral = NAT_REGEX(@"@selector\\([^ ]+\\)");
 
     kNATRegexLiteralTerminal = NAT_REGEX(@"[\\s\\];,\\)\\.]");
     kNATRegexStatementTerminal = NAT_REGEX(@";+");
