@@ -9,4 +9,7 @@
 #import "NATExpression.h"
 
 @interface NATPropertyChain : NATExpression
+
+- (instancetype)initWithRootExpression:(NATExpression *)rootExpr tokenizer:(NATTokenizer *)tokenizer;
+
 @end

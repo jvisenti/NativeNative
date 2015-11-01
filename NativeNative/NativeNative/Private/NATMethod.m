@@ -7,6 +7,7 @@
 //
 
 #import <dlfcn.h>
+#import <objc/runtime.h>
 
 #import "NATMethod.h"
 
@@ -103,11 +104,13 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
 
 @implementation NATCFunction {
     IMP _imp;
+    NSString *_returnType;
     NSArray<id<NATExpression>> *_arguments;
 }
 
 + (id<NATExpression>)expressionWithTokenizer:(NATTokenizer *)tokenizer
 {
+    NSString *returnType = [tokenizer advanceExpression:kNATRegexTypeCast];
     NSString *functionName = [tokenizer matchExpression:kNATRegexSymName];
     [tokenizer matchChar:'('];
 
@@ -126,14 +129,49 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
         }
     }
 
-    return [[self alloc] initWithIMP:imp arguments:args];
+    returnType = [returnType substringWithRange:NSMakeRange(1, returnType.length - 2)];
+    returnType = [returnType stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+    return [[self alloc] initWithIMP:imp arguments:args returnType:returnType];
 }
 
-- (instancetype)initWithIMP:(IMP)imp arguments:(NSArray<id<NATExpression>> *)arguments
+- (instancetype)initWithIMP:(IMP)imp arguments:(NSArray<id<NATExpression>> *)arguments returnType:(NSString *)returnType
 {
     if ( (self = [super init]) ) {
         _imp = imp;
         _arguments = [arguments copy];
+
+        if ( returnType != nil ) {
+            // TODO: this is not scaleable
+            const char *returnEncoding = NULL;
+            if ( [returnType hasPrefix:@"int"] ) {
+                returnEncoding = @encode(int);
+            }
+            else if ( [returnType hasPrefix:@"float"] ) {
+                returnEncoding = @encode(float);
+            }
+            else if ( [returnType hasPrefix:@"double"] ) {
+                returnEncoding = @encode(double);
+            }
+            else if ( [returnType hasPrefix:@"void"] ) {
+                returnEncoding = @encode(void);
+            }
+            else if ( [returnType hasPrefix:@"id"] ) {
+                returnEncoding = @encode(id);
+            }
+
+            if ( returnType != nil ) {
+                if ( [returnType hasSuffix:@"*"] ) {
+                    _returnType = [NSString stringWithFormat:@"%c%s", _C_PTR, returnEncoding];
+                }
+                else {
+                    _returnType = [NSString stringWithUTF8String:returnEncoding];
+                }
+            }
+            else {
+                _returnType = [NSString stringWithFormat:@"%s", @encode(id)];
+            }
+        }
     }
 
     return self;
@@ -141,13 +179,18 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
 
 - (NATValue *)evaluate
 {
-    NSArray *argValues = [_arguments valueForKey:@"evaluate"];
+    NSArray<NATValue *> *argValues = [_arguments valueForKey:@"evaluate"];
 
-    // TODO: support more than void return values
-    NSMutableString *encoding = [NSMutableString stringWithUTF8String:@encode(void)];
+    NSMutableString *encoding = _returnType != nil ? [_returnType mutableCopy] : [NSMutableString stringWithUTF8String:@encode(void)];
 
-    for ( NATValue *argValue in argValues ) {
-        [encoding appendFormat:@"%s", argValue.encoding];
+    for ( NSUInteger i = 0; i < _arguments.count; ++i ) {
+        if ( ![argValues[i] isEqual:[NSNull null]] ) {
+            [encoding appendFormat:@"%s", argValues[i].encoding];
+        }
+        else {
+            // TODO: this isn't reliable
+            [encoding appendFormat:@"%s", @encode(void *)];
+        }
     }
 
     NSMethodSignature *methodSig = [NSMethodSignature signatureWithObjCTypes:encoding.UTF8String];
@@ -157,7 +200,12 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     NATInvocation *invocation = [NATInvocation invocationWithMethodSignature:methodSig];
 
     for ( NSUInteger i = 0; i < invocation.methodSignature.numberOfArguments; ++i ) {
-        NATPrepareInvocation(invocation, argValues[i], i);
+        if ( ![argValues[i] isEqual:[NSNull null]] ) {
+            NATPrepareInvocation(invocation, argValues[i], i);
+        }
+        else {
+            NATPrepareInvocation(invocation, nil, i);
+        }
     }
 
     [invocation invokeIMP:_imp];
@@ -237,6 +285,10 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     }
     else if ( type == NATTypeBool ) {
         BOOL val = value.boolValue;
+        [invocation setArgument:&val atIndex:index];
+    }
+    else if ( type == NATTypePointer || type == NATTypeCharPointer ) {
+        void *val = value.pointerValue;
         [invocation setArgument:&val atIndex:index];
     }
 }

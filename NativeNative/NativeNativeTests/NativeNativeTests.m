@@ -252,10 +252,7 @@
 {
     [NATScope enter];
 
-    NATSymbol *sym = [[NATSymbol alloc] initWithName:@"self" value:[[NATValue alloc] initWithObject:self]];
-    [[NATScope currentScope] addSymbol:sym];
-
-    NATProgram *program = [[NATProgram alloc] initWithSource:@"NSLog(@\"PRINTING: %@\", self);"];
+    NATProgram *program = [[NATProgram alloc] initWithSource:@"NSLog(@\"PRINTING: %s\", @\"Test\".UTF8String);"];
     [program execute];
 
     [NATScope exit];

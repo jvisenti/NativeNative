@@ -39,6 +39,7 @@
 - (float)floatValue;
 - (double)doubleValue;
 - (BOOL)boolValue;
+- (void *)pointerValue;
 
 - (void)getValue:(void *)buffer;
 

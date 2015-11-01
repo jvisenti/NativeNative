@@ -31,6 +31,8 @@ CF_EXPORT const NATType NATTypeDouble;
 CF_EXPORT const NATType NATTypeBool;
 CF_EXPORT const NATType NATTypeStruct;
 CF_EXPORT const NATType NATTypeUnion;
+CF_EXPORT const NATType NATTypeCharPointer;
+CF_EXPORT const NATType NATTypePointer;
 
 CF_EXPORT const char* NATGetEncoding(NATType type);
 CF_EXPORT NATType NATGetType(const char *encoding);

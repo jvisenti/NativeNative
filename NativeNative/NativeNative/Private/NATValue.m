@@ -6,6 +6,8 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
+#import <objc/runtime.h>
+
 #import "NATValue.h"
 
 typedef struct _NATLiteralValues {
@@ -58,6 +60,11 @@ typedef struct _NATLiteralValues {
 
 - (instancetype)initWithBytes:(const void *)bytes encoding:(const char *)encoding
 {
+    // Skip qualifiers
+    if ( encoding[0] == _C_CONST ) {
+        ++encoding;
+    }
+
     if ( (self = [super init]) ) {
         _type = NATGetType(encoding);
         _encoding = encoding;
@@ -180,6 +187,11 @@ typedef struct _NATLiteralValues {
     return _literalValues.b;
 }
 
+- (void *)pointerValue
+{
+    return *(void **)_value;
+}
+
 - (void)getValue:(void *)buffer
 {
     memcpy(buffer, _value, _size);
@@ -236,6 +248,12 @@ typedef struct _NATLiteralValues {
     }
     else if ( _type == NATTypeBool ) {
         description = [NSString stringWithFormat:@"bool: %i", self.boolValue];
+    }
+    else if ( _type == NATTypeCharPointer ) {
+        description = [NSString stringWithFormat:@"CString: %s", *(char **)_value];
+    }
+    else if ( _type == NATTypePointer ) {
+        description = [NSString stringWithFormat:@"pointer: %p", self.pointerValue];
     }
     else {
         description = [super description];

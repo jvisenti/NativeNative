@@ -32,6 +32,8 @@ const NATType NATTypeDouble    = 15;
 const NATType NATTypeBool      = 16;
 const NATType NATTypeStruct    = 17;
 const NATType NATTypeUnion     = 18;
+const NATType NATTypeCharPointer = 19;
+const NATType NATTypePointer   = 20;
 
 static Boolean _NATTypesEqual(const void *a, const void *b)
 {
@@ -99,6 +101,7 @@ void _NATTypeConfigure(void)
     CFDictionaryAddValue(typesToEncodings, &NATTypeFloat, @encode(float));
     CFDictionaryAddValue(typesToEncodings, &NATTypeDouble, @encode(double));
     CFDictionaryAddValue(typesToEncodings, &NATTypeBool, @encode(BOOL));
+    CFDictionaryAddValue(typesToEncodings, &NATTypeCharPointer, @encode(char *));
 
     CFIndex count = CFDictionaryGetCount(typesToEncodings);
     CFMutableDictionaryRef encodingsToTypes = CFDictionaryCreateMutable(NULL, count, &encodingKeyCallbacks, NULL);
@@ -128,6 +131,9 @@ const char* NATGetEncoding(NATType type)
     else if ( type == NATTypeUnion ) {
         encoding = "(?=)";
     }
+    else if ( type == NATTypePointer ) {
+        encoding = "^";
+    }
     else {
         encoding = CFDictionaryGetValue(s_TypesToEncodings, &type);
     }
@@ -137,6 +143,11 @@ const char* NATGetEncoding(NATType type)
 
 NATType NATGetType(const char *encoding)
 {
+    // Skip qualifiers
+    if ( encoding[0] == _C_CONST ) {
+        ++encoding;
+    }
+
     NATType type = NATTypeUnknown;
 
     if ( encoding != NULL ) {
@@ -145,6 +156,9 @@ NATType NATGetType(const char *encoding)
         }
         else if ( encoding[0] == _C_UNION_B ) {
             type = NATTypeUnion;
+        }
+        else if ( encoding[0] == _C_PTR ) {
+            type = NATTypePointer;
         }
         else {
             const void *lookup = CFDictionaryGetValue(s_EncodingsToTypes, encoding);

@@ -13,20 +13,33 @@
 #import "NATScope.h"
 
 @implementation NATPropertyChain {
+    NATExpression *_rootExpression;
     NSArray<NSString *> *_segmentNames;
     NATExpression *_assignment;
 }
 
 + (instancetype)expressionWithTokenizer:(NATTokenizer *)tokenizer
 {
-    return [[self alloc] initWithTokenizer:tokenizer];
+    return [[self alloc] initWithRootExpression:nil tokenizer:tokenizer];
 }
 
-#pragma mark - private methods
-
-- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
+- (instancetype)initWithRootExpression:(NATExpression *)rootExpr tokenizer:(NATTokenizer *)tokenizer
 {
     if ( (self = [super init]) ) {
+        if ( rootExpr == nil ) {
+            NSString *rootExpression = [tokenizer advanceUntilChar:'.'];
+            assert(rootExpression != nil);
+
+            _rootExpression = [NATExpression expressionWithSource:rootExpression];
+        }
+        else {
+            _rootExpression = rootExpr;
+        }
+
+        if ( [tokenizer nextChar] == '.' ) {
+            [tokenizer advanceChar];
+        }
+
         NSMutableArray *segments = [NSMutableArray array];
 
         NSString *token = nil;
@@ -48,7 +61,7 @@
 
         _segmentNames = [segments copy];
     }
-
+    
     return self;
 }
 
@@ -56,15 +69,13 @@
 {
     NATMethod *methodChain = nil;
 
-    if ( _segmentNames.count >= 2 ) {
-        NATSymbol *targetSym = [[NATScope currentScope] lookupSymbol:[_segmentNames firstObject]];
-        assert(targetSym.value.type == NATTypeObject);
+    if ( _segmentNames.count > 0 ) {
+        id target = [_rootExpression evaluate].objectValue;
+        assert(target != nil);
 
-        id target = targetSym.value.objectValue;
+        NSUInteger getterCount = (_assignment == nil) ? _segmentNames.count : (_segmentNames.count - 1);
 
-        NSUInteger getterCount = (_assignment == nil) ? (_segmentNames.count - 1) : (_segmentNames.count - 2);
-
-        for ( NSUInteger i = 1; i <= getterCount; ++i ) {
+        for ( NSUInteger i = 0; i < getterCount; ++i ) {
             SEL getter = NSSelectorFromString(_segmentNames[i]);
             assert(getter != nil);
 

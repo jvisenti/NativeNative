@@ -108,6 +108,25 @@ NS_INLINE void NATConsumeWhitespace(NSString *string, NSUInteger *idx)
     return result;
 }
 
+- (NSString *)advanceUntilChar:(char)character
+{
+    NSString *result = nil;
+
+    NATConsumeWhitespace(_string, &_index);
+
+    NSUInteger idx = _index;
+
+    while ( self.hasTokens && [_string characterAtIndex:_index] != character) {
+        ++_index;
+    }
+
+    if ( _index != idx ) {
+        result = [_string substringWithRange:NSMakeRange(idx, _index - idx)];
+    }
+    
+    return result;
+}
+
 - (char)matchChar:(char)character
 {
     char result = [self advanceChar];

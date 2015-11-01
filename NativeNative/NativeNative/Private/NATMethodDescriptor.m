@@ -127,17 +127,22 @@
 
         case _C_PTR:
             info->flags.isPointer = YES;
+            [self pushRegArg:info packed:NO reg:reg stack:stack];
+
             // Nothing to do for void ptr
             if ( *typeEncoding == _C_UNDEF ) {
                 ++typeEncoding;
             }
             else {
                 //TODO: describe the type of pointer
+                ++typeEncoding;
             }
             break;
 
         case _C_CHARPTR:
+            info->flags.isPointer = YES;
             info->flags.isString = YES;
+            [self pushRegArg:info packed:NO reg:reg stack:stack];
             break;
 
         case _C_ARY_B: {

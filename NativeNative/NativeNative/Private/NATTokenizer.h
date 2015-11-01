@@ -20,6 +20,7 @@
 - (NSString *)advanceString:(NSString *)string;
 - (NSString *)advanceExpression:(NSRegularExpression *)expr;
 - (NSString *)advanceUntil:(NSRegularExpression *)expr;
+- (NSString *)advanceUntilChar:(char)character;
 
 - (char)matchChar:(char)character;
 - (NSString *)matchString:(NSString *)string;

@@ -48,6 +48,7 @@
     else if ( (token = [tokenizer advanceExpression:kNATRegexCFunction]) != nil ) {
         expression = [NATCFunction expressionWithSource:token];
     }
+    // TODO: can't currently use properties on string literals
     else if ( (token = [tokenizer advanceExpression:kNATRegexStringLiteral]) != nil ) {
         if ( [token characterAtIndex:0] == '@' ) {
             // Skip starting @" and ending "
@@ -89,6 +90,10 @@
                 expression = [[NATValue alloc] initWithBytes:&value type:NATTypeDouble];
             }
         }
+    }
+
+    if ( [tokenizer nextChar] == '.' ) {
+        expression = [[NATPropertyChain alloc] initWithRootExpression:expression tokenizer:tokenizer];
     }
 
     // TODO: more expression types
@@ -135,13 +140,18 @@
 
 + (instancetype)expressionWithTokenizer:(NATTokenizer *)tokenizer
 {
-    [tokenizer matchExpression:kNATRegexSymName];
+    NSString *typeSym = [tokenizer matchExpression:kNATRegexSymName];
 
     if ( [tokenizer nextChar] == '*' ) {
         [tokenizer advanceChar];
     }
 
-    NSString *symName = [tokenizer matchExpression:kNATRegexSymName];
+    NSString *symName = [tokenizer advanceExpression:kNATRegexSymName];
+
+    // Assigning to an existing symbol
+    if ( symName == nil ) {
+        symName = typeSym;
+    }
 
     [tokenizer matchChar:'='];
 
@@ -162,14 +172,19 @@
 
 - (NATValue *)evaluate
 {
+    BOOL addSymbol = NO;
     NATSymbol *symbol = [[NATScope currentScope] lookupSymbol:_symName];
 
     if ( symbol == nil ) {
         symbol = [[NATSymbol alloc] initWithName:_symName value:nil];
+        addSymbol = YES;
     }
 
     symbol.value = [_expr evaluate];
-    [[NATScope currentScope] addSymbol:symbol];
+
+    if ( addSymbol ) {
+        [[NATScope currentScope] addSymbol:symbol];
+    }
 
     return symbol.value;
 }

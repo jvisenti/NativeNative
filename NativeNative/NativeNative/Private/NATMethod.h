@@ -17,6 +17,6 @@
 
 @interface NATCFunction : NATExpression
 
-- (instancetype)initWithIMP:(IMP)imp arguments:(NSArray<id<NATExpression>> *)arguments;
+- (instancetype)initWithIMP:(IMP)imp arguments:(NSArray<id<NATExpression>> *)arguments returnType:(NSString *)returnType;
 
 @end
