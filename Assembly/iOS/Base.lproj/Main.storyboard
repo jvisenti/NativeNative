@@ -73,6 +73,7 @@
                     <navigationItem key="navigationItem" title="View Controller" id="tGi-yU-ay4"/>
                     <connections>
                         <outlet property="consoleView" destination="DkR-Ip-ssb" id="ubt-CR-4Gy"/>
+                        <outlet property="executeButton" destination="J8U-zp-yRh" id="SdP-eh-ZxN"/>
                         <outlet property="programLabel" destination="I4D-jy-zxB" id="S5S-qe-oPL"/>
                     </connections>
                 </viewController>

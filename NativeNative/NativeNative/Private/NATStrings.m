@@ -1,0 +1,53 @@
+//
+//  NATStrings.m
+//  Assembly
+//
+//  Created by Rob Visentin on 11/1/15.
+//  Copyright © 2015 Raizlabs. All rights reserved.
+//
+
+#import "NATStrings.h"
+
+@implementation NATStrings
+
++ (NSString *)getStringForLiteral:(NSString *)literal
+{
+    static NSMutableDictionary *s_StringLiterals = nil;
+
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_StringLiterals = [NSMutableDictionary dictionary];
+    });
+
+    NSString *string = s_StringLiterals[literal];
+
+    if ( string == nil ) {
+        string = [literal copy];
+        s_StringLiterals[literal] = string;
+    }
+
+    return string;
+}
+
++ (const char *)getCStringForLiteral:(NSString *)literal
+{
+    static NSMutableDictionary *s_CStringLiterals = nil;
+
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_CStringLiterals = [NSMutableDictionary dictionary];
+    });
+
+    const char *CString = [s_CStringLiterals[literal] UTF8String];
+
+    if ( CString == NULL ) {
+        NSString *string = [NSString stringWithUTF8String:literal.UTF8String];
+        s_CStringLiterals[literal] = string;
+
+        CString = string.UTF8String;
+    }
+
+    return CString;
+}
+
+@end

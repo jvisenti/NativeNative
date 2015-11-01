@@ -12,6 +12,7 @@
 #import "NATScope.h"
 #import "NATMethod.h"
 #import "NATPropertyChain.h"
+#import "NATStrings.h"
 
 @interface NATSymbolExpression : NATExpression
 - (instancetype)initWithName:(NSString *)name;
@@ -58,11 +59,15 @@
     else if ( (token = [tokenizer advanceExpression:kNATRegexStringLiteral]) != nil ) {
         if ( [token characterAtIndex:0] == '@' ) {
             // Skip starting @" and ending "
-            expression = [token substringWithRange:NSMakeRange(2, token.length - 3)];
+            NSString *literal = [token substringWithRange:NSMakeRange(2, token.length - 3)];
+            expression = [NATStrings getStringForLiteral:literal];
         }
         else {
-            //TOO: support C strings
-            NSAssert(NO, @"C strings not yet supported.");
+            // Skip starting and ending "s
+            NSString *literal = [token substringWithRange:NSMakeRange(1, token.length - 2)];
+
+            const char *CString = [NATStrings getCStringForLiteral:literal];
+            expression = [[NATValue alloc] initWithBytes:&CString type:NATTypeCharPointer];
         }
     }
     else {

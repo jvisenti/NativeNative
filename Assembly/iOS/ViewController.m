@@ -15,6 +15,7 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *programLabel;
 @property (weak, nonatomic) IBOutlet UITextView *consoleView;
+@property (weak, nonatomic) IBOutlet UIButton *executeButton;
 
 @end
 

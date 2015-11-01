@@ -14,6 +14,7 @@
 #import "NATProperty.h"
 #import "NATProgram.h"
 #import "NATPropertyChain.h"
+#import "NATStrings.h"
 
 @interface NativeNativeTests : XCTestCase
 
@@ -256,6 +257,19 @@
     [program execute];
 
     [NATScope exit];
+}
+
+- (void)testStrings
+{
+    NSString *s1 = [NATStrings getStringForLiteral:@"testing"];
+    NSString *s2 = [NATStrings getStringForLiteral:@"testing"];
+
+    XCTAssertEqual(s1, s2);
+
+    const char *cs1 = [NATStrings getCStringForLiteral:@"testing"];
+    const char *cs2 = [NATStrings getCStringForLiteral:@"testing"];
+
+    XCTAssertEqual(cs1, cs2);
 }
 
 @end
