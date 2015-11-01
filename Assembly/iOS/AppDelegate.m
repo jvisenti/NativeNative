@@ -55,7 +55,7 @@ static void test_function(int a, id  b)
 //    test[2] = -80;
     
 //    double test = NAT_INVOKE(obj, @selector(printInt:double:object:), &arg, &arg2, &obj).doubleValue;
-//    NAT_INVOKE_C(test_function, "vi@", &arg, &obj);
+//    NAT_INVOKE_C(test_function, "vi@", &arg, &self);
 
 //    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[obj methodSignatureForSelector:@selector(test:)]];
 //    test.target = obj;
@@ -66,6 +66,9 @@ static void test_function(int a, id  b)
 //    [test setArgument:&obj atIndex:4];
 //
 //    [test invoke];
+
+//    NSString *t = @"%@";
+//    NAT_INVOKE_C(NSLog, "v@@", &t, &self);
 
     return YES;
 }

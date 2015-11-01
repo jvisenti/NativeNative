@@ -190,15 +190,43 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
 - (void)invokeIMP:(IMP)imp
 {
     [self retainArgumentsIfNeeded];
-    
-    __nat_invoking__(imp, _frame, _methodDescriptor.frameLength, _returnBuffer);
 
-    NATArgInfo returnInfo = _methodDescriptor.returnTypeInfo;
+#if TARGET_CPU_ARM64
+    // NOTE: NSLog appears to be an exception in that it expects certain args on the stack
+    // TODO: investigate if this affects other functions as well
+    if ( imp == (IMP)NSLog ) {
+        NSUInteger sum = 0;
+        for ( NSUInteger i = 1; i < _methodDescriptor.numberOfArguments; ++i ) {
+            sum += [_methodDescriptor infoForArgumentAtIndex:i].size;
+        }
 
-    if (returnInfo.size > 0 ) {
-        void *retBuffer = (char *)_returnBuffer + returnInfo.frameOffset;
-        _returnValue = [[NATValue alloc] initWithBytes:retBuffer encoding:_methodSignature.methodReturnType];
+        // Allocate stack space
+        NSUInteger frameLength = NAT_ALIGN_16(kNATStackOffset + sum);
+        _frame = realloc(_frame, frameLength);
+
+        sum = 0;
+        for ( NSUInteger i = 1; i < _methodDescriptor.numberOfArguments; ++i ) {
+            NATArgInfo info = [_methodDescriptor infoForArgumentAtIndex:i];
+
+            memcpy((char *)_frame + kNATStackOffset + sum, (char *)_frame + info.frameOffset, info.size + info.sizeAdjustment);
+            sum += info.size;
+        }
+
+        __nat_invoking__(imp, _frame, frameLength, _returnBuffer);
     }
+    else {
+#endif
+        __nat_invoking__(imp, _frame, _methodDescriptor.frameLength, _returnBuffer);
+
+        NATArgInfo returnInfo = _methodDescriptor.returnTypeInfo;
+
+        if (returnInfo.size > 0 ) {
+            void *retBuffer = (char *)_returnBuffer + returnInfo.frameOffset;
+            _returnValue = [[NATValue alloc] initWithBytes:retBuffer encoding:_methodSignature.methodReturnType];
+        }
+#if TARGET_CPU_ARM64
+    }
+#endif
 }
 
 #pragma mark - private methods

@@ -21,6 +21,7 @@
 - (NSString *)advanceExpression:(NSRegularExpression *)expr;
 - (NSString *)advanceUntil:(NSRegularExpression *)expr;
 - (NSString *)advanceUntilChar:(char)character;
+- (NSString *)advanceRemaining;
 
 - (char)matchChar:(char)character;
 - (NSString *)matchString:(NSString *)string;

@@ -10,10 +10,8 @@
 
 #import "NATMethodDescriptor.h"
 
-#define NAT_ALIGN(v, a) (((v + (a - 1)) / (a)) * (a))
-#define NAT_ALIGN_16(v) ((v) + 0xF & ~0xF)
+#if TARGET_CPU_X86_64
 
-#if __x86_64__
 #define NAT_REG_SIZE        8
 #define NAT_MAX_REG_AREA    48
 #define NAT_SIMD_START      NAT_MAX_REG_AREA
@@ -22,7 +20,9 @@
 #define NAT_MAX_REG_STRUCT  16
 #define NAT_STRUCTS_BY_REF  0
 #define NAT_RET_BUFFER_LEN  48
-#elif __arm64__
+
+#elif TARGET_CPU_ARM64
+
 #define NAT_REG_SIZE        8
 #define NAT_MAX_REG_AREA    64
 #define NAT_SIMD_START      80
@@ -30,10 +30,13 @@
 #define NAT_SIMD_RET_OFFSET 80
 #define NAT_MAX_REG_STRUCT  16
 #define NAT_STRUCTS_BY_REF  1
-#define NAT_RET_BUFFER_LEN  208
+#define NAT_RET_BUFFER_LEN  NAT_SIMD_START + NAT_MAX_SIMD_AREA
+
 #endif
 
 #define NAT_SIMD_SIZE       16
+
+NSUInteger const kNATStackOffset = NAT_SIMD_START + NAT_MAX_SIMD_AREA;
 
 @implementation NATMethodDescriptor {
     NATArgInfo *_args;
@@ -115,6 +118,7 @@
 
     NSGetSizeAndAlignment(typeEncoding, &info->size, &info->align);
 
+    // TODO: only do this when parsing a struct recursively
     info->memOffset = _memOffset;
     _memOffset += info->size;
 

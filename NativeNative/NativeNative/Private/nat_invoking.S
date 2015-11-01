@@ -119,8 +119,8 @@ ___nat_invoking__:
     mov     x13, x0             /* store function */
     mov     x14, x1             /* store args */
 
-    sub    sp, sp, #16          /* allocate 16 bytes on the stack */
-    str    x3, [sp]             /* save return buffer */
+    sub     sp, sp, #16         /* allocate 16 bytes on the stack */
+    str     x3, [sp]            /* save return buffer */
 
     cmp     x2, #80             /* skip loading simd registers if possible */
     ble     Lload_reg

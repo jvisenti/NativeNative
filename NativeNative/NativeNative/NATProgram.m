@@ -24,7 +24,8 @@
         NSMutableArray *statements = [NSMutableArray array];
 
         // TODO: not every statement is delimited by a ; ...
-        while ( (line = [tokenizer advanceUntil:kNATRegexStatementTerminal]) != nil ) {
+        while ( (line = [tokenizer advanceUntil:kNATRegexStatementTerminal]) != nil ||
+                (line = [tokenizer advanceRemaining]) != nil ) {
             [tokenizer advanceExpression:kNATRegexStatementTerminal];
 
             [statements addObject:[NATStatement statementWithSource:line]];

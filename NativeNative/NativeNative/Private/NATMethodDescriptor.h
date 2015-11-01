@@ -30,6 +30,11 @@ struct _NATArgInfo {
     } flags;
 };
 
+OBJC_EXTERN NSUInteger const kNATStackOffset;
+
+#define NAT_ALIGN(v, a) (((v + (a - 1)) / (a)) * (a))
+#define NAT_ALIGN_16(v) ((v) + 0xF & ~0xF)
+
 @interface NATMethodDescriptor : NSObject
 
 @property (nonatomic, readonly) NSUInteger frameLength;
