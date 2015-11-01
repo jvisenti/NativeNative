@@ -197,6 +197,11 @@ typedef struct _NATLiteralValues {
     memcpy(buffer, _value, _size);
 }
 
+- (void *)addressOfValue
+{
+    return _value;
+}
+
 - (NSString *)description
 {
     NSString *description = nil;

@@ -132,7 +132,7 @@ const char* NATGetEncoding(NATType type)
         encoding = "(?=)";
     }
     else if ( type == NATTypePointer ) {
-        encoding = "^";
+        encoding = "^v";
     }
     else {
         encoding = CFDictionaryGetValue(s_TypesToEncodings, &type);

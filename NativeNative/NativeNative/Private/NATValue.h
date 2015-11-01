@@ -43,4 +43,6 @@
 
 - (void)getValue:(void *)buffer;
 
+- (void *)addressOfValue;
+
 @end

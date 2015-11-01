@@ -39,7 +39,13 @@
 + (id<NATExpression>)expressionWithTokenizer:(NATTokenizer *)tokenizer
 {
     id<NATExpression> expression = nil;
+    NATUnaryOperator op = nil;
     NSString *token = nil;
+
+    // TODO; refactor operators
+    if ( [tokenizer nextChar] == '&' ) {
+        op = NATUnaryOperatorWithSource([tokenizer matchString:@"&"]);
+    }
 
     if ( [tokenizer nextChar] == '[' ) {
         // TODO: this sucks...
@@ -94,6 +100,10 @@
 
     if ( [tokenizer nextChar] == '.' ) {
         expression = [[NATPropertyChain alloc] initWithRootExpression:expression tokenizer:tokenizer];
+    }
+
+    if ( op != nil ) {
+        expression = [[NATUnaryExpression alloc] initWithOperator:op operand:expression];
     }
 
     // TODO: more expression types
