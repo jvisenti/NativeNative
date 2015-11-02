@@ -105,13 +105,13 @@
                 break;
             }
             else if ( [token nat_matches:kNATRegexIntLiteral] ) {
-                long long value;
+                long long value = 0;
 
                 if ( [token hasPrefix:@"0x"] ) {
                     sscanf(token.UTF8String, "%llx", &value);
                 }
                 else {
-                    [token longLongValue];
+                    value = [token longLongValue];
                 }
 
                 expression = [[NATValue alloc] initWithBytes:&value type:NATTypeLongLong];

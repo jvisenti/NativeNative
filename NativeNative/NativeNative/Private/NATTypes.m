@@ -246,6 +246,7 @@ NSString* NATEncodeTypeFromTokenizer(NATTokenizer *tokenizer)
 
         if ( encoding != '\0' ) {
             if ( [tokenizer nextChar] == '*' ) {
+                [tokenizer advanceChar];
                 typeEncoding = [NSString stringWithFormat:@"%c%c", _C_PTR, encoding];
             }
             else {
