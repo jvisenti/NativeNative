@@ -11,8 +11,6 @@
 NSRegularExpression *kNATRegexNewline = nil;
 NSRegularExpression *kNATRegexWhitespace = nil;
 
-NSRegularExpression *kNATRegexPrimitiveType = nil;
-
 NSRegularExpression *kNATRegexIntLiteral = nil;
 NSRegularExpression *kNATRegexFloatLiteral = nil;
 NSRegularExpression *kNATRegexStringLiteral = nil;
@@ -24,6 +22,7 @@ NSRegularExpression *kNATRegexStatementTerminal = nil;
 NSRegularExpression *kNATRegexSymName = nil;
 NSRegularExpression *kNATRegexCFunction = nil;
 NSRegularExpression *kNATRegexTypeCast = nil;
+NSRegularExpression *kNATRegexProtocolConformance = nil;
 
 NSRegularExpression *kNATRegexAssignment = nil;
 NSRegularExpression *kNATRegexPropertyChain = nil;
@@ -38,8 +37,6 @@ void _NATRegexConfigure(void)
     kNATRegexNewline = NAT_REGEX(@"[\n\r]+");
     kNATRegexWhitespace = NAT_REGEX(@"[\\s]+");
 
-    kNATRegexPrimitiveType = NAT_REGEX(@"(char|int|float|double)");
-
     kNATRegexIntLiteral = NAT_REGEX(@"[\\d]+");
     kNATRegexFloatLiteral = NAT_REGEX(@"[\\d]*\\.[\\d]+f?");
     kNATRegexStringLiteral = NAT_REGEX(@"@?\"([^\"]|[^\\\"])*\"");
@@ -51,8 +48,9 @@ void _NATRegexConfigure(void)
     kNATRegexSymName = NAT_REGEX(@"[_a-zA-Z]+[_\\w]*");
     kNATRegexCFunction = NAT_REGEX(@"(\\([\\s]*[_a-zA-Z]+[_\\w]*[\\s]*\\*?\\))?[_a-zA-Z]+[_\\w]*[\\s]*\\(.*\\)");
     kNATRegexTypeCast = NAT_REGEX(@"(\\([\\s]*[_a-zA-Z]+[_\\w]*[\\s]*\\*?[\\s]*\\))");
+    kNATRegexProtocolConformance = NAT_REGEX(@"<.+>");
 
-    kNATRegexAssignment = NAT_REGEX(@"([_a-zA-Z]+[_\\w]*[\\s]+\\*?[\\s]*)?[_a-zA-Z]+[_\\w]*[\\s]*(\\.[\\s]*[_a-zA-Z]+[_\\w]*[\\s]*)*=[\\s]*.+[;\\)]?");
+    kNATRegexAssignment = NAT_REGEX(@"([_a-zA-Z]+[_\\w]*[\\s]*(<.+>)?[\\s]*\\*?[\\s]*)?[_a-zA-Z]+[_\\w]*[\\s]*(\\.[\\s]*[_a-zA-Z]+[_\\w]*[\\s]*)*=[\\s]*.+[;\\)]?");
     kNATRegexPropertyChain = NAT_REGEX(@"([\\s]*[_a-zA-Z]+[_\\w]*\\.[\\s]*)+[_a-zA-Z]+[_\\w]*");
 
     kNATRegexInterface = NAT_REGEX(@"@interface[\\s]*[_a-zA-Z]+[_\\w]*[\\s]*:[\\s]*[_a-zA-Z]+[_\\w]*");

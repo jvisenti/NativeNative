@@ -11,8 +11,6 @@
 OBJC_EXTERN NSRegularExpression *kNATRegexNewline;
 OBJC_EXTERN NSRegularExpression *kNATRegexWhitespace;
 
-OBJC_EXTERN NSRegularExpression *kNATRegexPrimitiveType;
-
 OBJC_EXTERN NSRegularExpression *kNATRegexIntLiteral;
 OBJC_EXTERN NSRegularExpression *kNATRegexFloatLiteral;
 OBJC_EXTERN NSRegularExpression *kNATRegexStringLiteral;
@@ -24,6 +22,7 @@ OBJC_EXTERN NSRegularExpression *kNATRegexStatementTerminal;
 OBJC_EXTERN NSRegularExpression *kNATRegexSymName;
 OBJC_EXTERN NSRegularExpression *kNATRegexCFunction;
 OBJC_EXTERN NSRegularExpression *kNATRegexTypeCast;
+OBJC_EXTERN NSRegularExpression *kNATRegexProtocolConformance;
 
 OBJC_EXTERN NSRegularExpression *kNATRegexAssignment;
 OBJC_EXTERN NSRegularExpression *kNATRegexPropertyChain;

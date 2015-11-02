@@ -241,6 +241,9 @@ NSString* NATEncodeTypeFromTokenizer(NATTokenizer *tokenizer)
             *encoding = toupper(*encoding);
         }
 
+        // Skip any protocol conformance
+        [tokenizer advanceExpression:kNATRegexProtocolConformance];
+
         if ( encoding != NULL ) {
             if ( [tokenizer nextChar] == '*' ) {
                 typeEncoding = [NSString stringWithFormat:@"%c%s", _C_PTR, encoding];

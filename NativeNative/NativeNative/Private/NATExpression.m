@@ -170,6 +170,9 @@
     NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:source];
     NSString *typeSym = [tokenizer matchExpression:kNATRegexSymName];
 
+    // Skip protocol conformance
+    [tokenizer advanceExpression:kNATRegexProtocolConformance];
+
     if ( [tokenizer nextChar] == '*' ) {
         [tokenizer advanceChar];
     }
