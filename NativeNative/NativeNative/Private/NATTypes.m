@@ -6,9 +6,10 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-#import "NATTypes.h"
-
 #import <objc/runtime.h>
+
+#import "NATTypes.h"
+#import "NATTokenizer.h"
 
 static CFDictionaryRef s_TypesToEncodings;
 static CFDictionaryRef s_EncodingsToTypes;
@@ -170,4 +171,88 @@ NATType NATGetType(const char *encoding)
     }
 
     return type;
+}
+
+NSString* NATEncodeType(NSString *type)
+{
+    return NATEncodeTypeFromTokenizer( [[NATTokenizer alloc] initWithString:type]);
+}
+
+NSString* NATEncodeTypeFromTokenizer(NATTokenizer *tokenizer)
+{
+    NSString *typeEncoding = nil;
+
+    if ( tokenizer.hasTokens ) {
+        // Account for both variations e.g. const unsigned and unsigned const
+
+        [tokenizer advanceString:@"const"];
+        [tokenizer advanceString:@"signed"];
+
+        BOOL isSigned = !([tokenizer advanceString:@"unsigned"] != nil);
+
+        [tokenizer advanceString:@"const"];
+        [tokenizer advanceString:@"signed"];
+
+        // TODO: this is not scaleable. figure out if there's a better way
+
+        char *encoding = NULL;
+        BOOL integerType = NO;
+
+        if ( [tokenizer advanceString:@"char"] ) {
+            encoding = @encode(char);
+            integerType = YES;
+        }
+        else if ( [tokenizer advanceString:@"short"] ) {
+            encoding = @encode(short);
+            integerType = YES;
+        }
+        else if ( [tokenizer advanceString:@"int"] ) {
+            encoding = @encode(int);
+            integerType = YES;
+        }
+        else if ( [tokenizer advanceString:@"long"] ) {
+            encoding = @encode(long);
+            integerType = YES;
+        }
+        else if ( [tokenizer advanceString:@"long long"] ) {
+            encoding = @encode(long long);
+            integerType = YES;
+        }
+        else if ( [tokenizer advanceString:@"float"] ) {
+            encoding = @encode(float);
+        }
+        else if ( [tokenizer advanceString:@"double"] ) {
+            encoding = @encode(double);
+        }
+        else if ( [tokenizer advanceString:@"BOOL"] || [tokenizer advanceString:@"bool"] ) {
+            encoding = @encode(BOOL);
+        }
+        else if ( [tokenizer advanceString:@"SEL"] ) {
+            encoding = @encode(SEL);
+        }
+        else if ( [tokenizer advanceString:@"void"] ) {
+            encoding = @encode(void);
+        }
+        else if ( [tokenizer advanceString:@"id"] ) {
+            encoding = @encode(id);
+        }
+
+        if ( integerType && !isSigned ) {
+            *encoding = toupper(*encoding);
+        }
+
+        if ( encoding != NULL ) {
+            if ( [tokenizer nextChar] == '*' ) {
+                typeEncoding = [NSString stringWithFormat:@"%c%s", _C_PTR, encoding];
+            }
+            else {
+                typeEncoding = [NSString stringWithUTF8String:encoding];
+            }
+        }
+        else {
+            typeEncoding = [NSString stringWithFormat:@"%c", _C_ID];
+        }
+    }
+
+    return typeEncoding;
 }

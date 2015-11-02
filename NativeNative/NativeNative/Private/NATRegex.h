@@ -26,7 +26,9 @@ OBJC_EXTERN NSRegularExpression *kNATRegexCFunction;
 OBJC_EXTERN NSRegularExpression *kNATRegexTypeCast;
 
 OBJC_EXTERN NSRegularExpression *kNATRegexAssignment;
-OBJC_EXPORT NSRegularExpression *kNATRegexPropertyChain;
+OBJC_EXTERN NSRegularExpression *kNATRegexPropertyChain;
+
+OBJC_EXTERN NSRegularExpression *kNATRegexInterface;
 
 @interface NSString (NATExtensions)
 

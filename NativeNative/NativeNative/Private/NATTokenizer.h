@@ -27,4 +27,7 @@
 - (NSString *)matchString:(NSString *)string;
 - (NSString *)matchExpression:(NSRegularExpression *)expr;
 
+// Checks for a match without advancing the tokenizer
+- (BOOL)matchesExpression:(NSRegularExpression *)expr;
+
 @end

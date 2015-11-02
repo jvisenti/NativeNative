@@ -19,16 +19,12 @@
 {
     if ( (self = [super init]) ) {
         NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:source];
-        NSString *line = nil;
 
         NSMutableArray *statements = [NSMutableArray array];
+        id<NATStatement> statement = nil;
 
-        // TODO: not every statement is delimited by a ; ...
-        while ( (line = [tokenizer advanceUntil:kNATRegexStatementTerminal]) != nil ||
-                (line = [tokenizer advanceRemaining]) != nil ) {
-            [tokenizer advanceExpression:kNATRegexStatementTerminal];
-
-            [statements addObject:[NATStatement statementWithSource:line]];
+        while ( (statement = [NATStatement statementWithTokenizer:tokenizer]) ) {
+            [statements addObject:statement];
         }
 
         _statements = [statements copy];

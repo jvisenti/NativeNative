@@ -54,7 +54,7 @@ NS_INLINE void NATConsumeWhitespace(NSString *string, NSUInteger *idx)
 
     NATConsumeWhitespace(_string, &_index);
 
-    if ( _index + string.length < _string.length ) {
+    if ( _index + string.length <= _string.length ) {
         result = [_string substringWithRange:NSMakeRange(_index, string.length)];
 
         if ( [result isEqualToString:string] ) {
@@ -166,6 +166,26 @@ NS_INLINE void NATConsumeWhitespace(NSString *string, NSUInteger *idx)
     NSAssert(result != nil, @"%@ unable to match expression: %@", [self class], expr.pattern);
 
     return result;
+}
+
+- (BOOL)matchesExpression:(NSRegularExpression *)expr
+{
+    BOOL matches = NO;
+
+    NATConsumeWhitespace(_string, &_index);
+
+    if ( self.hasTokens ) {
+        NSTextCheckingResult *match = [expr firstMatchInString:_string options:NSMatchingAnchored range:NSMakeRange(_index, _string.length - _index)];
+
+        matches = (match != nil);
+    }
+
+    return matches;
+}
+
+- (NSString *)description
+{
+    return self.hasTokens ? [_string substringFromIndex:_index] : @"";
 }
 
 @end

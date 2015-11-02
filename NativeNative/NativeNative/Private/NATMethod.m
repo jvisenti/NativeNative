@@ -149,37 +149,7 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
         _imp = imp;
         _arguments = [arguments copy];
 
-        if ( returnType != nil ) {
-            // TODO: this is not scaleable
-            const char *returnEncoding = NULL;
-            if ( [returnType hasPrefix:@"int"] ) {
-                returnEncoding = @encode(int);
-            }
-            else if ( [returnType hasPrefix:@"float"] ) {
-                returnEncoding = @encode(float);
-            }
-            else if ( [returnType hasPrefix:@"double"] ) {
-                returnEncoding = @encode(double);
-            }
-            else if ( [returnType hasPrefix:@"void"] ) {
-                returnEncoding = @encode(void);
-            }
-            else if ( [returnType hasPrefix:@"id"] ) {
-                returnEncoding = @encode(id);
-            }
-
-            if ( returnType != nil ) {
-                if ( [returnType hasSuffix:@"*"] ) {
-                    _returnType = [NSString stringWithFormat:@"%c%s", _C_PTR, returnEncoding];
-                }
-                else {
-                    _returnType = [NSString stringWithUTF8String:returnEncoding];
-                }
-            }
-            else {
-                _returnType = [NSString stringWithFormat:@"%s", @encode(id)];
-            }
-        }
+        _returnType = NATEncodeType(returnType);
     }
 
     return self;

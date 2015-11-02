@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class NATTokenizer;
+
 CF_EXTERN_C_BEGIN
 
 typedef int NATType;
@@ -36,5 +38,8 @@ CF_EXPORT const NATType NATTypePointer;
 
 CF_EXPORT const char* NATGetEncoding(NATType type);
 CF_EXPORT NATType NATGetType(const char *encoding);
+
+CF_EXPORT NSString* NATEncodeType(NSString *type);
+CF_EXPORT NSString* NATEncodeTypeFromTokenizer(NATTokenizer *tokenizer);
 
 CF_EXTERN_C_END

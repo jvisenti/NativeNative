@@ -8,12 +8,10 @@
 
 #import "NATStatement.h"
 
-#import "NATTokenizer.h"
 #import "NATExpression.h"
-#import "NATMethod.h"
-#import "NATScope.h"
+#import "NATInterfaceStatement.h"
 
-@interface NATExpressionStatement : NATStatement
+@interface NATExpressionStatement : NSObject <NATStatement>
 
 - (instancetype)initWithExpression:(NATExpression *)expression;
 
@@ -21,13 +19,26 @@
 
 @implementation NATStatement
 
-+ (instancetype)statementWithSource:(NSString *)source
++ (id<NATStatement>)statementWithSource:(NSString *)source
 {
-    NATStatement *statement = nil;
-    NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:source];
+    return [self statementWithTokenizer:[[NATTokenizer alloc] initWithString:source]];
+}
+
++ (id<NATStatement>)statementWithTokenizer:(NATTokenizer *)tokenizer
+{
+    id<NATStatement> statement = nil;
+    NSString *token = nil;
 
     // TODO: more types of statements...
-    statement = [[NATExpressionStatement alloc] initWithExpression:[NATExpression expressionWithTokenizer:tokenizer]];
+    if ( [tokenizer matchesExpression:kNATRegexInterface] ) {
+        statement = [[NATInterfaceStatement alloc] initWithTokenizer:tokenizer];
+    }
+    else if ( (token = [tokenizer advanceUntil:kNATRegexStatementTerminal]) ||
+              (token = [tokenizer advanceRemaining])) {
+        [tokenizer advanceExpression:kNATRegexStatementTerminal];
+
+        statement = [[NATExpressionStatement alloc] initWithExpression:[NATExpression expressionWithSource:token]];
+    }
 
     return statement;
 }

@@ -29,6 +29,7 @@
 		D45477A91BE3F95600DF16BD /* NATTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477931BE3F95600DF16BD /* NATTypes.m */; settings = {ASSET_TAGS = (); }; };
 		D45477AA1BE3F95600DF16BD /* NATValue.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477951BE3F95600DF16BD /* NATValue.m */; settings = {ASSET_TAGS = (); }; };
 		D4A058AC1BE664B400DD9234 /* NATStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = D4A058AA1BE6630D00DD9234 /* NATStrings.m */; settings = {ASSET_TAGS = (); }; };
+		D4A058B71BE7093B00DD9234 /* NATInterfaceStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = D4A058B61BE7093B00DD9234 /* NATInterfaceStatement.m */; settings = {ASSET_TAGS = (); }; };
 		D4BDD8351BE57B2400D59872 /* NATPropertyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = D4BDD8331BE57B2400D59872 /* NATPropertyChain.m */; settings = {ASSET_TAGS = (); }; };
 		D4BDD8361BE57B5E00D59872 /* NATProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477AC1BE4FAAE00DF16BD /* NATProperty.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
@@ -89,6 +90,8 @@
 		D45477AC1BE4FAAE00DF16BD /* NATProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATProperty.m; sourceTree = "<group>"; };
 		D4A058A91BE6630D00DD9234 /* NATStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATStrings.h; sourceTree = "<group>"; };
 		D4A058AA1BE6630D00DD9234 /* NATStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATStrings.m; sourceTree = "<group>"; };
+		D4A058B51BE7093B00DD9234 /* NATInterfaceStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATInterfaceStatement.h; sourceTree = "<group>"; };
+		D4A058B61BE7093B00DD9234 /* NATInterfaceStatement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATInterfaceStatement.m; sourceTree = "<group>"; };
 		D4BDD8321BE57B2400D59872 /* NATPropertyChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATPropertyChain.h; sourceTree = "<group>"; };
 		D4BDD8331BE57B2400D59872 /* NATPropertyChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATPropertyChain.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -181,6 +184,8 @@
 				D454777F1BE3F95600DF16BD /* nat_invoking.S */,
 				D45477801BE3F95600DF16BD /* NATExpression.h */,
 				D45477811BE3F95600DF16BD /* NATExpression.m */,
+				D4A058B51BE7093B00DD9234 /* NATInterfaceStatement.h */,
+				D4A058B61BE7093B00DD9234 /* NATInterfaceStatement.m */,
 				D45477821BE3F95600DF16BD /* NATInvocation.h */,
 				D45477831BE3F95600DF16BD /* NATInvocation.m */,
 				D45477841BE3F95600DF16BD /* NATMethod.h */,
@@ -318,6 +323,7 @@
 				D45477A81BE3F95600DF16BD /* NATTokenizer.m in Sources */,
 				D45477AA1BE3F95600DF16BD /* NATValue.m in Sources */,
 				D45477A41BE3F95600DF16BD /* NATOperators.m in Sources */,
+				D4A058B71BE7093B00DD9234 /* NATInterfaceStatement.m in Sources */,
 				D4BDD8351BE57B2400D59872 /* NATPropertyChain.m in Sources */,
 				D454779E1BE3F95600DF16BD /* NATProgram.m in Sources */,
 				D45477A01BE3F95600DF16BD /* NATExpression.m in Sources */,

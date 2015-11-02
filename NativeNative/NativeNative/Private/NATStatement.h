@@ -6,12 +6,17 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "NATTokenizer.h"
 
-@interface NATStatement : NSObject
-
-+ (instancetype)statementWithSource:(NSString *)source;
+@protocol NATStatement <NSObject>
 
 - (void)execute;
+
+@end
+
+@interface NATStatement : NSObject <NATStatement>
+
++ (id<NATStatement>)statementWithSource:(NSString *)source;
++ (id<NATStatement>)statementWithTokenizer:(NATTokenizer *)tokenizer;
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <objc/runtime.h>
 
 #import "NATTokenizer.h"
 #import "NATScope.h"
@@ -270,6 +271,41 @@
     const char *cs2 = [NATStrings getCStringForLiteral:@"testing"];
 
     XCTAssertEqual(cs1, cs2);
+}
+
+- (void)testInterfaces
+{
+    [NATScope enter];
+
+    NATProgram *program = [[NATProgram alloc] initWithSource:@"\
+                       @interface TestClass : NativeNativeTests <UITableViewDataSource, UITableViewDelegate> { \
+                           NSString *_testIvar1; \
+                           int _testIvar2; \
+                       } \
+                       @end"];
+
+    [program execute];
+
+    XCTAssertNotNil(NSClassFromString(@"TestClass"));
+
+    program = [[NATProgram alloc] initWithSource:@"TestClass *test = [[TestClass alloc] init];"];
+    [program execute];
+
+    id obj = [[NATScope currentScope] lookupSymbol:@"test"].value.objectValue;
+
+    XCTAssert([obj isKindOfClass:NSClassFromString(@"TestClass")]);
+    XCTAssert([obj isKindOfClass:NSClassFromString(@"NativeNativeTests")]);
+
+    XCTAssert([obj conformsToProtocol:@protocol(UITableViewDataSource)]);
+    XCTAssert([obj conformsToProtocol:@protocol(UITableViewDelegate)]);
+
+    Ivar ivar1 = class_getInstanceVariable([obj class], "_testIvar1");
+    Ivar ivar2 = class_getInstanceVariable([obj class], "_testIvar2");
+
+    XCTAssert(strcmp(ivar_getTypeEncoding(ivar1), @encode(id)) == 0);
+    XCTAssert(strcmp(ivar_getTypeEncoding(ivar2), @encode(int)) == 0);
+
+    [NATScope exit];
 }
 
 @end

@@ -32,6 +32,8 @@
 		D487A86C1BDB124F009DCCBE /* NATValue.m in Sources */ = {isa = PBXBuildFile; fileRef = D487A86A1BDB124F009DCCBE /* NATValue.m */; settings = {ASSET_TAGS = (); }; };
 		D4A058AF1BE664CE00DD9234 /* NATStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = D4A058AD1BE664CE00DD9234 /* NATStrings.h */; settings = {ASSET_TAGS = (); }; };
 		D4A058B01BE664CE00DD9234 /* NATStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = D4A058AE1BE664CE00DD9234 /* NATStrings.m */; settings = {ASSET_TAGS = (); }; };
+		D4A058B31BE6DFD200DD9234 /* NATInterfaceStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = D4A058B11BE6DFD200DD9234 /* NATInterfaceStatement.h */; settings = {ASSET_TAGS = (); }; };
+		D4A058B41BE6DFD200DD9234 /* NATInterfaceStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = D4A058B21BE6DFD200DD9234 /* NATInterfaceStatement.m */; settings = {ASSET_TAGS = (); }; };
 		D4B3E7A31BDAC50C009E6507 /* NATMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B3E7A11BDAC50C009E6507 /* NATMethod.h */; settings = {ASSET_TAGS = (); }; };
 		D4B3E7A41BDAC50C009E6507 /* NATMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B3E7A21BDAC50C009E6507 /* NATMethod.m */; settings = {ASSET_TAGS = (); }; };
 		D4B3E7AB1BDAC824009E6507 /* NATTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B3E7A91BDAC824009E6507 /* NATTypes.h */; settings = {ASSET_TAGS = (); }; };
@@ -83,6 +85,8 @@
 		D487A86A1BDB124F009DCCBE /* NATValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATValue.m; sourceTree = "<group>"; };
 		D4A058AD1BE664CE00DD9234 /* NATStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATStrings.h; sourceTree = "<group>"; };
 		D4A058AE1BE664CE00DD9234 /* NATStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATStrings.m; sourceTree = "<group>"; };
+		D4A058B11BE6DFD200DD9234 /* NATInterfaceStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATInterfaceStatement.h; sourceTree = "<group>"; };
+		D4A058B21BE6DFD200DD9234 /* NATInterfaceStatement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATInterfaceStatement.m; sourceTree = "<group>"; };
 		D4B3E7A11BDAC50C009E6507 /* NATMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATMethod.h; sourceTree = "<group>"; };
 		D4B3E7A21BDAC50C009E6507 /* NATMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATMethod.m; sourceTree = "<group>"; };
 		D4B3E7A91BDAC824009E6507 /* NATTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATTypes.h; sourceTree = "<group>"; };
@@ -165,6 +169,8 @@
 				D432C8531BDC1DE80043AB45 /* NATOperators.m */,
 				D4D854971BE3C4F900E3683D /* NATStatement.h */,
 				D4D854981BE3C4F900E3683D /* NATStatement.m */,
+				D4A058B11BE6DFD200DD9234 /* NATInterfaceStatement.h */,
+				D4A058B21BE6DFD200DD9234 /* NATInterfaceStatement.m */,
 				D4B3E7A11BDAC50C009E6507 /* NATMethod.h */,
 				D4B3E7A21BDAC50C009E6507 /* NATMethod.m */,
 				D45477AE1BE4FCF500DF16BD /* NATProperty.h */,
@@ -204,6 +210,7 @@
 				D45477B41BE5691300DF16BD /* NATPropertyChain.h in Headers */,
 				D45477661BE3F81100DF16BD /* NATProgram.h in Headers */,
 				D474D3011BDBF67700042911 /* NATRegex.h in Headers */,
+				D4A058B31BE6DFD200DD9234 /* NATInterfaceStatement.h in Headers */,
 				D487A86B1BDB124F009DCCBE /* NATValue.h in Headers */,
 				D4D854991BE3C4F900E3683D /* NATStatement.h in Headers */,
 				D432C8541BDC1DE80043AB45 /* NATOperators.h in Headers */,
@@ -322,6 +329,7 @@
 				D474D2FE1BDBF5D500042911 /* NATTokenizer.m in Sources */,
 				D4445C1D1BDEF8E30093B2B7 /* NATInvocation.m in Sources */,
 				D4D8549A1BE3C4F900E3683D /* NATStatement.m in Sources */,
+				D4A058B41BE6DFD200DD9234 /* NATInterfaceStatement.m in Sources */,
 				D4C8950D1BE2F6A00003404F /* NATMethodDescriptor.m in Sources */,
 				D487A86C1BDB124F009DCCBE /* NATValue.m in Sources */,
 				D45477B11BE4FCF500DF16BD /* NATProperty.m in Sources */,
