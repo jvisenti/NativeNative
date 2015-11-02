@@ -105,7 +105,15 @@
                 break;
             }
             else if ( [token nat_matches:kNATRegexIntLiteral] ) {
-                long long value = [token longLongValue];
+                long long value;
+
+                if ( [token hasPrefix:@"0x"] ) {
+                    sscanf(token.UTF8String, "%llx", &value);
+                }
+                else {
+                    [token longLongValue];
+                }
+
                 expression = [[NATValue alloc] initWithBytes:&value type:NATTypeLongLong];
             }
             else if ( [token nat_matches:kNATRegexFloatLiteral] ) {
@@ -168,21 +176,11 @@
 - (instancetype)initWithSource:(NSString *)source
 {
     NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:source];
-    NSString *typeSym = [tokenizer matchExpression:kNATRegexSymName];
 
-    // Skip protocol conformance
-    [tokenizer advanceExpression:kNATRegexProtocolConformance];
-
-    if ( [tokenizer nextChar] == '*' ) {
-        [tokenizer advanceChar];
-    }
+    // TODO: maybe preserve type information
+    NATEncodeTypeFromTokenizer(tokenizer);
 
     NSString *symName = [tokenizer advanceExpression:kNATRegexSymName];
-
-    // Assigning to an existing symbol
-    if ( symName == nil ) {
-        symName = typeSym;
-    }
 
     [tokenizer matchChar:'='];
 

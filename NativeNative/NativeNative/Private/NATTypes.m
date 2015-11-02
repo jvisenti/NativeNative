@@ -195,61 +195,61 @@ NSString* NATEncodeTypeFromTokenizer(NATTokenizer *tokenizer)
 
         // TODO: this is not scaleable. figure out if there's a better way
 
-        char *encoding = NULL;
+        char encoding = '\0';
         BOOL integerType = NO;
 
         if ( [tokenizer advanceString:@"char"] ) {
-            encoding = @encode(char);
+            encoding = _C_CHR;
             integerType = YES;
         }
         else if ( [tokenizer advanceString:@"short"] ) {
-            encoding = @encode(short);
+            encoding = _C_SHT;
             integerType = YES;
         }
         else if ( [tokenizer advanceString:@"int"] ) {
-            encoding = @encode(int);
+            encoding = _C_INT;
             integerType = YES;
         }
         else if ( [tokenizer advanceString:@"long"] ) {
-            encoding = @encode(long);
+            encoding = _C_LNG;
             integerType = YES;
         }
         else if ( [tokenizer advanceString:@"long long"] ) {
-            encoding = @encode(long long);
+            encoding = _C_LNG_LNG;
             integerType = YES;
         }
         else if ( [tokenizer advanceString:@"float"] ) {
-            encoding = @encode(float);
+            encoding = _C_FLT;
         }
         else if ( [tokenizer advanceString:@"double"] ) {
-            encoding = @encode(double);
+            encoding = _C_DBL;
         }
         else if ( [tokenizer advanceString:@"BOOL"] || [tokenizer advanceString:@"bool"] ) {
-            encoding = @encode(BOOL);
+            encoding = _C_BOOL;
         }
         else if ( [tokenizer advanceString:@"SEL"] ) {
-            encoding = @encode(SEL);
+            encoding = _C_SEL;
         }
         else if ( [tokenizer advanceString:@"void"] ) {
-            encoding = @encode(void);
+            encoding = _C_VOID;
         }
         else if ( [tokenizer advanceString:@"id"] ) {
-            encoding = @encode(id);
+            encoding = _C_ID;
         }
 
         if ( integerType && !isSigned ) {
-            *encoding = toupper(*encoding);
+            encoding = toupper(encoding);
         }
 
         // Skip any protocol conformance
         [tokenizer advanceExpression:kNATRegexProtocolConformance];
 
-        if ( encoding != NULL ) {
+        if ( encoding != '\0' ) {
             if ( [tokenizer nextChar] == '*' ) {
-                typeEncoding = [NSString stringWithFormat:@"%c%s", _C_PTR, encoding];
+                typeEncoding = [NSString stringWithFormat:@"%c%c", _C_PTR, encoding];
             }
             else {
-                typeEncoding = [NSString stringWithUTF8String:encoding];
+                typeEncoding = [NSString stringWithFormat:@"%c", encoding];
             }
         }
         else {

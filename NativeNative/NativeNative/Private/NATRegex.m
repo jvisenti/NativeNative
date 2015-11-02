@@ -37,12 +37,12 @@ void _NATRegexConfigure(void)
     kNATRegexNewline = NAT_REGEX(@"[\n\r]+");
     kNATRegexWhitespace = NAT_REGEX(@"[\\s]+");
 
-    kNATRegexIntLiteral = NAT_REGEX(@"[\\d]+");
+    kNATRegexIntLiteral = NAT_REGEX(@"(0x)?[\\d]+(L|LL|UL|ULL|LU|LLU)?");
     kNATRegexFloatLiteral = NAT_REGEX(@"[\\d]*\\.[\\d]+f?");
     kNATRegexStringLiteral = NAT_REGEX(@"@?\"([^\"]|[^\\\"])*\"");
     kNATRegexSelectorLiteral = NAT_REGEX(@"@selector\\([^ ]+\\)");
 
-    kNATRegexLiteralTerminal = NAT_REGEX(@"[\\s\\];,\\)]");
+    kNATRegexLiteralTerminal = NAT_REGEX(@"[\\s\\];,\\)\\-]");
     kNATRegexStatementTerminal = NAT_REGEX(@";+");
 
     kNATRegexSymName = NAT_REGEX(@"[_a-zA-Z]+[_\\w]*");
@@ -50,7 +50,7 @@ void _NATRegexConfigure(void)
     kNATRegexTypeCast = NAT_REGEX(@"(\\([\\s]*[_a-zA-Z]+[_\\w]*[\\s]*\\*?[\\s]*\\))");
     kNATRegexProtocolConformance = NAT_REGEX(@"<.+>");
 
-    kNATRegexAssignment = NAT_REGEX(@"([_a-zA-Z]+[_\\w]*[\\s]*(<.+>)?[\\s]*\\*?[\\s]*)?[_a-zA-Z]+[_\\w]*[\\s]*(\\.[\\s]*[_a-zA-Z]+[_\\w]*[\\s]*)*=[\\s]*.+[;\\)]?");
+    kNATRegexAssignment = NAT_REGEX(@"(((const|signed|unsigned)[\\s]*)?((const|signed|unsigned)[\\s]*)?[_a-zA-Z]+[_\\w]*[\\s]*(<.+>)?[\\s]*\\*?[\\s]*(const)?[\\s]*)?[_a-zA-Z]+[_\\w]*[\\s]*(\\.[\\s]*[_a-zA-Z]+[_\\w]*[\\s]*)*=[\\s]*.+[;\\)]?");
     kNATRegexPropertyChain = NAT_REGEX(@"([\\s]*[_a-zA-Z]+[_\\w]*\\.[\\s]*)+[_a-zA-Z]+[_\\w]*");
 
     kNATRegexInterface = NAT_REGEX(@"@interface[\\s]*[_a-zA-Z]+[_\\w]*[\\s]*:[\\s]*[_a-zA-Z]+[_\\w]*");
