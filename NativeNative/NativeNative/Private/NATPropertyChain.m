@@ -70,7 +70,9 @@
     NATMethod *methodChain = nil;
 
     if ( _segmentNames.count > 0 ) {
-        id target = [_rootExpression evaluate].objectValue;
+        NATValue *targetValue = [_rootExpression evaluate];
+
+        id target = (targetValue.type == NATTypeObject) ? targetValue.objectValue : targetValue.classValue;
         assert(target != nil);
 
         NSUInteger getterCount = (_assignment == nil) ? _segmentNames.count : (_segmentNames.count - 1);
