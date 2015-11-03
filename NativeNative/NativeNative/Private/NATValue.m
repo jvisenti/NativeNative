@@ -10,47 +10,65 @@
 
 #import "NATValue.h"
 
-typedef struct _NATLiteralValues {
-    char c;
-    unsigned char uc;
-    short s;
-    unsigned short us;
-    int i;
-    unsigned int ui;
-    long l;
-    unsigned long ul;
-    long long ll;
-    unsigned long long ull;
-    float f;
-    double d;
-    BOOL b;
-} NATLiteralValues;
-
-#define NAT_CVT(value, FROM_TYPE, TO_TYPE) ({ \
-    FROM_TYPE src; memmove(&src, value, sizeof(FROM_TYPE)); \
+#define NAT_CVT(FROM_TYPE, TO_TYPE) do {\
+    FROM_TYPE src; memcpy(&src, _value, sizeof(FROM_TYPE)); \
     TO_TYPE dst = (TO_TYPE)src; \
-    dst; \
-})
+    cvt = &dst; \
+} while(0)
 
-#define NAT_CVT_ALL(value, FROM_TYPE, literal_values) do { \
-    literal_values.c    = NAT_CVT(value, FROM_TYPE, char); \
-    literal_values.uc   = NAT_CVT(value, FROM_TYPE, unsigned char); \
-    literal_values.s    = NAT_CVT(value, FROM_TYPE, short); \
-    literal_values.us   = NAT_CVT(value, FROM_TYPE, unsigned short); \
-    literal_values.i    = NAT_CVT(value, FROM_TYPE, int); \
-    literal_values.ui   = NAT_CVT(value, FROM_TYPE, unsigned int); \
-    literal_values.l    = NAT_CVT(value, FROM_TYPE, long); \
-    literal_values.ul   = NAT_CVT(value, FROM_TYPE, unsigned long); \
-    literal_values.ll   = NAT_CVT(value, FROM_TYPE, long long); \
-    literal_values.ull  = NAT_CVT(value, FROM_TYPE, unsigned long long); \
-    literal_values.f    = NAT_CVT(value, FROM_TYPE, float); \
-    literal_values.d    = NAT_CVT(value, FROM_TYPE, double); \
-    literal_values.b    = NAT_CVT(value, FROM_TYPE, BOOL); \
-} while (0)
+#define NAT_CVT_TO(TO_TYPE) ({ \
+    void *cvt = NULL; \
+    \
+    if ( self.isPrimitive ) { \
+        if ( _type == NATTypeChar ) { \
+            NAT_CVT(char, TO_TYPE); \
+        } \
+        else if ( _type == NATTypeUChar ) { \
+            NAT_CVT(unsigned char, TO_TYPE); \
+        } \
+        else if ( _type == NATTypeShort ) { \
+            NAT_CVT(short, TO_TYPE); \
+        } \
+        else if ( _type == NATTypeUShort ) { \
+            NAT_CVT(unsigned short, TO_TYPE); \
+        } \
+        else if ( _type == NATTypeInt ) { \
+            NAT_CVT(int, TO_TYPE); \
+        } \
+        else if ( _type == NATTypeUInt ) { \
+            NAT_CVT(unsigned int, TO_TYPE); \
+        } \
+        else if ( _type == NATTypeLong ) { \
+            NAT_CVT(long, TO_TYPE); \
+        } \
+        else if ( _type == NATTypeULong ) { \
+            NAT_CVT(unsigned long, TO_TYPE); \
+        } \
+        else if ( _type == NATTypeLongLong ) { \
+            NAT_CVT(long long, TO_TYPE); \
+        } \
+        else if ( _type == NATTypeULongLong ) { \
+            NAT_CVT(unsigned long long, TO_TYPE); \
+        } \
+        else if ( _type == NATTypeFloat ) { \
+            NAT_CVT(float, TO_TYPE); \
+        } \
+        else if ( _type == NATTypeDouble ) { \
+            NAT_CVT(double, TO_TYPE); \
+        } \
+        else if ( _type == NATTypeBool) { \
+            NAT_CVT(BOOL, TO_TYPE); \
+        } \
+    } \
+    else { \
+        cvt = _value; \
+    } \
+    \
+    *(TO_TYPE *)cvt; \
+})
 
 @implementation NATValue {
     void *_value;
-    NATLiteralValues _literalValues;
 }
 
 - (instancetype)initWithBytes:(const void *)bytes type:(NATType)type
@@ -81,8 +99,6 @@ typedef struct _NATLiteralValues {
         else {
             memcpy(_value, bytes, _size);
         }
-
-        [self computeLiteralValues];
     }
 
     return self;
@@ -124,67 +140,67 @@ typedef struct _NATLiteralValues {
 
 - (char)charValue
 {
-    return _literalValues.c;
+    return NAT_CVT_TO(char);
 }
 
 - (unsigned char)uCharValue
 {
-    return _literalValues.uc;
+    return NAT_CVT_TO(unsigned char);
 }
 
 - (short)shortValue
 {
-    return _literalValues.s;
+    return NAT_CVT_TO(short);
 }
 
 - (unsigned short)uShortValue
 {
-    return _literalValues.us;
+    return NAT_CVT_TO(unsigned short);
 }
 
 - (int)intValue
 {
-    return _literalValues.i;
+    return NAT_CVT_TO(int);
 }
 
 - (unsigned int)uIntValue
 {
-    return _literalValues.ui;
+    return NAT_CVT_TO(unsigned int);
 }
 
 - (long)longValue
 {
-    return _literalValues.l;
+    return NAT_CVT_TO(long);
 }
 
 - (unsigned long)uLongValue
 {
-    return _literalValues.ul;
+    return NAT_CVT_TO(unsigned long);
 }
 
 - (long long)longLongValue
 {
-    return _literalValues.ll;
+    return NAT_CVT_TO(long long);
 }
 
 - (unsigned long long)uLongLongValue
 {
-    return _literalValues.ull;
+    return NAT_CVT_TO(unsigned long long);
 }
 
 - (float)floatValue
 {
-    return _literalValues.f;
+    return NAT_CVT_TO(float);
 }
 
 - (double)doubleValue
 {
-    return _literalValues.d;
+    return NAT_CVT_TO(double);
 }
 
 - (BOOL)boolValue
 {
-    return _literalValues.b;
+    return NAT_CVT_TO(BOOL);
 }
 
 - (void *)pointerValue
@@ -272,58 +288,6 @@ typedef struct _NATLiteralValues {
 - (NATValue *)evaluate
 {
     return self;
-}
-
-#pragma mark - private
-
-- (void)computeLiteralValues
-{
-    NATLiteralValues literalValues;
-    memset(&literalValues, 0, sizeof(literalValues));
-
-    if ( self.isPrimitive ) {
-        if ( _type == NATTypeChar ) {
-            NAT_CVT_ALL(_value, char, literalValues);
-        }
-        else if ( _type == NATTypeUChar ) {
-            NAT_CVT_ALL(_value, unsigned char, literalValues);
-        }
-        else if ( _type == NATTypeShort ) {
-            NAT_CVT_ALL(_value, short, literalValues);
-        }
-        else if ( _type == NATTypeUShort ) {
-            NAT_CVT_ALL(_value, unsigned short, literalValues);
-        }
-        else if ( _type == NATTypeInt ) {
-            NAT_CVT_ALL(_value, int, literalValues);
-        }
-        else if ( _type == NATTypeUInt ) {
-            NAT_CVT_ALL(_value, unsigned int, literalValues);
-        }
-        else if ( _type == NATTypeLong ) {
-            NAT_CVT_ALL(_value, long, literalValues);
-        }
-        else if ( _type == NATTypeULong ) {
-            NAT_CVT_ALL(_value, unsigned long, literalValues);
-        }
-        else if ( _type == NATTypeLongLong ) {
-            NAT_CVT_ALL(_value, long long, literalValues);
-        }
-        else if ( _type == NATTypeULongLong ) {
-            NAT_CVT_ALL(_value, unsigned long long, literalValues);
-        }
-        else if ( _type == NATTypeFloat ) {
-            NAT_CVT_ALL(_value, float, literalValues);
-        }
-        else if ( _type == NATTypeDouble ) {
-            NAT_CVT_ALL(_value, double, literalValues);
-        }
-        else if ( _type == NATTypeBool) {
-            NAT_CVT_ALL(_value, BOOL, literalValues);
-        }
-    }
-
-    _literalValues = literalValues;
 }
 
 @end
