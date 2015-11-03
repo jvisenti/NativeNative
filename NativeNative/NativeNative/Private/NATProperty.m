@@ -7,6 +7,7 @@
 //
 
 #import "NATProperty.h"
+#import "NSObject+NATIvars.h"
 
 char* const kNATPropertyAttributeType       = "T";
 char* const kNATPropertyAttributeGetter     = "G";
@@ -16,6 +17,9 @@ char* const kNATPropertyAttributeNonatomic  = "N";
 char* const kNATPropertyAttributeStrong     = "&";
 char* const kNATPropertyAttributeCopy       = "C";
 char* const kNATPropertyAttributeWeak       = "W";
+char* const kNATPropertyAttributeIvar       = "V";
+
+#pragma mark - function definitions
 
 static SEL NATReadSelector(const char *encoding)
 {
@@ -53,6 +57,37 @@ NS_INLINE SEL NATDefaultSetter(const char *prop)
     free(capName);
 
     return setter;
+}
+
+#define NAT_GETTER_BLOCK(_TYPE_, _IVAR_) \
+^_TYPE_ (id self) { \
+    @synchronized(self) { \
+        void *value = [self nat_getIvar:_IVAR_]; \
+        return *(_TYPE_ *)value; \
+    } \
+}
+
+#define NAT_ASSIGN_SETTER_BLOCK(_TYPE_, _IVAR_) \
+^void (id self, _TYPE_ value) { \
+    @synchronized(self) { \
+        [self nat_setIvar:_IVAR_ withValue:&value]; \
+    } \
+}
+
+#define NAT_STRONG_SETTER_BLOCK(_TYPE_, _IVAR_) \
+^void (id self, _TYPE_ value) { \
+    @synchronized(self) { \
+        [self nat_setIvar:_IVAR_ withValue:&value]; \
+    } \
+    CFRetain((CFTypeRef)value); \
+}
+
+#define NAT_COPY_SETTER_BLOCK(_TYPE_, _IVAR_) \
+^void (id self, _TYPE_ value) { \
+    _TYPE_ copy = [value copy]; \
+    @synchronized(self) { \
+        [self nat_setIvar:_IVAR_ withValue:&copy]; \
+    } \
 }
 
 #pragma mark - NATProperty private interface
@@ -99,6 +134,27 @@ NS_INLINE SEL NATDefaultSetter(const char *prop)
         }
 
         free(encoding);
+
+        const char *ivarPtr = strstr(attributes, ",V");
+
+        if ( ivarPtr != NULL ) {
+            const char *start = ivarPtr + 2;
+            char *delim = strchr(ivarPtr, ',');
+
+            char *ivarName = NULL;
+
+            if ( delim != NULL ) {
+                size_t len = (size_t)(delim - start);
+
+                ivarName = strndup(start, len);
+            }
+            else {
+                ivarName = strdup(start);
+            }
+
+            _ivarName = [NSString stringWithUTF8String:ivarName];
+            free(ivarName);
+        }
 
         const char *getterPtr = strstr(attributes, ",G");
 
@@ -213,7 +269,13 @@ NS_INLINE SEL NATDefaultSetter(const char *prop)
         attributes[c++] = weak;
     }
 
-    // TODO: create ivar name attribute (V)
+    if ( self.ivarName != nil ) {
+        objc_property_attribute_t ivar = {
+            .name = kNATPropertyAttributeIvar,
+            .value = self.ivarName.UTF8String
+        };
+        attributes[c++] = ivar;
+    }
 
     objc_property_attribute_t *attrs = malloc(c * sizeof(objc_property_attribute_t));
     memcpy(attrs, attributes, c * sizeof(objc_property_attribute_t));
@@ -259,6 +321,26 @@ NS_INLINE SEL NATDefaultSetter(const char *prop)
     }
 
     return property;
+}
+
++ (void)nat_synthesizeProperty:(NATProperty *)prop
+{
+    id getter, setter;
+    [self nat_getGetterBlock:&getter setterBlock:&setter forProperty:prop];
+
+    if ( getter != nil ) {
+        IMP getterIMP = imp_implementationWithBlock(getter);
+
+        NSString *methodEncoding = [NSString stringWithFormat:@"%@@:", prop.typeEncoding];
+        class_addMethod(self, prop.getter, getterIMP, methodEncoding.UTF8String);
+    }
+
+    if ( setter != nil && !prop.isReadonly ) {
+        IMP setterIMP = imp_implementationWithBlock(setter);
+
+        NSString *methodEncoding = [NSString stringWithFormat:@"v@:%@", prop.typeEncoding];
+        class_addMethod(self, prop.setter, setterIMP, methodEncoding.UTF8String);
+    }
 }
 
 #pragma mark - private methods
@@ -307,6 +389,100 @@ NS_INLINE SEL NATDefaultSetter(const char *prop)
     [self nat_loadProperties];
     
     return objc_getAssociatedObject(self, _cmd);
+}
+
++ (void)nat_getGetterBlock:(id *)getter setterBlock:(id *)setter forProperty:(NATProperty *)prop
+{
+    id getRet, setRet;
+
+    NSString *ivar = prop.ivarName;
+    const char *encoding = prop.typeEncoding.UTF8String;
+
+    if ( ivar != nil && encoding != NULL ) {
+        if ( encoding[0] == _C_ID ) {
+            getRet = NAT_GETTER_BLOCK(const id, ivar);
+
+            if ( prop.isStrong ) {
+                setRet = NAT_STRONG_SETTER_BLOCK(id, ivar);
+            }
+            else if ( prop.isCopy ) {
+                setRet = NAT_COPY_SETTER_BLOCK(id, ivar);
+            }
+            else {
+                setRet = NAT_ASSIGN_SETTER_BLOCK(id, ivar);
+            }
+
+            // TODO: support weak?
+        }
+        else if ( encoding[0] == _C_CHR ) {
+            getRet = NAT_GETTER_BLOCK(char, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(char, ivar);
+        }
+        else if ( encoding[0] == _C_UCHR ) {
+            getRet = NAT_GETTER_BLOCK(unsigned char, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(unsigned char, ivar);
+        }
+        else if ( encoding[0] == _C_SHT ) {
+            getRet = NAT_GETTER_BLOCK(short, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(short, ivar);
+        }
+        else if ( encoding[0] == _C_USHT ) {
+            getRet = NAT_GETTER_BLOCK(unsigned short, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(unsigned short, ivar);
+        }
+        else if ( encoding[0] == _C_INT ) {
+            getRet = NAT_GETTER_BLOCK(int, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(int, ivar);
+        }
+        else if ( encoding[0] == _C_UINT ) {
+            getRet = NAT_GETTER_BLOCK(unsigned int, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(unsigned int, ivar);
+        }
+        else if ( encoding[0] == _C_LNG ) {
+            getRet = NAT_GETTER_BLOCK(long, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(long, ivar);
+        }
+        else if ( encoding[0] == _C_ULNG ) {
+            getRet = NAT_GETTER_BLOCK(unsigned long, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(unsigned long, ivar);
+        }
+        else if ( encoding[0] == _C_LNG_LNG ) {
+            getRet = NAT_GETTER_BLOCK(long long, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(long long, ivar);
+        }
+        else if ( encoding[0] == _C_ULNG_LNG ) {
+            getRet = NAT_GETTER_BLOCK(unsigned long long, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(unsigned long long, ivar);
+        }
+        else if ( encoding[0] == _C_FLT ) {
+            getRet = NAT_GETTER_BLOCK(float, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(float, ivar);
+        }
+        else if ( encoding[0] == _C_DBL ) {
+            getRet = NAT_GETTER_BLOCK(double, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(double, ivar);
+        }
+        else if ( encoding[0] == _C_BOOL ) {
+            getRet = NAT_GETTER_BLOCK(BOOL, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(BOOL, ivar);
+        }
+        else if ( encoding[0] == _C_PTR ) {
+            getRet = NAT_GETTER_BLOCK(void *, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(void *, ivar);
+        }
+        else if ( encoding[0] == _C_CHARPTR ) {
+            getRet = NAT_GETTER_BLOCK(char *, ivar);
+            setRet = NAT_ASSIGN_SETTER_BLOCK(char *, ivar);
+        }
+    }
+
+    if ( getter != NULL ) {
+        *getter = getRet;
+    }
+
+    if ( setter != NULL ) {
+        *setter = setRet;
+    }
 }
 
 @end

@@ -30,45 +30,51 @@
 
 - (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
 {
-    [tokenizer matchString:@"@interface"];
-
-    NSString *className = [tokenizer matchExpression:kNATRegexSymName];
-
-    [tokenizer matchChar:':'];
-
-    NSString *superclassName = [tokenizer matchExpression:kNATRegexSymName];
-
-    if ( [tokenizer nextChar] == '<' ) {
-        [tokenizer advanceChar];
-        _protocols = [self readProtocols:tokenizer];
-        [tokenizer matchChar:'>'];
-    }
-
-    if ( [tokenizer nextChar] == '{' ) {
-        [tokenizer advanceChar];
-        _ivars = [self readIvars:tokenizer];
-        [tokenizer matchChar:'}'];
-    }
-
-    NSMutableArray *properties = [NSMutableArray array];
-
-    while ( tokenizer.hasTokens && [tokenizer advanceString:@"@end"] == nil ) {
-        // Only care about properties. Methods are created when Implementation is interpreted
-        if ( [tokenizer nextChar] == '@' ) {
-            [properties addObject:[self readProperty:tokenizer]];
-        }
-        else {
-            [tokenizer advanceUntil:kNATRegexStatementTerminal];
-        }
-
-        [tokenizer advanceExpression:kNATRegexStatementTerminal];
-    }
-
-    _properties = (properties.count > 0) ? [properties copy] : nil;
-
     if ( (self = [super init]) ) {
-        _className = [className copy];
-        _superclassName = [superclassName copy];
+        [tokenizer matchString:@"@interface"];
+
+        _className = [tokenizer matchExpression:kNATRegexSymName];
+
+        if ( [tokenizer nextChar] == ':' ) {
+            [tokenizer advanceChar];
+
+            _superclassName = [tokenizer matchExpression:kNATRegexSymName];
+        }
+        else if ( [tokenizer nextChar] == '(' ) {
+            // Skip category name
+            // TODO: support interface extension e.g. @interface MyObj ()
+            [tokenizer advanceChar];
+            [tokenizer matchExpression:kNATRegexSymName];
+            [tokenizer matchChar:')'];
+        }
+
+        if ( [tokenizer nextChar] == '<' ) {
+            [tokenizer advanceChar];
+            _protocols = [self readProtocols:tokenizer];
+            [tokenizer matchChar:'>'];
+        }
+
+        if ( [tokenizer nextChar] == '{' ) {
+            [tokenizer advanceChar];
+            _ivars = [self readIvars:tokenizer];
+            [tokenizer matchChar:'}'];
+        }
+
+        NSMutableArray *properties = [NSMutableArray array];
+
+        while ( tokenizer.hasTokens && [tokenizer advanceString:@"@end"] == nil ) {
+            // Only care about properties. Methods are created when Implementation is interpreted
+            if ( [tokenizer nextChar] == '@' ) {
+                [properties addObject:[self readProperty:tokenizer]];
+            }
+            else {
+                [tokenizer advanceUntil:kNATRegexStatementTerminal];
+            }
+
+            [tokenizer advanceExpression:kNATRegexStatementTerminal];
+        }
+
+        _properties = (properties.count > 0) ? [properties copy] : nil;
     }
 
     return self;
@@ -78,19 +84,12 @@
 {
     const char *className = _className.UTF8String;
 
+    BOOL registerClass = NO;
     Class cls = objc_getClass(className);
 
     if ( cls == nil ) {
         Class supercls = objc_getRequiredClass(_superclassName.UTF8String);
         cls = objc_allocateClassPair(supercls, className, 0);
-
-        for ( NSString *protocolName in _protocols ) {
-            Protocol *protocol = objc_getProtocol(protocolName.UTF8String);
-
-            if ( protocol != NULL ) {
-                class_addProtocol(cls, protocol);
-            }
-        }
 
         for ( NATIvar *ivar in _ivars ) {
             NSUInteger size, align;
@@ -99,15 +98,36 @@
             class_addIvar(cls, ivar.name.UTF8String, (size_t)size, (uint8_t)align, ivar.encoding.UTF8String);
         }
 
-        for ( NATProperty *property in _properties ) {
-            unsigned int count = 0;
-            objc_property_attribute_t *attributes = [property createAttributeList:&count];
+        registerClass = YES;
+    }
 
-            class_addProperty(cls, property.name.UTF8String, attributes, count);
+    for ( NSString *protocolName in _protocols ) {
+        Protocol *protocol = objc_getProtocol(protocolName.UTF8String);
 
-            free(attributes);
+        if ( protocol != NULL ) {
+            class_addProtocol(cls, protocol);
+        }
+    }
+
+    for ( NATProperty *property in _properties ) {
+        unsigned int count = 0;
+        objc_property_attribute_t *attributes = [property createAttributeList:&count];
+
+        class_addProperty(cls, property.name.UTF8String, attributes, count);
+
+        free(attributes);
+
+        if ( registerClass && property.ivarName != nil ) {
+            NSUInteger size, align;
+            NSGetSizeAndAlignment(property.typeEncoding.UTF8String, &size, &align);
+
+            class_addIvar(cls, property.ivarName.UTF8String, (size_t)size, (uint8_t)align, property.typeEncoding.UTF8String);
         }
 
+        [cls nat_synthesizeProperty:property];
+    }
+
+    if ( registerClass ) {
         objc_registerClassPair(cls);
     }
 }
@@ -227,6 +247,12 @@
 
     property.typeEncoding = NATEncodeTypeFromTokenizer(tokenizer);
     property.name = [tokenizer matchExpression:kNATRegexSymName];
+
+    if ( _superclassName != nil ) {
+        // Can only declare ivar-backed properties in the class interface (not categories)
+        // TODO: support properties @synthesized to another ivar
+        property.ivarName = [NSString stringWithFormat:@"_%@", property.name];
+    }
 
     if ( strcmp(property.typeEncoding.UTF8String, @encode(id)) == 0 && !ownershipSet ) {
         property.strong = YES;

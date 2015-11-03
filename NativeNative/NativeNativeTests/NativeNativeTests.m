@@ -16,6 +16,7 @@
 #import "NATProgram.h"
 #import "NATPropertyChain.h"
 #import "NATStrings.h"
+#import "NSObject+NATIvars.h"
 
 @interface NativeNativeTests : XCTestCase
 
@@ -252,7 +253,7 @@
     [NATScope enter];
 
     NATProgram *program = [[NATProgram alloc] initWithSource:@"\
-                       @interface TestClass : NSObject <UITableViewDataSource, UITableViewDelegate> { \
+                       @interface NATTestClass : NSObject <UITableViewDataSource, UITableViewDelegate> { \
                            NSString *_testIvar1; \
                            int _testIvar2; \
                        } \
@@ -264,14 +265,14 @@
 
     [program execute];
 
-    XCTAssertNotNil(NSClassFromString(@"TestClass"));
+    XCTAssertNotNil(NSClassFromString(@"NATTestClass"));
 
-    program = [[NATProgram alloc] initWithSource:@"TestClass *test = [[TestClass alloc] init];"];
+    program = [[NATProgram alloc] initWithSource:@"NATTestClass *test = [[NATTestClass alloc] init];"];
     [program execute];
 
     id obj = [[NATScope currentScope] lookupSymbol:@"test"].value.objectValue;
 
-    XCTAssert([obj isKindOfClass:NSClassFromString(@"TestClass")]);
+    XCTAssert([obj isKindOfClass:NSClassFromString(@"NATTestClass")]);
     
     XCTAssert([obj conformsToProtocol:@protocol(UITableViewDataSource)]);
     XCTAssert([obj conformsToProtocol:@protocol(UITableViewDelegate)]);
@@ -282,7 +283,18 @@
     XCTAssert(strcmp(ivar_getTypeEncoding(ivar1), @encode(id)) == 0);
     XCTAssert(strcmp(ivar_getTypeEncoding(ivar2), @encode(int)) == 0);
 
-    // TODO: test default getter and setter
+    NSString *val1 = @"test";
+    int val2 = 25;
+
+    [obj nat_setIvar:@"_testIvar1" withValue:&val1];
+    [obj nat_setIvar:@"_testIvar2" withValue:&val2];
+
+    NSString *ivarVal1 = *(const id *)[obj nat_getIvar:@"_testIvar1"];
+    int ivarVal2 = *(int *)[obj nat_getIvar:@"_testIvar2"];
+
+    XCTAssertEqual(ivarVal1, val1);
+    XCTAssertEqual(ivarVal2, val2);
+
     NATProperty *testProp = [[obj class] nat_propertyForKey:@"testProp"];
     XCTAssert(testProp.isStrong);
     XCTAssert(!testProp.isCopy);
@@ -292,6 +304,7 @@
     XCTAssert(strcmp(testProp.typeEncoding.UTF8String, @encode(id)) == 0);
     XCTAssertEqual(testProp.getter, NSSelectorFromString(@"testProp"));
     XCTAssert(testProp.setter == nil);
+    XCTAssert([testProp.ivarName isEqualToString:@"_testProp"]);
 
     NATProperty *testProp2 = [[obj class] nat_propertyForKey:@"testProp2"];
     XCTAssert(!testProp2.isStrong);
@@ -302,6 +315,7 @@
     XCTAssert(strcmp(testProp2.typeEncoding.UTF8String, @encode(int)) == 0);
     XCTAssertEqual(testProp2.getter, NSSelectorFromString(@"testProp2"));
     XCTAssertEqual(testProp2.setter, NSSelectorFromString(@"setTestProp2:"));
+    XCTAssert([testProp2.ivarName isEqualToString:@"_testProp2"]);
 
     NATProperty *testProp3 = [[obj class] nat_propertyForKey:@"testProp3"];
     XCTAssert(testProp3.isStrong);
@@ -312,6 +326,7 @@
     XCTAssert(strcmp(testProp3.typeEncoding.UTF8String, @encode(id)) == 0);
     XCTAssertEqual(testProp3.getter, NSSelectorFromString(@"testProp3"));
     XCTAssertEqual(testProp3.setter, NSSelectorFromString(@"setTestProp3:"));
+    XCTAssert([testProp3.ivarName isEqualToString:@"_testProp3"]);
 
     NATProperty *testProp4 = [[obj class] nat_propertyForKey:@"testProp4"];
     XCTAssert(!testProp4.isStrong);
@@ -322,6 +337,16 @@
     XCTAssert(strcmp(testProp4.typeEncoding.UTF8String, @encode(void *)) == 0);
     XCTAssertEqual(testProp4.getter, NSSelectorFromString(@"getTestProp4"));
     XCTAssertEqual(testProp4.setter, NSSelectorFromString(@"setTestProp4Test:"));
+    XCTAssert([testProp4.ivarName isEqualToString:@"_testProp4"]);
+
+    program = [[NATProgram alloc] initWithSource:
+               @"test.testProp2 = 10; \
+                 test.testProp3 = @\"test\";"];
+    [program execute];
+
+    XCTAssert([[obj valueForKey:@"testProp2"] intValue] == 10);
+    XCTAssert([[obj valueForKey:@"testProp3"] isEqualToString:@"test"]);
+
 
     [NATScope exit];
 }

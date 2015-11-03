@@ -10,61 +10,61 @@
 
 #import "NATValue.h"
 
-#define NAT_CVT(FROM_TYPE, TO_TYPE) do {\
-    FROM_TYPE src; memcpy(&src, _value, sizeof(FROM_TYPE)); \
-    TO_TYPE dst = (TO_TYPE)src; \
+#define NAT_CVT(_FROM_, _TO_) do {\
+    _FROM_ src; memcpy(&src, _value, sizeof(_FROM_)); \
+    _TO_ dst = (_TO_)src; \
     cvt = &dst; \
 } while(0)
 
-#define NAT_CVT_TO(TO_TYPE) ({ \
+#define NAT_CVT_TO(_TYPE_) ({ \
     void *cvt = NULL; \
     \
     if ( self.isPrimitive ) { \
         if ( _type == NATTypeChar ) { \
-            NAT_CVT(char, TO_TYPE); \
+            NAT_CVT(char, _TYPE_); \
         } \
         else if ( _type == NATTypeUChar ) { \
-            NAT_CVT(unsigned char, TO_TYPE); \
+            NAT_CVT(unsigned char, _TYPE_); \
         } \
         else if ( _type == NATTypeShort ) { \
-            NAT_CVT(short, TO_TYPE); \
+            NAT_CVT(short, _TYPE_); \
         } \
         else if ( _type == NATTypeUShort ) { \
-            NAT_CVT(unsigned short, TO_TYPE); \
+            NAT_CVT(unsigned short, _TYPE_); \
         } \
         else if ( _type == NATTypeInt ) { \
-            NAT_CVT(int, TO_TYPE); \
+            NAT_CVT(int, _TYPE_); \
         } \
         else if ( _type == NATTypeUInt ) { \
-            NAT_CVT(unsigned int, TO_TYPE); \
+            NAT_CVT(unsigned int, _TYPE_); \
         } \
         else if ( _type == NATTypeLong ) { \
-            NAT_CVT(long, TO_TYPE); \
+            NAT_CVT(long, _TYPE_); \
         } \
         else if ( _type == NATTypeULong ) { \
-            NAT_CVT(unsigned long, TO_TYPE); \
+            NAT_CVT(unsigned long, _TYPE_); \
         } \
         else if ( _type == NATTypeLongLong ) { \
-            NAT_CVT(long long, TO_TYPE); \
+            NAT_CVT(long long, _TYPE_); \
         } \
         else if ( _type == NATTypeULongLong ) { \
-            NAT_CVT(unsigned long long, TO_TYPE); \
+            NAT_CVT(unsigned long long, _TYPE_); \
         } \
         else if ( _type == NATTypeFloat ) { \
-            NAT_CVT(float, TO_TYPE); \
+            NAT_CVT(float, _TYPE_); \
         } \
         else if ( _type == NATTypeDouble ) { \
-            NAT_CVT(double, TO_TYPE); \
+            NAT_CVT(double, _TYPE_); \
         } \
         else if ( _type == NATTypeBool) { \
-            NAT_CVT(BOOL, TO_TYPE); \
+            NAT_CVT(BOOL, _TYPE_); \
         } \
     } \
     else { \
         cvt = _value; \
     } \
     \
-    *(TO_TYPE *)cvt; \
+    *(_TYPE_ *)cvt; \
 })
 
 @implementation NATValue {

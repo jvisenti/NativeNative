@@ -17,11 +17,14 @@ OBJC_EXTERN char* const kNATPropertyAttributeNonatomic;
 OBJC_EXTERN char* const kNATPropertyAttributeStrong;
 OBJC_EXTERN char* const kNATPropertyAttributeCopy;
 OBJC_EXTERN char* const kNATPropertyAttributeWeak;
+OBJC_EXTERN char* const kNATPropertyAttributeIvar;
 
 @interface NATProperty : NSObject
 
 @property (copy, nonatomic) NSString *name;
 @property (copy, nonatomic) NSString *typeEncoding;
+
+@property (copy, nonatomic) NSString *ivarName;
 
 @property (assign, nonatomic) SEL getter;
 @property (assign, nonatomic) SEL setter;
@@ -42,5 +45,8 @@ OBJC_EXTERN char* const kNATPropertyAttributeWeak;
 
 + (NATProperty *)nat_propertyForKey:(NSString *)key;
 + (NATProperty *)nat_propertyForSelector:(SEL)selector;
+
+// NOTE: will not replace existing implementations
++ (void)nat_synthesizeProperty:(NATProperty *)prop;
 
 @end

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D4205EEF1BE951D3007F83F4 /* NSObject+NATIvars.m in Sources */ = {isa = PBXBuildFile; fileRef = D4205EEE1BE951D3007F83F4 /* NSObject+NATIvars.m */; settings = {ASSET_TAGS = (); }; };
 		D421559E1BE113CE00835A42 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D421559D1BE113CE00835A42 /* main.m */; };
 		D42155A11BE113CE00835A42 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D42155A01BE113CE00835A42 /* AppDelegate.m */; };
 		D42155A41BE113CE00835A42 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D42155A31BE113CE00835A42 /* ViewController.m */; };
@@ -47,6 +48,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D4205EED1BE951D3007F83F4 /* NSObject+NATIvars.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+NATIvars.h"; sourceTree = "<group>"; };
+		D4205EEE1BE951D3007F83F4 /* NSObject+NATIvars.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+NATIvars.m"; sourceTree = "<group>"; };
 		D421559A1BE113CE00835A42 /* iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D421559D1BE113CE00835A42 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D421559F1BE113CE00835A42 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -212,6 +215,8 @@
 				D45477AC1BE4FAAE00DF16BD /* NATProperty.m */,
 				D4BDD8321BE57B2400D59872 /* NATPropertyChain.h */,
 				D4BDD8331BE57B2400D59872 /* NATPropertyChain.m */,
+				D4205EED1BE951D3007F83F4 /* NSObject+NATIvars.h */,
+				D4205EEE1BE951D3007F83F4 /* NSObject+NATIvars.m */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -325,6 +330,7 @@
 				D45477A41BE3F95600DF16BD /* NATOperators.m in Sources */,
 				D4A058B71BE7093B00DD9234 /* NATInterfaceStatement.m in Sources */,
 				D4BDD8351BE57B2400D59872 /* NATPropertyChain.m in Sources */,
+				D4205EEF1BE951D3007F83F4 /* NSObject+NATIvars.m in Sources */,
 				D454779E1BE3F95600DF16BD /* NATProgram.m in Sources */,
 				D45477A01BE3F95600DF16BD /* NATExpression.m in Sources */,
 				D45477A91BE3F95600DF16BD /* NATTypes.m in Sources */,
