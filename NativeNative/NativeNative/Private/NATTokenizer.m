@@ -55,13 +55,13 @@ NS_INLINE void NATConsumeWhitespace(NSString *string, NSUInteger *idx)
     NATConsumeWhitespace(_string, &_index);
 
     if ( _index + string.length <= _string.length ) {
-        result = [_string substringWithRange:NSMakeRange(_index, string.length)];
 
-        if ( [result isEqualToString:string] ) {
+        NSUInteger idx = 0;
+        while ( [_string characterAtIndex:_index + idx] == [string characterAtIndex:idx] && ++idx < string.length ) {}
+
+        if ( idx == string.length ) {
+            result = string;
             _index += string.length;
-        }
-        else {
-            result = nil;
         }
     }
 

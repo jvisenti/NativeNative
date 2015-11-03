@@ -30,12 +30,6 @@
 
 @implementation NativeNativeTests
 
-- (void)setUp
-{
-    NSURL *filePath = [[NSBundle bundleForClass:[self class]] URLForResource:@"tokenizer_test" withExtension:@"txt"];
-    self.source = [NSString stringWithContentsOfURL:filePath encoding:NSUTF8StringEncoding error:nil];
-}
-
 - (void)print
 {
     NSLog(@"REACHED");
@@ -59,26 +53,6 @@
     });
 
     return 1.0 + drand48();
-}
-
-- (void)testTokenizerLines
-{
-    NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:self.source];
-
-    while ( tokenizer.hasTokens ) {
-        NSString *line = [tokenizer advanceUntil:kNATRegexNewline];
-        printf("%s\n", line.UTF8String);
-    }
-}
-
-- (void)testTokenizerWords
-{
-    NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:self.source];
-
-    while ( tokenizer.hasTokens ) {
-        NSString *word = [tokenizer advanceUntil:kNATRegexWhitespace];
-        printf("%s\n", word.UTF8String);
-    }
 }
 
 - (void)testScoping
@@ -278,10 +252,14 @@
     [NATScope enter];
 
     NATProgram *program = [[NATProgram alloc] initWithSource:@"\
-                       @interface TestClass : NativeNativeTests <UITableViewDataSource, UITableViewDelegate> { \
+                       @interface TestClass : NSObject <UITableViewDataSource, UITableViewDelegate> { \
                            NSString *_testIvar1; \
                            int _testIvar2; \
                        } \
+                           @property (nullable, strong, nonatomic, readonly) NSString *testProp; \
+                           @property (assign, atomic, readwrite) int testProp2; \
+                           @property id testProp3; \
+                           @property (nonnull, getter=getTestProp4, setter = setTestProp4Test:) void *testProp4; \
                        @end"];
 
     [program execute];
@@ -294,8 +272,7 @@
     id obj = [[NATScope currentScope] lookupSymbol:@"test"].value.objectValue;
 
     XCTAssert([obj isKindOfClass:NSClassFromString(@"TestClass")]);
-    XCTAssert([obj isKindOfClass:NSClassFromString(@"NativeNativeTests")]);
-
+    
     XCTAssert([obj conformsToProtocol:@protocol(UITableViewDataSource)]);
     XCTAssert([obj conformsToProtocol:@protocol(UITableViewDelegate)]);
 
@@ -304,6 +281,47 @@
 
     XCTAssert(strcmp(ivar_getTypeEncoding(ivar1), @encode(id)) == 0);
     XCTAssert(strcmp(ivar_getTypeEncoding(ivar2), @encode(int)) == 0);
+
+    // TODO: test default getter and setter
+    NATProperty *testProp = [[obj class] nat_propertyForKey:@"testProp"];
+    XCTAssert(testProp.isStrong);
+    XCTAssert(!testProp.isCopy);
+    XCTAssert(!testProp.isWeak);
+    XCTAssert(testProp.isNonatomic);
+    XCTAssert(testProp.isReadonly);
+    XCTAssert(strcmp(testProp.typeEncoding.UTF8String, @encode(id)) == 0);
+    XCTAssertEqual(testProp.getter, NSSelectorFromString(@"testProp"));
+    XCTAssert(testProp.setter == nil);
+
+    NATProperty *testProp2 = [[obj class] nat_propertyForKey:@"testProp2"];
+    XCTAssert(!testProp2.isStrong);
+    XCTAssert(!testProp2.isCopy);
+    XCTAssert(!testProp2.isWeak);
+    XCTAssert(!testProp2.isNonatomic);
+    XCTAssert(!testProp2.isReadonly);
+    XCTAssert(strcmp(testProp2.typeEncoding.UTF8String, @encode(int)) == 0);
+    XCTAssertEqual(testProp2.getter, NSSelectorFromString(@"testProp2"));
+    XCTAssertEqual(testProp2.setter, NSSelectorFromString(@"setTestProp2:"));
+
+    NATProperty *testProp3 = [[obj class] nat_propertyForKey:@"testProp3"];
+    XCTAssert(testProp3.isStrong);
+    XCTAssert(!testProp3.isCopy);
+    XCTAssert(!testProp3.isWeak);
+    XCTAssert(testProp3.isNonatomic);
+    XCTAssert(!testProp3.isReadonly);
+    XCTAssert(strcmp(testProp3.typeEncoding.UTF8String, @encode(id)) == 0);
+    XCTAssertEqual(testProp3.getter, NSSelectorFromString(@"testProp3"));
+    XCTAssertEqual(testProp3.setter, NSSelectorFromString(@"setTestProp3:"));
+
+    NATProperty *testProp4 = [[obj class] nat_propertyForKey:@"testProp4"];
+    XCTAssert(!testProp4.isStrong);
+    XCTAssert(!testProp4.isCopy);
+    XCTAssert(!testProp4.isWeak);
+    XCTAssert(testProp4.isNonatomic);
+    XCTAssert(!testProp4.isReadonly);
+    XCTAssert(strcmp(testProp4.typeEncoding.UTF8String, @encode(void *)) == 0);
+    XCTAssertEqual(testProp4.getter, NSSelectorFromString(@"getTestProp4"));
+    XCTAssertEqual(testProp4.setter, NSSelectorFromString(@"setTestProp4Test:"));
 
     [NATScope exit];
 }

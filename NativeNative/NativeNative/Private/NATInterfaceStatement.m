@@ -10,6 +10,7 @@
 
 #import "NATInterfaceStatement.h"
 #import "NATTypes.h"
+#import "NATProperty.h"
 
 @interface NATIvar : NSObject
 
@@ -24,6 +25,7 @@
 
     NSArray *_protocols;
     NSArray *_ivars;
+    NSArray *_properties;
 }
 
 - (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
@@ -48,9 +50,21 @@
         [tokenizer matchChar:'}'];
     }
 
-    // TODO: read properties
+    NSMutableArray *properties = [NSMutableArray array];
 
-    [tokenizer matchString:@"@end"];
+    while ( tokenizer.hasTokens && [tokenizer advanceString:@"@end"] == nil ) {
+        // Only care about properties. Methods are created when Implementation is interpreted
+        if ( [tokenizer nextChar] == '@' ) {
+            [properties addObject:[self readProperty:tokenizer]];
+        }
+        else {
+            [tokenizer advanceUntil:kNATRegexStatementTerminal];
+        }
+
+        [tokenizer advanceExpression:kNATRegexStatementTerminal];
+    }
+
+    _properties = (properties.count > 0) ? [properties copy] : nil;
 
     if ( (self = [super init]) ) {
         _className = [className copy];
@@ -83,6 +97,15 @@
             NSGetSizeAndAlignment(ivar.encoding.UTF8String, &size, &align);
 
             class_addIvar(cls, ivar.name.UTF8String, (size_t)size, (uint8_t)align, ivar.encoding.UTF8String);
+        }
+
+        for ( NATProperty *property in _properties ) {
+            unsigned int count = 0;
+            objc_property_attribute_t *attributes = [property createAttributeList:&count];
+
+            class_addProperty(cls, property.name.UTF8String, attributes, count);
+
+            free(attributes);
         }
 
         objc_registerClassPair(cls);
@@ -132,6 +155,88 @@
     }
 
     return [ivars copy];
+}
+
+- (NATProperty *)readProperty:(NATTokenizer *)tokenizer
+{
+    [tokenizer matchString:@"@property"];
+
+    NATProperty *property = [[NATProperty alloc] init];
+
+    BOOL atomicitySet = NO;
+    BOOL ownershipSet = NO;
+
+    if ( [tokenizer nextChar] == '(' ) {
+        [tokenizer advanceChar];
+        
+        while ( tokenizer.hasTokens && [tokenizer nextChar] != ')' ) {
+            if ( [tokenizer advanceString:@"strong"] || [tokenizer advanceString:@"retain"] ) {
+                property.strong = YES;
+                ownershipSet = YES;
+            }
+            else if ( [tokenizer advanceString:@"copy"] ) {
+                property.copy = YES;
+                ownershipSet = YES;
+            }
+            else if ( [tokenizer advanceString:@"weak"] ) {
+                property.weak = YES;
+                ownershipSet = YES;
+            }
+            else if ( [tokenizer advanceString:@"assign"] ) {
+                ownershipSet = YES;
+            }
+            else if ( [tokenizer advanceString:@"nonatomic"] ) {
+                property.nonatomic = YES;
+                atomicitySet = YES;
+            }
+            else if ( [tokenizer advanceString:@"readonly"] ) {
+                property.readonly = YES;
+            }
+            else if ( [tokenizer advanceString:@"getter"] ) {
+                [tokenizer matchChar:'='];
+                property.getter = NSSelectorFromString([tokenizer advanceExpression:kNATRegexSymName]);
+            }
+            else if ( [tokenizer advanceString:@"setter"] ) {
+                [tokenizer matchChar:'='];
+
+                NSString *setterName = [NSString stringWithFormat:@"%@:", [tokenizer advanceExpression:kNATRegexSymName]];
+                [tokenizer matchChar:':'];
+
+                property.setter = NSSelectorFromString(setterName);
+            }
+            else if ( [tokenizer advanceString:@"atomic"] ) {
+                property.nonatomic = NO;
+                atomicitySet = YES;
+            }
+
+            // Skip these attributes
+            [tokenizer advanceString:@"readwrite"];
+            [tokenizer advanceString:@"nullable"];
+            [tokenizer advanceString:@"nonnull"];
+
+            if ( [tokenizer nextChar] == ',' ) {
+                [tokenizer advanceChar];
+            }
+            else {
+                break;
+            }
+        }
+
+        [tokenizer matchChar:')'];
+    }
+
+    property.typeEncoding = NATEncodeTypeFromTokenizer(tokenizer);
+    property.name = [tokenizer matchExpression:kNATRegexSymName];
+
+    if ( strcmp(property.typeEncoding.UTF8String, @encode(id)) == 0 && !ownershipSet ) {
+        property.strong = YES;
+    }
+
+    if ( !atomicitySet ) {
+        property.nonatomic = YES;
+    }
+
+    return property;
 }
 
 @end

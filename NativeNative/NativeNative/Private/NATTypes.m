@@ -255,6 +255,9 @@ NSString* NATEncodeTypeFromTokenizer(NATTokenizer *tokenizer)
         }
         else {
             typeEncoding = [NSString stringWithFormat:@"%c", _C_ID];
+            
+            [tokenizer advanceExpression:kNATRegexSymName];
+            [tokenizer matchChar:'*'];
         }
     }
 

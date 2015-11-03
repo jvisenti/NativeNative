@@ -6,9 +6,16 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-#import <objc/runtime.h>
-
 #import "NATProperty.h"
+
+char* const kNATPropertyAttributeType       = "T";
+char* const kNATPropertyAttributeGetter     = "G";
+char* const kNATPropertyAttributeSetter     = "S";
+char* const kNATPropertyAttributeReadonly   = "R";
+char* const kNATPropertyAttributeNonatomic  = "N";
+char* const kNATPropertyAttributeStrong     = "&";
+char* const kNATPropertyAttributeCopy       = "C";
+char* const kNATPropertyAttributeWeak       = "W";
 
 static SEL NATReadSelector(const char *encoding)
 {
@@ -30,6 +37,22 @@ static SEL NATReadSelector(const char *encoding)
     }
     
     return selector;
+}
+
+NS_INLINE SEL NATDefaultGetter(const char *prop)
+{
+    return sel_getUid(prop);
+}
+
+NS_INLINE SEL NATDefaultSetter(const char *prop)
+{
+    char *capName = strdup(prop);
+    capName[0] = toupper(capName[0]);
+
+    SEL setter = NSSelectorFromString([NSString stringWithFormat:@"set%s:", capName]);
+    free(capName);
+
+    return setter;
 }
 
 #pragma mark - NATProperty private interface
@@ -66,6 +89,10 @@ static SEL NATReadSelector(const char *encoding)
         if ( encoding[0] == _C_ID) {
             // Properties also incude the class name after, but that's not important for the encoding
             _typeEncoding = [NSString stringWithUTF8String:@encode(id)];
+
+            _strong = (strstr(attributes, ",&") != NULL);
+            _copy = (strstr(attributes, ",C") != NULL);
+            _weak = (strstr(attributes, ",W") != NULL);
         }
         else {
             _typeEncoding = [NSString stringWithUTF8String:encoding];
@@ -79,7 +106,7 @@ static SEL NATReadSelector(const char *encoding)
             _getter = NATReadSelector(getterPtr + 2);
         }
         else {
-            _getter = sel_getUid(name);
+            _getter = NATDefaultGetter(name);
         }
 
         if ( strstr(attributes, ",R") == NULL ) {
@@ -89,11 +116,7 @@ static SEL NATReadSelector(const char *encoding)
                 _setter = NATReadSelector(setterPtr + 2);
             }
             else {
-                char *capName = strdup(name);
-                capName[0] = toupper(capName[0]);
-
-                _setter = NSSelectorFromString([NSString stringWithFormat:@"set%s:", capName]);
-                free(capName);
+                _setter = NATDefaultSetter(name);
             }
             
             _readonly = NO;
@@ -101,9 +124,105 @@ static SEL NATReadSelector(const char *encoding)
         else {
             _readonly = YES;
         }
+
+        _nonatomic = (strstr(attributes, ",N") != NULL);
     }
 
     return self;
+}
+
+- (SEL)getter
+{
+    if ( _getter == NULL && _name != nil ) {
+        _getter = NATDefaultGetter(_name.UTF8String);
+    }
+    return _getter;
+}
+
+- (SEL)setter
+{
+    if ( _setter == NULL && !self.isReadonly && _name != nil ) {
+        _setter = NATDefaultSetter(_name.UTF8String);
+    }
+    return _setter;
+}
+
+- (objc_property_attribute_t *)createAttributeList:(unsigned int *)count
+{
+    objc_property_attribute_t attributes[10];
+
+    unsigned int c = 0;
+
+    objc_property_attribute_t type = {
+        .name = kNATPropertyAttributeType,
+        .value = _typeEncoding.UTF8String
+    };
+    attributes[c++] = type;
+
+    if ( self.getter != NULL ) {
+        objc_property_attribute_t getter = {
+            .name = kNATPropertyAttributeGetter,
+            .value = sel_getName(self.getter) };
+        attributes[c++] = getter;
+    }
+
+    if ( self.setter != NULL ) {
+        objc_property_attribute_t setter = {
+            .name = kNATPropertyAttributeSetter,
+            .value = sel_getName(self.setter) };
+        attributes[c++] = setter;
+    }
+
+    if ( self.isReadonly ) {
+        objc_property_attribute_t readonly = {
+            .name = kNATPropertyAttributeReadonly,
+            .value = ""
+        };
+        attributes[c++] = readonly;
+    }
+
+    if ( self.isNonatomic ) {
+        objc_property_attribute_t nonatomic = {
+            .name = kNATPropertyAttributeNonatomic,
+            .value = ""
+        };
+        attributes[c++] = nonatomic;
+    }
+
+    if ( self.isStrong ) {
+        objc_property_attribute_t strong = {
+            .name = kNATPropertyAttributeStrong,
+            .value = ""
+        };
+        attributes[c++] = strong;
+    }
+
+    if ( self.isCopy ) {
+        objc_property_attribute_t copy = {
+            .name = kNATPropertyAttributeCopy,
+            .value = ""
+        };
+        attributes[c++] = copy;
+    }
+
+    if ( self.isWeak ) {
+        objc_property_attribute_t weak = {
+            .name = kNATPropertyAttributeWeak,
+            .value = ""
+        };
+        attributes[c++] = weak;
+    }
+
+    // TODO: create ivar name attribute (V)
+
+    objc_property_attribute_t *attrs = malloc(c * sizeof(objc_property_attribute_t));
+    memcpy(attrs, attributes, c * sizeof(objc_property_attribute_t));
+
+    if ( count != NULL ) {
+        *count = c;
+    }
+
+    return attrs;
 }
 
 - (NSString *)description

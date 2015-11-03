@@ -10,7 +10,6 @@
 		D40569511BD84BEC00EC02D5 /* NativeNative.h in Headers */ = {isa = PBXBuildFile; fileRef = D40569501BD84BEC00EC02D5 /* NativeNative.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D405696C1BD8537100EC02D5 /* NativeNativeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D405696B1BD8537100EC02D5 /* NativeNativeTests.m */; };
 		D405696E1BD8537100EC02D5 /* NativeNative.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D405694D1BD84BEC00EC02D5 /* NativeNative.framework */; settings = {ASSET_TAGS = (); }; };
-		D40569751BD853EE00EC02D5 /* tokenizer_test.txt in Resources */ = {isa = PBXBuildFile; fileRef = D40569741BD853EE00EC02D5 /* tokenizer_test.txt */; settings = {ASSET_TAGS = (); }; };
 		D432C84C1BDC08330043AB45 /* NATScope.h in Headers */ = {isa = PBXBuildFile; fileRef = D432C84A1BDC08330043AB45 /* NATScope.h */; settings = {ASSET_TAGS = (); }; };
 		D432C84D1BDC08330043AB45 /* NATScope.m in Sources */ = {isa = PBXBuildFile; fileRef = D432C84B1BDC08330043AB45 /* NATScope.m */; settings = {ASSET_TAGS = (); }; };
 		D432C8501BDC1A900043AB45 /* NATExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = D432C84E1BDC1A900043AB45 /* NATExpression.h */; settings = {ASSET_TAGS = (); }; };
@@ -63,7 +62,6 @@
 		D40569691BD8537100EC02D5 /* NativeNativeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NativeNativeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D405696B1BD8537100EC02D5 /* NativeNativeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NativeNativeTests.m; sourceTree = "<group>"; };
 		D405696D1BD8537100EC02D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D40569741BD853EE00EC02D5 /* tokenizer_test.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tokenizer_test.txt; sourceTree = "<group>"; };
 		D432C84A1BDC08330043AB45 /* NATScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATScope.h; sourceTree = "<group>"; };
 		D432C84B1BDC08330043AB45 /* NATScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATScope.m; sourceTree = "<group>"; };
 		D432C84E1BDC1A900043AB45 /* NATExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATExpression.h; sourceTree = "<group>"; };
@@ -191,7 +189,6 @@
 			children = (
 				D405696B1BD8537100EC02D5 /* NativeNativeTests.m */,
 				D405696D1BD8537100EC02D5 /* Info.plist */,
-				D40569741BD853EE00EC02D5 /* tokenizer_test.txt */,
 			);
 			path = NativeNativeTests;
 			sourceTree = "<group>";
@@ -309,7 +306,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D40569751BD853EE00EC02D5 /* tokenizer_test.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
