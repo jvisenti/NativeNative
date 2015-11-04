@@ -402,7 +402,7 @@
     }
 
     XCTAssertNil(obj);
-//    XCTAssertNil(obj2);
+    XCTAssertNil(obj2);
 }
 
 @end
