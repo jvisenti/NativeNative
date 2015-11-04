@@ -21,6 +21,19 @@
 #define NAT_STRUCTS_BY_REF  0
 #define NAT_RET_BUFFER_LEN  48
 
+#elif TARGET_CPU_X86
+
+// TODO:
+
+#define NAT_REG_SIZE        8
+#define NAT_MAX_REG_AREA    0
+#define NAT_SIMD_START      0
+#define NAT_MAX_SIMD_AREA   0
+#define NAT_SIMD_RET_OFFSET 0
+#define NAT_MAX_REG_STRUCT  0
+#define NAT_STRUCTS_BY_REF  0
+#define NAT_RET_BUFFER_LEN  0
+
 #elif TARGET_CPU_ARM64
 
 #define NAT_REG_SIZE        8
@@ -31,6 +44,19 @@
 #define NAT_MAX_REG_STRUCT  16
 #define NAT_STRUCTS_BY_REF  1
 #define NAT_RET_BUFFER_LEN  NAT_SIMD_START + NAT_MAX_SIMD_AREA
+
+#elif TARGET_CPU_ARM
+
+// TODO:
+
+#define NAT_REG_SIZE        0
+#define NAT_MAX_REG_AREA    0
+#define NAT_SIMD_START      0
+#define NAT_MAX_SIMD_AREA   0
+#define NAT_SIMD_RET_OFFSET 0
+#define NAT_MAX_REG_STRUCT  0
+#define NAT_STRUCTS_BY_REF  0
+#define NAT_RET_BUFFER_LEN  0
 
 #endif
 
@@ -43,11 +69,11 @@ NSUInteger const kNATStackOffset = NAT_SIMD_START + NAT_MAX_SIMD_AREA;
     NATArgInfo _returnInfo;
 
     // Used when parsing a method signature
-    off_t _reg;
-    off_t _simd;
-    off_t _stack;
+    NSUInteger _reg;
+    NSUInteger _simd;
+    NSUInteger _stack;
 
-    off_t _memOffset;
+    NSUInteger _memOffset;
 }
 
 + (instancetype)descriptorForMethodSignature:(NSMethodSignature *)signature
@@ -103,7 +129,7 @@ NSUInteger const kNATStackOffset = NAT_SIMD_START + NAT_MAX_SIMD_AREA;
     return self;
 }
 
-- (const char *)getArgInfo:(NATArgInfo *)info forEncoding:(const char *)encoding topLevel:(BOOL)topLevel reg:(off_t *)reg simd:(off_t *)simd stack:(off_t *)stack
+- (const char *)getArgInfo:(NATArgInfo *)info forEncoding:(const char *)encoding topLevel:(BOOL)topLevel reg:(NSUInteger *)reg simd:(NSUInteger *)simd stack:(NSUInteger *)stack
 {
     if ( encoding == NULL || *encoding == '\0' ) {
         return encoding;
@@ -158,10 +184,10 @@ NSUInteger const kNATStackOffset = NAT_SIMD_START + NAT_MAX_SIMD_AREA;
                 [self pushRegArg:info packed:NO reg:reg stack:stack];
             }
             else {
-                size_t length  = atol(typeEncoding);
+                long length  = atol(typeEncoding);
                 while ( isdigit(*typeEncoding) ) { ++typeEncoding; }
 
-                off_t tempReg, tempSimd, tempStack;
+                NSUInteger tempReg, tempSimd, tempStack;
 
                 NATArgInfo typeInfo;
                 typeEncoding = [self getArgInfo:&typeInfo forEncoding:typeEncoding topLevel:NO reg:&tempReg simd:&tempSimd stack:&tempStack];
@@ -222,7 +248,7 @@ NSUInteger const kNATStackOffset = NAT_SIMD_START + NAT_MAX_SIMD_AREA;
     return typeEncoding;
 }
 
-- (void)pushRegArg:(NATArgInfo *)info packed:(BOOL)pack reg:(off_t *)reg stack:(off_t *)stack
+- (void)pushRegArg:(NATArgInfo *)info packed:(BOOL)pack reg:(NSUInteger *)reg stack:(NSUInteger *)stack
 {
     if ( *reg < NAT_MAX_REG_AREA ) {
         if ( !pack ) {
@@ -240,7 +266,7 @@ NSUInteger const kNATStackOffset = NAT_SIMD_START + NAT_MAX_SIMD_AREA;
     }
 }
 
-- (void)pushFloatArg:(NATArgInfo *)info packed:(BOOL)pack simd:(off_t *)simd stack:(off_t *)stack
+- (void)pushFloatArg:(NATArgInfo *)info packed:(BOOL)pack simd:(NSUInteger *)simd stack:(NSUInteger *)stack
 {
     if ( *simd < NAT_SIMD_START + NAT_MAX_SIMD_AREA ) {
         if ( !pack ) {
@@ -264,7 +290,7 @@ NSUInteger const kNATStackOffset = NAT_SIMD_START + NAT_MAX_SIMD_AREA;
     }
 }
 
-- (void)pushStackArg:(NATArgInfo *)info stack:(off_t *)stack
+- (void)pushStackArg:(NATArgInfo *)info stack:(NSUInteger *)stack
 {
     info->frameOffset = *stack;
     *stack += info->size;

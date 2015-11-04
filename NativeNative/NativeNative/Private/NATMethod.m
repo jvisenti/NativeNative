@@ -55,7 +55,17 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     SEL selector = NSSelectorFromString(methodName);
     NSAssert(selector != NULL, @"Failed to lookup selector: %@", methodName);
 
-    return [self initWithSelector:selector arguments:args];
+
+    // TODO: potentially improve this
+    if ( [NSStringFromSelector(selector) hasPrefix:@"init"] ) {
+        NATMethod *method = [[NATMethod alloc] initWithSelector:selector arguments:args];
+        self = [self initWithSelector:NSSelectorFromString(@"autorelease") arguments:@[method]];
+    }
+    else {
+        self = [self initWithSelector:selector arguments:args];
+    }
+
+    return self;
 }
 
 - (instancetype)initWithSelector:(SEL)selector arguments:(NSArray<id<NATExpression>> *)arguments;

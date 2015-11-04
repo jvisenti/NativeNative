@@ -157,6 +157,8 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
                 }
             }
         }
+
+        _argumentsRetained = YES;
     }
 }
 

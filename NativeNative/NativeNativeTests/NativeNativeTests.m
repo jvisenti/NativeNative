@@ -286,11 +286,11 @@
     NSString *val1 = @"test";
     int val2 = 25;
 
-    [obj nat_setIvar:@"_testIvar1" withValue:&val1];
-    [obj nat_setIvar:@"_testIvar2" withValue:&val2];
+    [obj nat_setIvar:@"_testIvar1" withValue:&val1 ownership:NATOwnershipPolicyStrong];
+    [obj nat_setIvar:@"_testIvar2" withValue:&val2 ownership:NATOwnershipPolicyAssign];
 
-    NSString *ivarVal1 = *(const id *)[obj nat_getIvar:@"_testIvar1"];
-    int ivarVal2 = *(int *)[obj nat_getIvar:@"_testIvar2"];
+    NSString *ivarVal1 = *(const id *)[obj nat_getIvar:@"_testIvar1" withOwnership:NATOwnershipPolicyStrong];
+    int ivarVal2 = *(int *)[obj nat_getIvar:@"_testIvar2" withOwnership:NATOwnershipPolicyAssign];
 
     XCTAssertEqual(ivarVal1, val1);
     XCTAssertEqual(ivarVal2, val2);
@@ -349,6 +349,60 @@
 
 
     [NATScope exit];
+}
+
+- (void)testMemoryManagement
+{
+    __weak id obj = nil;
+    __weak id obj2 = nil;
+
+    @autoreleasepool {
+        [NATScope enter];
+
+        NATProgram *program = [[NATProgram alloc] initWithSource:@"\
+                               @interface NATMemoryTest : NSObject \
+                               @property (nullable, strong, nonatomic) id testProp; \
+                               @property (weak, nonatomic) id testProp2; \
+                               @end"];
+
+        [program execute];
+
+        program = [[NATProgram alloc] initWithSource:@"NATMemoryTest *test = [[NATMemoryTest alloc] init];"];
+        [program execute];
+        
+        obj = [[NATScope currentScope] lookupSymbol:@"test"].value.objectValue;
+        XCTAssertNotNil(obj);
+
+        program = [[NATProgram alloc] initWithSource:
+                   @"test.testProp = [[NATMemoryTest alloc] init]; \
+                   id testObj = test.testProp;"];
+        [program execute];
+
+        obj2 = [[NATScope currentScope] lookupSymbol:@"testObj"].value.objectValue;
+        XCTAssertNotNil(obj2);
+
+        __weak id testProp2;
+
+        @autoreleasepool {
+            [NATScope enter];
+
+            program = [[NATProgram alloc] initWithSource:@"test.testProp2 = [[NATMemoryTest alloc] init];"];
+            [program execute];
+
+            testProp2 = [[[NATPropertyChain alloc] initWithSource:@"test.testProp2"] evaluate].objectValue;
+
+            XCTAssertNotNil(testProp2);
+            
+            [NATScope exit];
+        }
+
+        XCTAssertNil(testProp2);
+
+        [NATScope exit];
+    }
+
+    XCTAssertNil(obj);
+//    XCTAssertNil(obj2);
 }
 
 @end

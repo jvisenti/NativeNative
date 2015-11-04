@@ -128,6 +128,8 @@
     }
 
     if ( registerClass ) {
+        // TODO: implement dealloc 
+
         objc_registerClassPair(cls);
     }
 }

@@ -8,9 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(NSUInteger, NATOwnershipPolicy) {
+    NATOwnershipPolicyAssign = 0,
+    NATOwnershipPolicyStrong,
+    NATOwnershipPolicyCopy,
+    NATOwnershipPolicyWeak
+};
+
 @interface NSObject (NATIvars)
 
-- (void *)nat_getIvar:(NSString *)ivarName;
-- (void)nat_setIvar:(NSString *)ivarName withValue:(void *)value;
+- (void *)nat_getIvar:(NSString *)ivarName withOwnership:(NATOwnershipPolicy)ownership;
+- (void)nat_setIvar:(NSString *)ivarName withValue:(void *)value ownership:(NATOwnershipPolicy)ownership;
 
 @end

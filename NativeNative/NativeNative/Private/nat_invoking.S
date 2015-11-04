@@ -100,6 +100,22 @@ Lcall:
     pop     %rbp
     ret
 
+#elif __i386__
+
+/////////////////////////////////////////////////////////////////////////
+//                                                                     //
+//                                                                     //
+//                              x86                                    //
+//                                                                     //
+//                                                                     //
+/////////////////////////////////////////////////////////////////////////
+
+/* void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret) */
+/* NOTE: bytes must be a multiple of 16 if greater than 208 */
+___nat_invoking__:
+    // TODO
+    ret
+
 #elif __arm64__
 
 /////////////////////////////////////////////////////////////////////////
@@ -205,5 +221,20 @@ Lload_reg:
     
     ldp     x29, x30, [sp], #16
     ret
+
+#elif __arm__
+
+/////////////////////////////////////////////////////////////////////////
+//                                                                     //
+//                                                                     //
+//                              ARM                                    //
+//                                                                     //
+//                                                                     //
+/////////////////////////////////////////////////////////////////////////
+
+/* void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret) */
+/* NOTE: bytes must be a multiple of 16 if greater than 208 */
+___nat_invoking__:
+    // TODO
 
 #endif

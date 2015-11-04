@@ -17,7 +17,7 @@
 } while(0)
 
 #define NAT_CVT_TO(_TYPE_) ({ \
-    void *cvt = NULL; \
+    void *cvt = _value; \
     \
     if ( self.isPrimitive ) { \
         if ( _type == NATTypeChar ) { \
@@ -59,9 +59,6 @@
         else if ( _type == NATTypeBool) { \
             NAT_CVT(BOOL, _TYPE_); \
         } \
-    } \
-    else { \
-        cvt = _value; \
     } \
     \
     *(_TYPE_ *)cvt; \

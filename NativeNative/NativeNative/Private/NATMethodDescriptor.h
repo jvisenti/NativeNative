@@ -11,13 +11,13 @@
 typedef struct _NATArgInfo NATArgInfo;
 
 struct _NATArgInfo {
-    off_t memOffset;
-    off_t frameOffset;
+    NSUInteger memOffset;
+    NSUInteger frameOffset;
 
-    size_t size;
-    off_t sizeAdjustment;
+    NSUInteger size;
+    NSUInteger sizeAdjustment;
 
-    size_t align;
+    NSUInteger align;
 
     NATArgInfo *subInfo;        // array of sub arg info
 

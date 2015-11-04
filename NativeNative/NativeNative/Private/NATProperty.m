@@ -62,7 +62,15 @@ NS_INLINE SEL NATDefaultSetter(const char *prop)
 #define NAT_GETTER_BLOCK(_TYPE_, _IVAR_) \
 ^_TYPE_ (id self) { \
     @synchronized(self) { \
-        void *value = [self nat_getIvar:_IVAR_]; \
+        void *value = [self nat_getIvar:_IVAR_ withOwnership:NATOwnershipPolicyStrong]; \
+        return *(_TYPE_ *)value; \
+    } \
+}
+
+#define NAT_WEAK_GETTER_BLOCK(_TYPE_, _IVAR_) \
+^_TYPE_ (id self) { \
+    @synchronized(self) { \
+    void *value = [self nat_getIvar:_IVAR_ withOwnership:NATOwnershipPolicyWeak]; \
         return *(_TYPE_ *)value; \
     } \
 }
@@ -70,23 +78,28 @@ NS_INLINE SEL NATDefaultSetter(const char *prop)
 #define NAT_ASSIGN_SETTER_BLOCK(_TYPE_, _IVAR_) \
 ^void (id self, _TYPE_ value) { \
     @synchronized(self) { \
-        [self nat_setIvar:_IVAR_ withValue:&value]; \
+        [self nat_setIvar:_IVAR_ withValue:&value ownership:NATOwnershipPolicyAssign]; \
     } \
 }
 
 #define NAT_STRONG_SETTER_BLOCK(_TYPE_, _IVAR_) \
 ^void (id self, _TYPE_ value) { \
     @synchronized(self) { \
-        [self nat_setIvar:_IVAR_ withValue:&value]; \
+        [self nat_setIvar:_IVAR_ withValue:&value ownership:NATOwnershipPolicyStrong]; \
     } \
-    CFRetain((CFTypeRef)value); \
 }
 
 #define NAT_COPY_SETTER_BLOCK(_TYPE_, _IVAR_) \
 ^void (id self, _TYPE_ value) { \
-    _TYPE_ copy = [value copy]; \
     @synchronized(self) { \
-        [self nat_setIvar:_IVAR_ withValue:&copy]; \
+        [self nat_setIvar:_IVAR_ withValue:&value ownership:NATOwnershipPolicyCopy]; \
+    } \
+}
+
+#define NAT_WEAK_SETTER_BLOCK(_TYPE_, _IVAR_) \
+^void (id self, _TYPE_ value) { \
+    @synchronized(self) { \
+        [self nat_setIvar:_IVAR_ withValue:&value ownership:NATOwnershipPolicyWeak]; \
     } \
 }
 
@@ -400,19 +413,22 @@ NS_INLINE SEL NATDefaultSetter(const char *prop)
 
     if ( ivar != nil && encoding != NULL ) {
         if ( encoding[0] == _C_ID ) {
-            getRet = NAT_GETTER_BLOCK(const id, ivar);
-
             if ( prop.isStrong ) {
+                getRet = NAT_GETTER_BLOCK(const id, ivar);
                 setRet = NAT_STRONG_SETTER_BLOCK(id, ivar);
             }
             else if ( prop.isCopy ) {
+                getRet = NAT_GETTER_BLOCK(const id, ivar);
                 setRet = NAT_COPY_SETTER_BLOCK(id, ivar);
             }
+            else if ( prop.isWeak ) {
+                getRet = NAT_WEAK_GETTER_BLOCK(const id, ivar);
+                setRet = NAT_WEAK_SETTER_BLOCK(id, ivar);
+            }
             else {
+                getRet = NAT_GETTER_BLOCK(const id, ivar);
                 setRet = NAT_ASSIGN_SETTER_BLOCK(id, ivar);
             }
-
-            // TODO: support weak?
         }
         else if ( encoding[0] == _C_CHR ) {
             getRet = NAT_GETTER_BLOCK(char, ivar);

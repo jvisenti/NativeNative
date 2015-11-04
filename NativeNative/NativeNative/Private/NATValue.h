@@ -13,7 +13,7 @@
 
 @property (nonatomic, readonly) NATType type;
 @property (nonatomic, readonly) const char *encoding NS_RETURNS_INNER_POINTER;
-@property (nonatomic, readonly) size_t size;
+@property (nonatomic, readonly) NSUInteger size;
 
 @property (nonatomic, readonly, getter=isPrimitive) BOOL primitive;
 
