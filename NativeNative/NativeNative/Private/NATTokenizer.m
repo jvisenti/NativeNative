@@ -168,16 +168,20 @@ NS_INLINE void NATConsumeWhitespace(NSString *string, NSUInteger *idx)
     return result;
 }
 
-- (BOOL)matchesExpression:(NSRegularExpression *)expr
+- (BOOL)matchesString:(NSString *)string
 {
     BOOL matches = NO;
 
     NATConsumeWhitespace(_string, &_index);
 
-    if ( self.hasTokens ) {
-        NSTextCheckingResult *match = [expr firstMatchInString:_string options:NSMatchingAnchored range:NSMakeRange(_index, _string.length - _index)];
+    if ( _index + string.length <= _string.length ) {
 
-        matches = (match != nil);
+        NSUInteger idx = 0;
+        while ( [_string characterAtIndex:_index + idx] == [string characterAtIndex:idx] && ++idx < string.length ) {}
+
+        if ( idx == string.length ) {
+            matches = YES;
+        }
     }
 
     return matches;

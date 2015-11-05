@@ -10,6 +10,7 @@
 
 #import "NATExpression.h"
 #import "NATInterfaceStatement.h"
+#import "NATImplementationStatement.h"
 
 @interface NATExpressionStatement : NSObject <NATStatement>
 
@@ -30,8 +31,11 @@
     NSString *token = nil;
 
     // TODO: more types of statements...
-    if ( [tokenizer matchesExpression:kNATRegexInterface] ) {
+    if ( [tokenizer matchesString:@"interface"] ) {
         statement = [[NATInterfaceStatement alloc] initWithTokenizer:tokenizer];
+    }
+    else if ( [tokenizer matchesString:@"implementation"] ) {
+        statement = [[NATImplementationStatement alloc] initWithTokenizer:tokenizer];
     }
     else if ( (token = [tokenizer advanceUntil:kNATRegexStatementTerminal]) ||
               (token = [tokenizer advanceRemaining])) {

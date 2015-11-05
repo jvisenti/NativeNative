@@ -28,6 +28,6 @@
 - (NSString *)matchExpression:(NSRegularExpression *)expr;
 
 // Checks for a match without advancing the tokenizer
-- (BOOL)matchesExpression:(NSRegularExpression *)expr;
+- (BOOL)matchesString:(NSString *)string;
 
 @end

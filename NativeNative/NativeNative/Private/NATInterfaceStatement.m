@@ -15,13 +15,6 @@
 
 void _NATDealloc(__unsafe_unretained id self, SEL _cmd);
 
-@interface NATIvar : NSObject
-
-@property (copy, nonatomic) NSString *name;
-@property (copy, nonatomic) NSString *encoding;
-
-@end
-
 @implementation NATInterfaceStatement {
     NSString *_className;
     NSString *_superclassName;
@@ -83,25 +76,46 @@ void _NATDealloc(__unsafe_unretained id self, SEL _cmd);
     return self;
 }
 
++ (Class)lookupNasentClass:(NSString *)className
+{
+    return [self nascentClasses][className];
+}
+
++ (void)finalizeNascentClass:(Class)cls
+{
+    // TODO: swizzle existing dealloc
+    SEL deallocSEL = sel_getUid("dealloc");
+    class_addMethod(cls, deallocSEL, (IMP)_NATDealloc, "v@:");
+
+    objc_registerClassPair(cls);
+
+    [[self nascentClasses] removeObjectForKey:NSStringFromClass(cls)];
+}
+
 - (void)execute
 {
     const char *className = _className.UTF8String;
 
-    BOOL registerClass = NO;
+    BOOL nascentClass = NO;
     Class cls = objc_getClass(className);
 
     if ( cls == nil ) {
-        Class supercls = objc_getRequiredClass(_superclassName.UTF8String);
-        cls = objc_allocateClassPair(supercls, className, 0);
+        cls = [NATInterfaceStatement nascentClasses][_className];
 
-        for ( NATIvar *ivar in _ivars ) {
-            NSUInteger size, align;
-            NSGetSizeAndAlignment(ivar.encoding.UTF8String, &size, &align);
+        if ( cls == nil ) {
+            Class supercls = objc_getRequiredClass(_superclassName.UTF8String);
+            cls = objc_allocateClassPair(supercls, className, 0);
 
-            class_addIvar(cls, ivar.name.UTF8String, (size_t)size, (uint8_t)align, ivar.encoding.UTF8String);
+            [NATInterfaceStatement nascentClasses][_className] = cls;
         }
 
-        registerClass = YES;
+        nascentClass = YES;
+    }
+
+    if ( nascentClass ) {
+        for ( NATIvar *ivar in _ivars ) {
+            NATClassAddIvar(cls, ivar);
+        }
     }
 
     for ( NSString *protocolName in _protocols ) {
@@ -113,32 +127,31 @@ void _NATDealloc(__unsafe_unretained id self, SEL _cmd);
     }
 
     for ( NATProperty *property in _properties ) {
-        unsigned int count = 0;
-        objc_property_attribute_t *attributes = [property createAttributeList:&count];
+        NATClassAddProperty(cls, property);
 
-        class_addProperty(cls, property.name.UTF8String, attributes, count);
-
-        free(attributes);
-
-        if ( registerClass && property.ivarName != nil ) {
-            NSUInteger size, align;
-            NSGetSizeAndAlignment(property.typeEncoding.UTF8String, &size, &align);
-
-            class_addIvar(cls, property.ivarName.UTF8String, (size_t)size, (uint8_t)align, property.typeEncoding.UTF8String);
+        if ( nascentClass && property.ivarName != nil ) {
+            NATIvar *ivar = [[NATIvar alloc] init];
+            ivar.name = property.ivarName;
+            ivar.encoding = property.typeEncoding;
+            
+            NATClassAddIvar(cls, ivar);
         }
 
         [cls nat_synthesizeProperty:property];
     }
-
-    if ( registerClass ) {
-        SEL deallocSEL = sel_getUid("dealloc");
-        class_addMethod(cls, deallocSEL, (IMP)_NATDealloc, "v@:");
-
-        objc_registerClassPair(cls);
-    }
 }
 
 #pragma mark - private methods
+
++ (NSMutableDictionary *)nascentClasses
+{
+    static NSMutableDictionary *s_NascentClasses = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_NascentClasses = [NSMutableDictionary dictionary];
+    });
+    return s_NascentClasses;
+}
 
 - (NSArray *)readProtocols:(NATTokenizer *)tokenizer
 {
@@ -165,18 +178,7 @@ void _NATDealloc(__unsafe_unretained id self, SEL _cmd);
     NSMutableArray *ivars = [NSMutableArray array];
 
     while ( [tokenizer nextChar] != '}' ) {
-        NSString *typeEncoding = NATEncodeTypeFromTokenizer(tokenizer);
-        assert(typeEncoding != nil);
-
-        NSString *name = [tokenizer advanceExpression:kNATRegexSymName];
-        assert(name != nil);
-
-        NATIvar *ivar = [[NATIvar alloc] init];
-        ivar.name = name;
-        ivar.encoding = typeEncoding;
-
-        [ivars addObject:ivar];
-
+        [ivars addObject:[[NATIvar alloc] initWithTokenizer:tokenizer]];
         [tokenizer matchChar:';'];
     }
 
@@ -273,8 +275,45 @@ void _NATDealloc(__unsafe_unretained id self, SEL _cmd);
 
 @end
 
+#pragma mark - NATIvar
+
 @implementation NATIvar
+
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
+{
+    NSString *typeEncoding = NATEncodeTypeFromTokenizer(tokenizer);
+    assert(typeEncoding != nil);
+
+    NSString *name = [tokenizer advanceExpression:kNATRegexSymName];
+    assert(name != nil);
+
+    if ( (self = [super init]) ) {
+        _name = name;
+        _encoding = typeEncoding;
+    }
+
+    return self;
+}
+
 @end
+
+void NATClassAddIvar(Class cls, NATIvar *ivar)
+{
+    NSUInteger size, align;
+    NSGetSizeAndAlignment(ivar.encoding.UTF8String, &size, &align);
+
+    class_addIvar(cls, ivar.name.UTF8String, (size_t)size, (uint8_t)align, ivar.encoding.UTF8String);
+}
+
+void NATClassAddProperty(Class cls, NATProperty *property)
+{
+    unsigned int count = 0;
+    objc_property_attribute_t *attributes = [property createAttributeList:&count];
+
+    class_addProperty(cls, property.name.UTF8String, attributes, count);
+
+    free(attributes);
+}
 
 void _NATDealloc(__unsafe_unretained id self, SEL _cmd)
 {
