@@ -7,12 +7,15 @@
 //
 
 #import <objc/runtime.h>
+#import <CoreGraphics/CGGeometry.h>
 
 #import "NATTypes.h"
 #import "NATTokenizer.h"
+#import "NATScope.h"
 
 static CFDictionaryRef s_TypesToEncodings;
 static CFDictionaryRef s_EncodingsToTypes;
+static CFDictionaryRef s_TypeStringsToEncodings;
 
 const NATType NATTypeUnknown   = 0;
 const NATType NATTypeObject    = 1;
@@ -85,6 +88,8 @@ void _NATTypeConfigure(void)
         .hash = _NATEncodingHash
     };
 
+#pragma mark - NATType -> Encoding
+
     CFMutableDictionaryRef typesToEncodings = CFDictionaryCreateMutable(NULL, 0, &typeKeyCallbacks, NULL);
     CFDictionaryAddValue(typesToEncodings, &NATTypeObject, @encode(id));
     CFDictionaryAddValue(typesToEncodings, &NATTypeClass, @encode(Class));
@@ -104,6 +109,8 @@ void _NATTypeConfigure(void)
     CFDictionaryAddValue(typesToEncodings, &NATTypeBool, @encode(BOOL));
     CFDictionaryAddValue(typesToEncodings, &NATTypeCharPointer, @encode(char *));
 
+#pragma mark - Encoding -> NATType
+
     CFIndex count = CFDictionaryGetCount(typesToEncodings);
     CFMutableDictionaryRef encodingsToTypes = CFDictionaryCreateMutable(NULL, count, &encodingKeyCallbacks, NULL);
 
@@ -120,6 +127,45 @@ void _NATTypeConfigure(void)
 
     s_TypesToEncodings = typesToEncodings;
     s_EncodingsToTypes = encodingsToTypes;
+
+#pragma mark - Type String -> Encoding
+
+    CFMutableDictionaryRef typeStringsToEncodings = CFDictionaryCreateMutable(NULL, 0, &encodingKeyCallbacks, NULL);
+
+    CFDictionaryAddValue(typeStringsToEncodings, "char", @encode(char));
+    CFDictionaryAddValue(typeStringsToEncodings, "short", @encode(short));
+    CFDictionaryAddValue(typeStringsToEncodings, "int", @encode(int));
+    CFDictionaryAddValue(typeStringsToEncodings, "long", @encode(long));
+    CFDictionaryAddValue(typeStringsToEncodings, "long long", @encode(long long));
+    CFDictionaryAddValue(typeStringsToEncodings, "float", @encode(float));
+    CFDictionaryAddValue(typeStringsToEncodings, "double", @encode(double));
+    CFDictionaryAddValue(typeStringsToEncodings, "BOOL", @encode(BOOL));
+    CFDictionaryAddValue(typeStringsToEncodings, "bool", @encode(BOOL));
+    CFDictionaryAddValue(typeStringsToEncodings, "SEL", @encode(SEL));
+    CFDictionaryAddValue(typeStringsToEncodings, "void", @encode(void));
+    CFDictionaryAddValue(typeStringsToEncodings, "id", @encode(id));
+    CFDictionaryAddValue(typeStringsToEncodings, "NSUInteger", @encode(NSUInteger));
+    CFDictionaryAddValue(typeStringsToEncodings, "NSInteger", @encode(NSInteger));
+    CFDictionaryAddValue(typeStringsToEncodings, "CGFloat", @encode(CGFloat));
+    CFDictionaryAddValue(typeStringsToEncodings, "int32_t", @encode(int32_t));
+    CFDictionaryAddValue(typeStringsToEncodings, "int64_t", @encode(int64_t));
+
+    s_TypeStringsToEncodings = typeStringsToEncodings;
+
+#pragma mark - Boolean Globals
+
+    NATScope *globalScope = [NATScope globalScope];
+
+    BOOL yes = YES;
+    BOOL no = NO;
+
+    [globalScope addSymbol:[[NATSymbol alloc] initWithName:@"YES" value:[[NATValue alloc] initWithBytes:&yes type:NATTypeBool]]];
+    [globalScope addSymbol:[[NATSymbol alloc] initWithName:@"true" value:[[NATValue alloc] initWithBytes:&yes type:NATTypeBool]]];
+    [globalScope addSymbol:[[NATSymbol alloc] initWithName:@"TRUE" value:[[NATValue alloc] initWithBytes:&yes type:NATTypeBool]]];
+
+    [globalScope addSymbol:[[NATSymbol alloc] initWithName:@"NO" value:[[NATValue alloc] initWithBytes:&no type:NATTypeBool]]];
+    [globalScope addSymbol:[[NATSymbol alloc] initWithName:@"false" value:[[NATValue alloc] initWithBytes:&no type:NATTypeBool]]];
+    [globalScope addSymbol:[[NATSymbol alloc] initWithName:@"FALSE" value:[[NATValue alloc] initWithBytes:&no type:NATTypeBool]]];
 }
 
 const char* NATGetEncoding(NATType type)
@@ -193,71 +239,50 @@ NSString* NATEncodeTypeFromTokenizer(NATTokenizer *tokenizer)
         [tokenizer advanceString:@"const"];
         [tokenizer advanceString:@"signed"];
 
-        // TODO: this is not scaleable. figure out if there's a better way
-
-        char encoding = '\0';
-        BOOL integerType = NO;
-
-        if ( [tokenizer advanceString:@"char"] ) {
-            encoding = _C_CHR;
-            integerType = YES;
-        }
-        else if ( [tokenizer advanceString:@"short"] ) {
-            encoding = _C_SHT;
-            integerType = YES;
-        }
-        else if ( [tokenizer advanceString:@"int"] ) {
-            encoding = _C_INT;
-            integerType = YES;
-        }
-        else if ( [tokenizer advanceString:@"long"] ) {
-            encoding = _C_LNG;
-            integerType = YES;
-        }
-        else if ( [tokenizer advanceString:@"long long"] ) {
-            encoding = _C_LNG_LNG;
-            integerType = YES;
-        }
-        else if ( [tokenizer advanceString:@"float"] ) {
-            encoding = _C_FLT;
-        }
-        else if ( [tokenizer advanceString:@"double"] ) {
-            encoding = _C_DBL;
-        }
-        else if ( [tokenizer advanceString:@"BOOL"] || [tokenizer advanceString:@"bool"] ) {
-            encoding = _C_BOOL;
-        }
-        else if ( [tokenizer advanceString:@"SEL"] ) {
-            encoding = _C_SEL;
-        }
-        else if ( [tokenizer advanceString:@"void"] ) {
-            encoding = _C_VOID;
-        }
-        else if ( [tokenizer advanceString:@"id"] ) {
-            encoding = _C_ID;
-        }
-
-        if ( integerType && !isSigned ) {
-            encoding = toupper(encoding);
-        }
+        NSString *type = [tokenizer matchExpression:kNATRegexSymName];
 
         // Skip any protocol conformance
         [tokenizer advanceExpression:kNATRegexProtocolConformance];
 
-        if ( encoding != '\0' ) {
+        if ( [type isEqualToString:@"long"] && [tokenizer advanceString:@"long"] ) {
+            type = @"long long";
+        }
+
+        const char *encoding = CFDictionaryGetValue(s_TypeStringsToEncodings, type.UTF8String);
+
+        if ( encoding != NULL ) {
+            char *encodingCopy = strdup(encoding);
+
+            if ( !isSigned ) {
+                encodingCopy[0] = toupper(encodingCopy[0]);
+            }
+
             if ( [tokenizer nextChar] == '*' ) {
                 [tokenizer advanceChar];
-                typeEncoding = [NSString stringWithFormat:@"%c%c", _C_PTR, encoding];
+
+                if ( encodingCopy[0] == _C_CHR ) {
+                    typeEncoding = [NSString stringWithFormat:@"%c", _C_CHARPTR];
+                }
+                else {
+                    typeEncoding = [NSString stringWithFormat:@"%c%s", _C_PTR, encodingCopy];
+                }
             }
             else {
-                typeEncoding = [NSString stringWithFormat:@"%c", encoding];
+                typeEncoding = [NSString stringWithFormat:@"%s", encodingCopy];
             }
+
+            free(encodingCopy);
         }
         else {
             typeEncoding = [NSString stringWithFormat:@"%c", _C_ID];
-            
-            [tokenizer advanceExpression:kNATRegexSymName];
-            [tokenizer matchChar:'*'];
+
+            // Expect an object type
+            if ( [tokenizer nextChar] == '*' ) {
+                [tokenizer advanceChar];
+            }
+            else {
+                @throw [NSString stringWithFormat:@"Unsupported type: %@", type];
+            }
         }
     }
 
