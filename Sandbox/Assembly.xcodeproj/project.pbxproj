@@ -33,7 +33,7 @@
 		D4A058B71BE7093B00DD9234 /* NATInterfaceStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = D4A058B61BE7093B00DD9234 /* NATInterfaceStatement.m */; settings = {ASSET_TAGS = (); }; };
 		D4BDD8351BE57B2400D59872 /* NATPropertyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = D4BDD8331BE57B2400D59872 /* NATPropertyChain.m */; settings = {ASSET_TAGS = (); }; };
 		D4BDD8361BE57B5E00D59872 /* NATProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477AC1BE4FAAE00DF16BD /* NATProperty.m */; settings = {ASSET_TAGS = (); }; };
-		D4DC21651BEB9CD10054FC45 /* NATImplementationStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = D4DC21641BEB9CD10054FC45 /* NATImplementationStatement.m */; settings = {ASSET_TAGS = (); }; };
+		D4FDBEA81BEBC34B00AF932D /* NATImplementationStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = D4DC21641BEB9CD10054FC45 /* NATImplementationStatement.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -331,6 +331,7 @@
 				D45477A71BE3F95600DF16BD /* NATStatement.m in Sources */,
 				D4BDD8361BE57B5E00D59872 /* NATProperty.m in Sources */,
 				D45477A81BE3F95600DF16BD /* NATTokenizer.m in Sources */,
+				D4FDBEA81BEBC34B00AF932D /* NATImplementationStatement.m in Sources */,
 				D45477AA1BE3F95600DF16BD /* NATValue.m in Sources */,
 				D45477A41BE3F95600DF16BD /* NATOperators.m in Sources */,
 				D4A058B71BE7093B00DD9234 /* NATInterfaceStatement.m in Sources */,
@@ -347,7 +348,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D4445C0F1BDDA0400093B2B7 /* main.m in Sources */,
-				D4DC21651BEB9CD10054FC45 /* NATImplementationStatement.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

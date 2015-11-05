@@ -31,10 +31,10 @@
     NSString *token = nil;
 
     // TODO: more types of statements...
-    if ( [tokenizer matchesString:@"interface"] ) {
+    if ( [tokenizer matchesString:@"@interface"] ) {
         statement = [[NATInterfaceStatement alloc] initWithTokenizer:tokenizer];
     }
-    else if ( [tokenizer matchesString:@"implementation"] ) {
+    else if ( [tokenizer matchesString:@"@implementation"] ) {
         statement = [[NATImplementationStatement alloc] initWithTokenizer:tokenizer];
     }
     else if ( (token = [tokenizer advanceUntil:kNATRegexStatementTerminal]) ||
