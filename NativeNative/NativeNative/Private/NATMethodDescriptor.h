@@ -31,6 +31,7 @@ struct _NATArgInfo {
 };
 
 OBJC_EXTERN NSUInteger const kNATStackOffset;
+OBJC_EXTERN NSUInteger const kNATRegisterSize;
 
 #define NAT_ALIGN(v, a) (((v + (a - 1)) / (a)) * (a))
 #define NAT_ALIGN_16(v) ((v) + 0xF & ~0xF)

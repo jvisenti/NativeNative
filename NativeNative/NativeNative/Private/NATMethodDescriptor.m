@@ -62,6 +62,7 @@
 
 #define NAT_SIMD_SIZE       16
 
+NSUInteger const kNATRegisterSize = NAT_REG_SIZE;
 NSUInteger const kNATStackOffset = NAT_SIMD_START + NAT_MAX_SIMD_AREA;
 
 @implementation NATMethodDescriptor {

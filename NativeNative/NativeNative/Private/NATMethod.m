@@ -39,9 +39,10 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     NSMutableArray *args = [NSMutableArray array];
     NSMutableString *methodName = [NSMutableString string];
 
-    if ( [tokenizer matchesString:@"super"] ) {
-        _sendSuper = YES;
+    if ( [tokenizer matchesString:@"super "] ) {
+        [tokenizer advanceString:@"super"];
 
+        _sendSuper = YES;
         [args addObject:[NATExpression expressionWithSource:@"self"]];
     }
     else {

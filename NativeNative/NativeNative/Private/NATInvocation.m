@@ -186,10 +186,28 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
 
 - (void)invokeSuper
 {
-    [self invokeIMP:objc_msgSendSuper];
+    void *frame = malloc(_methodDescriptor.frameLength);
+    memcpy(frame, _frame, _methodDescriptor.frameLength);
+
+    struct objc_super spr;
+    spr.receiver = *(__unsafe_unretained id *)frame;
+    spr.super_class = class_getSuperclass(**(Class **)frame);
+
+    *(struct objc_super **)frame = &spr;
+
+    [self invokeIMP:objc_msgSendSuper withFrame:&frame];
+
+    free(frame);
 }
 
 - (void)invokeIMP:(IMP)imp
+{
+    [self invokeIMP:imp withFrame:&_frame];
+}
+
+#pragma mark - private methods
+
+- (void)invokeIMP:(IMP)imp withFrame:(void **)frame
 {
     [self retainArgumentsIfNeeded];
 
@@ -204,21 +222,22 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
 
         // Allocate stack space
         NSUInteger frameLength = NAT_ALIGN_16(kNATStackOffset + sum);
-        _frame = realloc(_frame, frameLength);
+        *frame = realloc(*frame, frameLength);
 
         sum = 0;
         for ( NSUInteger i = 1; i < _methodDescriptor.numberOfArguments; ++i ) {
             NATArgInfo info = [_methodDescriptor infoForArgumentAtIndex:i];
 
-            memcpy((char *)_frame + kNATStackOffset + sum, (char *)_frame + info.frameOffset, info.size + info.sizeAdjustment);
+            memcpy((char *)*frame + kNATStackOffset + sum, (char *)*frame + info.frameOffset, info.size + info.sizeAdjustment);
             sum += info.size;
         }
 
-        __nat_invoking__(imp, _frame, frameLength, _returnBuffer);
+        __nat_invoking__(imp, *frame, frameLength, _returnBuffer);
     }
     else {
 #endif
-        __nat_invoking__(imp, _frame, _methodDescriptor.frameLength, _returnBuffer);
+
+        __nat_invoking__(imp, *frame, _methodDescriptor.frameLength, _returnBuffer);
 
         NATArgInfo returnInfo = _methodDescriptor.returnTypeInfo;
 
@@ -226,12 +245,11 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
             void *retBuffer = (char *)_returnBuffer + returnInfo.frameOffset;
             _returnValue = [[NATValue alloc] initWithBytes:retBuffer encoding:_methodSignature.methodReturnType];
         }
+        
 #if TARGET_CPU_ARM64
     }
 #endif
 }
-
-#pragma mark - private methods
 
 - (void)releaseArgumentsIfNeeded
 {

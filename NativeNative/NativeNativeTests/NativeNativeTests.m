@@ -261,6 +261,8 @@
                            @property (assign, atomic, readwrite) int testProp2; \
                            @property id testProp3; \
                            @property (nonnull, getter=getTestProp4, setter = setTestProp4Test:) void *testProp4; \
+                       @end \
+                       @implementation NATTestClass \
                        @end"];
 
     [program execute];
@@ -363,6 +365,8 @@
                                @interface NATMemoryTest : NSObject \
                                @property (nullable, strong, nonatomic) id testProp; \
                                @property (weak, nonatomic) id testProp2; \
+                               @end \
+                               @implementation NATMemoryTest \
                                @end"];
 
         [program execute];

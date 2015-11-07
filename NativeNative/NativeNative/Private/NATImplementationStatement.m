@@ -223,24 +223,23 @@ void __nat_method_imp__(/* ... */)
                   : [args]"=r"(args)
                   );
 
-    args += 16;
+    // Skip stack args saved by prologue
+    args += 2 * kNATRegisterSize;
 
     NATScope *scope = [NATScope enter];
 
     NATMethodImplementation *imp = _NATClassLookupImpl(**(Class **)args, *(SEL *)(args + sizeof(id)));
 
     NSMethodSignature *signature = imp.signature;
+    NATMethodDescriptor *descriptor = [NATMethodDescriptor descriptorForMethodSignature:signature];
 
     for ( NSUInteger i = 0; i < signature.numberOfArguments; ++i ) {
         const char *argEncoding = [signature getArgumentTypeAtIndex:i];
 
-        NSUInteger argSize = 0;
-        NSGetSizeAndAlignment(argEncoding, &argSize, NULL);
+        NATArgInfo argInfo = [descriptor infoForArgumentAtIndex:i];
 
-        NATValue *argVal = [[NATValue alloc] initWithBytes:args encoding:argEncoding];
+        NATValue *argVal = [[NATValue alloc] initWithBytes:args + argInfo.frameOffset encoding:argEncoding];
         [scope addSymbol:[[NATSymbol alloc] initWithName:imp.argumentNames[i] value:argVal]];
-
-        args += argSize;
     }
 
     [imp.body execute];
