@@ -23,6 +23,8 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
 @implementation NATMethod {
     SEL _selector;
     NSArray<id<NATExpression>> *_arguments;
+
+    BOOL _sendSuper;
 }
 
 - (instancetype)initWithSource:(NSString *)source
@@ -37,7 +39,14 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     NSMutableArray *args = [NSMutableArray array];
     NSMutableString *methodName = [NSMutableString string];
 
-    [args addObject:[NATExpression expressionWithTokenizer:tokenizer]];
+    if ( [tokenizer matchesString:@"super"] ) {
+        _sendSuper = YES;
+
+        [args addObject:[NATExpression expressionWithSource:@"self"]];
+    }
+    else {
+        [args addObject:[NATExpression expressionWithTokenizer:tokenizer]];
+    }
 
     while ( tokenizer.nextChar != ']' ) {
         [methodName appendString:[tokenizer matchExpression:kNATRegexSymName]];
@@ -99,8 +108,13 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
             NATPrepareInvocation(invocation, [_arguments[i - 1] evaluate], i);
         }
 
-        [invocation invoke];
-        
+        if ( _sendSuper ) {
+            [invocation invokeSuper];
+        }
+        else {
+            [invocation invoke];
+        }
+
         return invocation.returnValue;
     }
     else {

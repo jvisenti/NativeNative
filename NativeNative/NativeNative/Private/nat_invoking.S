@@ -1,16 +1,13 @@
 //
-//  nat_invoking.s
+//  nat_invoking.S
 //
 //  Created by Rob Visentin on 10/25/15.
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-.file "nat_invoking.s"
+.file "nat_invoking.S"
 
 .text
-
-.align 4
-.globl ___nat_invoking__
 
 #if __x86_64__
 
@@ -22,28 +19,35 @@
 //                                                                     //
 /////////////////////////////////////////////////////////////////////////
 
+.align 6
+.globl ___nat_invoking__
+
 /* void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret) */
 /* NOTE: bytes must be a multiple of 16 if greater than 176 */
 ___nat_invoking__:
     push    %rbp                /* save initial frame pointer */
     push    %rcx                /* save return buffer */
-    push    %rdx                /* save byte count */
 
+    mov     %rsi, %r10          /* save args */
     mov     %rdi, %r11          /* save function */
 
     mov     %rsp, %rbp          /* finalize local stack frame */
 
+    and     $-16, %rsp          /* 16-byte align the stack */
+
+    cmpq    $48, %rdx           /* skip loading SSE registers if possible */
+    jle     Lload_reg
+
+    cmpq    $176, %rdx          /* skip stack copy if possible */
+    jle     Lload_sse
+
     // prepare to copy args to the stack //
 
-    mov     $176, %r10          /* 176 is the number of bits that will fit in arg registers */
-
     mov     %rdx, %rcx          /* move byte count into rcx, rep count below */
+    sub     $176, %rcx          /* only copy bytes that don't fit in registers */
     shr     $3, %rcx            /* convert byte -> qword for fewer reps */
 
-    cmp     %r10, %rdx
-    cmovl   %r10, %rdx
-    sub     %rdx, %rsp          /* allocate max(176, bytes) on the stack */
-    and     $-16, %rsp          /* align stack to 16-byte boundary */
+    sub     %rcx, %rsp          /* allocate space on the stack */
 
     mov     %rsi, %rsi          /* move args into rsi, source in mov below */
     mov     %rsp, %rdi          /* move rsp into rdi, destination in mov below */
@@ -53,49 +57,43 @@ ___nat_invoking__:
     cld
     rep     movsq
 
-    // load registers //
-
-    mov     0(%rsp),  %rdi
-    mov     8(%rsp),  %rsi
-    mov     16(%rsp), %rdx
-    mov     24(%rsp), %rcx
-    mov     32(%rsp), %r8
-    mov     40(%rsp), %r9
-
-    // skip SSE registers if args fit in standard registers //
-
-    cmpq    $48, (%rbp)
-    jle     Lcall
-
     // load SSE registers //
 
-    movdqa	48(%rsp),  %xmm0
-	movdqa	64(%rsp),  %xmm1
-	movdqa	80(%rsp),  %xmm2
-	movdqa	96(%rsp),  %xmm3
-	movdqa	112(%rsp), %xmm4
-	movdqa	128(%rsp), %xmm5
-	movdqa	144(%rsp), %xmm6
-	movdqa	160(%rsp), %xmm7
+Lload_sse:
+    movdqa	48(%r10),  %xmm0
+	movdqa	64(%r10),  %xmm1
+	movdqa	80(%r10),  %xmm2
+	movdqa	96(%r10),  %xmm3
+	movdqa	112(%r10), %xmm4
+	movdqa	128(%r10), %xmm5
+	movdqa	144(%r10), %xmm6
+	movdqa	160(%r10), %xmm7
+    
+    // load registers //
+
+Lload_reg:
+    mov     0(%r10),  %rdi
+    mov     8(%r10),  %rsi
+    mov     16(%r10), %rdx
+    mov     24(%r10), %rcx
+    mov     32(%r10), %r8
+    mov     40(%r10), %r9
 
 Lcall:
-    add     %r10, %rsp          /* dealloc reg arg area */
-                                /* note: stack still 16-byte aligned */
-
     call    *%r11               /* call function */
 
-    mov     8(%rbp), %rdi       /* restore return buffer */
+    mov     (%rbp), %rdi       /* restore return buffer */
 
     // load return buffer //
 
-    mov     %rax, (%rdi)
-    mov     %rdx, 8(%rdi)
+    mov     %rax,  0(%rdi)
+    mov     %rdx,  8(%rdi)
     movq    %xmm0, 16(%rdi)
     movq    %xmm1, 32(%rdi)
 
     // return //
 
-    lea     16(%rbp), %rsp      /* deallocate stack args */
+    lea     8(%rbp), %rsp      /* deallocate stack args */
 
     pop     %rbp
     ret
@@ -105,10 +103,13 @@ Lcall:
 /////////////////////////////////////////////////////////////////////////
 //                                                                     //
 //                                                                     //
-//                              x86                                    //
+//                              i386                                   //
 //                                                                     //
 //                                                                     //
 /////////////////////////////////////////////////////////////////////////
+
+.align 4
+.globl ___nat_invoking__
 
 /* void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret) */
 /* NOTE: bytes must be a multiple of 16 if greater than 208 */
@@ -125,6 +126,9 @@ ___nat_invoking__:
 //                                                                     //
 //                                                                     //
 /////////////////////////////////////////////////////////////////////////
+
+.align 5
+.globl ___nat_invoking__
 
 /* void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret) */
 /* NOTE: bytes must be a multiple of 16 if greater than 208 */
@@ -231,6 +235,9 @@ Lload_reg:
 //                                                                     //
 //                                                                     //
 /////////////////////////////////////////////////////////////////////////
+
+.align 5
+.globl ___nat_invoking__
 
 /* void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret) */
 /* NOTE: bytes must be a multiple of 16 if greater than 208 */
