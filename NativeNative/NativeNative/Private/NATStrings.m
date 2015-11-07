@@ -38,13 +38,13 @@
         s_CStringLiterals = [NSMutableDictionary dictionary];
     });
 
-    const char *CString = [s_CStringLiterals[literal] UTF8String];
+    const char *CString = [s_CStringLiterals[literal] pointerValue];
 
     if ( CString == NULL ) {
-        NSString *string = [NSString stringWithUTF8String:literal.UTF8String];
-        s_CStringLiterals[literal] = string;
+        // Value will never be freed since literal strings last for the duration of the program
+        CString = strdup(literal.UTF8String);
 
-        CString = string.UTF8String;
+        s_CStringLiterals[literal] = [NSValue valueWithPointer:CString];
     }
 
     return CString;
