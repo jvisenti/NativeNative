@@ -40,7 +40,7 @@ void _NATRegexConfigure(void)
     kNATRegexIntLiteral = NAT_REGEX(@"(0x)?[\\d]+(L|LL|UL|ULL|LU|LLU)?");
     kNATRegexFloatLiteral = NAT_REGEX(@"[\\d]*\\.[\\d]+f?");
     kNATRegexStringLiteral = NAT_REGEX(@"@?\"([^\"]|[^\\\"])*\"");
-    kNATRegexSelectorLiteral = NAT_REGEX(@"@selector\\([^ ]+\\)");
+    kNATRegexSelectorLiteral = NAT_REGEX(@"@selector\\([^ \\)]+\\)");
 
     kNATRegexLiteralTerminal = NAT_REGEX(@"[\\s\\];,\\)\\-]");
     kNATRegexStatementTerminal = NAT_REGEX(@";+");

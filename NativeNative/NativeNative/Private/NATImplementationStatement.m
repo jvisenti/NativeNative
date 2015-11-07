@@ -19,10 +19,11 @@
 
 static void* const kNATArgumentCacheKey = (void *)&kNATArgumentCacheKey;
 
-void _NATClassRegisterImplementation(Class cls, NATMethodImplementation *implementation);
-NATMethodImplementation* _NATClassLookupImplementation(Class cls, SEL selector);
+void _NATClassRegisterImpl(Class cls, NATMethodImplementation *impl);
+NATMethodImplementation* _NATClassLookupImpl(Class cls, SEL selector);
 
-void _NATMethodIMP(id self, SEL _cmd, ...);
+OBJC_EXTERN void __nat_method_prep__(id self, SEL _cmd, ...);
+OBJC_EXPORT void __nat_method_imp__(/* ... */);
 
 @interface NATMethodImplementation : NSObject
 
@@ -104,9 +105,9 @@ void _NATMethodIMP(id self, SEL _cmd, ...);
 
     for ( NATMethodImplementation *method in _methodImplementations ) {
         Class target = method.isClassMethod ? object_getClass(cls) : cls;
-        class_addMethod(target, method.selector, (IMP)_NATMethodIMP, method.encoding.UTF8String);
+        class_addMethod(target, method.selector, (IMP)__nat_method_prep__, method.encoding.UTF8String);
 
-        _NATClassRegisterImplementation(target, method);
+        _NATClassRegisterImpl(target, method);
     }
 
     if ( nascentClass ) {
@@ -154,6 +155,9 @@ void _NATMethodIMP(id self, SEL _cmd, ...);
         NSMutableArray *args = [NSMutableArray array];
         NSMutableString *methodName = [NSMutableString string];
 
+        [args addObject:@"self"];
+        [args addObject:@"_cmd"];
+
         while ( tokenizer.nextChar != '{' ) {
             [methodName appendString:[tokenizer matchExpression:kNATRegexSymName]];
 
@@ -187,7 +191,7 @@ void _NATMethodIMP(id self, SEL _cmd, ...);
 
 @end
 
-void _NATClassRegisterImplementation(Class cls, NATMethodImplementation *implementation)
+void _NATClassRegisterImpl(Class cls, NATMethodImplementation *impl)
 {
     CFMutableDictionaryRef impCache = nil;
 
@@ -200,72 +204,46 @@ void _NATClassRegisterImplementation(Class cls, NATMethodImplementation *impleme
         }
     }
 
-    CFDictionarySetValue(impCache, implementation.selector, (__bridge const void *)(implementation));
+    CFDictionarySetValue(impCache, impl.selector, (__bridge const void *)(impl));
 }
 
-NATMethodImplementation* _NATClassLookupImplementation(Class cls, SEL selector)
+NATMethodImplementation* _NATClassLookupImpl(Class cls, SEL selector)
 {
     CFMutableDictionaryRef argCache = (__bridge CFMutableDictionaryRef)(objc_getAssociatedObject(cls, kNATArgumentCacheKey));
 
     return (argCache != NULL) ? CFDictionaryGetValue(argCache, selector) : nil;
 }
 
-void _NATMethodIMP(id self, SEL _cmd, ...)
+void __nat_method_imp__(/* ... */)
 {
+    void *args = NULL;
+
+    asm volatile (
+                  "mov %%rbp, %[args]"
+                  : [args]"=r"(args)
+                  );
+
+    args += 16;
+
     NATScope *scope = [NATScope enter];
 
-    [scope addSymbol:[[NATSymbol alloc] initWithName:@"self" value:[[NATValue alloc] initWithObject:self]]];
-    [scope addSymbol:[[NATSymbol alloc] initWithName:@"_cmd" value:[[NATValue alloc] initWithBytes:&_cmd type:NATTypeSEL]]];
+    NATMethodImplementation *imp = _NATClassLookupImpl(**(Class **)args, *(SEL *)(args + sizeof(id)));
 
-    NATMethodImplementation *imp = _NATClassLookupImplementation(object_getClass(self), _cmd);
+    NSMethodSignature *signature = imp.signature;
 
-    if ( imp != nil ) {
-        // TODO: figure out arguments
-//        NSMethodSignature *signature = imp.signature;
-//        NATMethodDescriptor *descriptor = [NATMethodDescriptor descriptorForMethodSignature:signature];
-//
-//        NSUInteger len = descriptor.frameLength;
-//        void *args = calloc(len, 1);
-//
-//        asm volatile (
-//            "mov     %%rdi,  0(%[args])     \n\t"
-//            "mov     %%rsi,  8(%[args])     \n\t"
-//            "mov     %%rdx,  16(%[args])    \n\t"
-//            "mov     %%rcx,  24(%[args])    \n\t"
-//            "mov     %%r8,   32(%[args])    \n\t"
-//            "mov     %%r9,   40(%[args])    \n\t"
-//
-//            // skip reading SSE registers if possible
-//
-//            "cmpq    $48, (%[len])          \n\t"
-//            "jle     Ldone                  \n\t"
-//
-//             // read SSE registers //
-//
-//            "movdqa  %%xmm0,  48(%[args])   \n\t"
-//            "movdqa	 %%xmm1,  64(%[args])   \n\t"
-//            "movdqa	 %%xmm2,  80(%[args])   \n\t"
-//            "movdqa	 %%xmm3,  96(%[args])   \n\t"
-//            "movdqa	 %%xmm4, 112(%[args])   \n\t"
-//            "movdqa	 %%xmm5, 128(%[args])   \n\t"
-//            "movdqa	 %%xmm6, 144(%[args])   \n\t"
-//            "movdqa	 %%xmm7, 160(%[args])   \n\t"
-//            "Ldone:                         \n\t"
-//            :
-//            : [args]"r"(args), [len]"r"(&len)
-//        );
-//
-//        for ( NSUInteger i = 0; i < signature.numberOfArguments; ++i ) {
-//            NATArgInfo info = [descriptor infoForArgumentAtIndex:i];
-//
-//            NATValue *argVal = [[NATValue alloc] initWithBytes:(char *)args + info.frameOffset encoding:[signature getArgumentTypeAtIndex:i]];
-//            [scope addSymbol:[[NATSymbol alloc] initWithName:imp.argumentNames[i] value:argVal]];
-//        }
-//
-//        free(args);
+    for ( NSUInteger i = 0; i < signature.numberOfArguments; ++i ) {
+        const char *argEncoding = [signature getArgumentTypeAtIndex:i];
 
-        [imp.body execute];
+        NSUInteger argSize = 0;
+        NSGetSizeAndAlignment(argEncoding, &argSize, NULL);
+
+        NATValue *argVal = [[NATValue alloc] initWithBytes:args encoding:argEncoding];
+        [scope addSymbol:[[NATSymbol alloc] initWithName:imp.argumentNames[i] value:argVal]];
+
+        args += argSize;
     }
+
+    [imp.body execute];
 
     [NATScope exit];
 }
