@@ -18,8 +18,12 @@
 + (NATScope *)enter;
 + (void)exit;
 
++ (void)exitAll;
++ (void)setCurrentScope:(NATScope *)scope;
+
 - (void)addSymbol:(NATSymbol *)symbol;
 - (NATSymbol *)lookupSymbol:(NSString *)symName;
+- (void)removeSymbol:(NSString *)symName;
 
 @end
 

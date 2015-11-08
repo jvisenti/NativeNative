@@ -282,7 +282,7 @@
 
 #pragma mark - NATExpression
 
-- (NATValue *)evaluate
+- (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
 {
     return self;
 }

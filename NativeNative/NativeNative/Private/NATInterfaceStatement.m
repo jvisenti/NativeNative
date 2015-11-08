@@ -92,7 +92,7 @@ void _NATDealloc(__unsafe_unretained id self, SEL _cmd);
     [[self nascentClasses] removeObjectForKey:NSStringFromClass(cls)];
 }
 
-- (void)execute
+- (void)executeWithContext:(NATExecutionContext *)ctx
 {
     const char *className = _className.UTF8String;
 

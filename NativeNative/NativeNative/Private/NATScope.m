@@ -47,6 +47,19 @@ static NSString* const kNATCurrentScopeKey = @"_NATCurrentScope";
     }
 }
 
++ (void)exitAll
+{
+    [[NSThread currentThread].threadDictionary removeObjectForKey:kNATCurrentScopeKey];
+}
+
++ (void)setCurrentScope:(NATScope *)scope
+{
+    if ( scope != nil ) {
+        [NSThread currentThread].threadDictionary[kNATCurrentScopeKey] = scope;
+
+    }
+}
+
 - (instancetype)init
 {
     return [self initWithEnclosingScope:nil];
@@ -81,6 +94,11 @@ static NSString* const kNATCurrentScopeKey = @"_NATCurrentScope";
     }
 
     return symbol;
+}
+
+- (void)removeSymbol:(NSString *)symName
+{
+    [_symbolTable removeObjectForKey:symName];
 }
 
 #pragma mark - private methods

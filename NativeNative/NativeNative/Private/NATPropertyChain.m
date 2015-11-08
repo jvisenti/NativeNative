@@ -65,12 +65,12 @@
     return self;
 }
 
-- (NATValue *)evaluate
+- (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
 {
     NATMethod *methodChain = nil;
 
     if ( _segmentNames.count > 0 ) {
-        NATValue *targetValue = [_rootExpression evaluate];
+        NATValue *targetValue = [_rootExpression evaluateInContext:ctx];
 
         id target = (targetValue.type == NATTypeObject) ? targetValue.objectValue : targetValue.classValue;
         assert(target != nil);
@@ -87,7 +87,7 @@
 
         if ( _assignment != nil ) {
             if ( methodChain != nil ) {
-                target = [methodChain evaluate].objectValue;
+                target = [methodChain evaluateInContext:ctx].objectValue;
             }
 
             NATProperty *property = [[target class] nat_propertyForKey:[_segmentNames lastObject]];
@@ -112,7 +112,7 @@
         }
     }
 
-    return [methodChain evaluate];
+    return [methodChain evaluateInContext:ctx];
 }
 
 @end

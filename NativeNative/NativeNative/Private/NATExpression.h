@@ -8,10 +8,11 @@
 
 #import "NATTokenizer.h"
 #import "NATOperators.h"
+#import "NATExecutionContext.h"
 
 @protocol NATExpression <NSObject>
 
-- (NATValue *)evaluate;
+- (NATValue *)evaluateInContext:(NATExecutionContext *)ctx;
 
 @end
 

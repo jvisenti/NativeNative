@@ -11,6 +11,8 @@
 #import "NATTokenizer.h"
 #import "NATStatement.h"
 
+#import "NATScope.h"
+
 @implementation NATProgram {
     NSArray *_statements;
 }
@@ -35,7 +37,23 @@
 
 - (void)execute
 {
-    [_statements makeObjectsPerformSelector:@selector(execute)];
+    [_statements makeObjectsPerformSelector:@selector(executeWithContext:) withObject:nil];
+}
+
+- (void)executeWithContext:(NATExecutionContext *)ctx
+{
+    [NATScope enter];
+
+    if ( ctx != nil ) {
+        [NATExecutionContext setCurrentContext:ctx];
+
+        NATSymbol *selfSym = [[NATSymbol alloc] initWithName:@"self" value:[[NATValue alloc] initWithObject:ctx.sender]];
+        [[NATScope currentScope] addSymbol:selfSym];
+    }
+
+    [_statements makeObjectsPerformSelector:@selector(executeWithContext:) withObject:ctx];
+
+    [NATScope exit];
 }
 
 @end

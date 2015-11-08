@@ -7,10 +7,11 @@
 //
 
 #import "NATTokenizer.h"
+#import "NATExecutionContext.h"
 
 @protocol NATStatement <NSObject>
 
-- (void)execute;
+- (void)executeWithContext:(NATExecutionContext *)ctx;
 
 @end
 

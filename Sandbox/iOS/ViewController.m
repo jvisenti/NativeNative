@@ -52,7 +52,7 @@
 
     NATProgram *program = [[NATProgram alloc] initWithSource:source];
 
-    [program execute];
+    [program executeWithContext:nil];
 }
 
 @end

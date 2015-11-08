@@ -47,7 +47,7 @@
     return statement;
 }
 
-- (void)execute
+- (void)executeWithContext:(NATExecutionContext *)ctx
 {
     NSAssert(NO, @"Invalid invocation of method %@ on abstract class %@.", NSStringFromSelector(_cmd), [self class]);
 }
@@ -67,9 +67,9 @@
     return self;
 }
 
-- (void)execute
+- (void)executeWithContext:(NATExecutionContext *)ctx
 {
-    [_expression evaluate];
+    [_expression evaluateInContext:ctx];
 }
 
 @end

@@ -27,6 +27,7 @@ OBJC_EXPORT void __nat_method_imp__(/* ... */);
 
 @interface NATMethodImplementation : NSObject
 
+@property (strong, nonatomic) Class associatedClass;
 @property (assign, nonatomic, readonly, getter=isClassMethod) BOOL classMethod;
 
 @property (assign, nonatomic, readonly) SEL selector;
@@ -85,7 +86,7 @@ OBJC_EXPORT void __nat_method_imp__(/* ... */);
     return self;
 }
 
-- (void)execute
+- (void)executeWithContext:(NATExecutionContext *)ctx
 {
     const char *className = _className.UTF8String;
 
@@ -104,10 +105,11 @@ OBJC_EXPORT void __nat_method_imp__(/* ... */);
     }
 
     for ( NATMethodImplementation *method in _methodImplementations ) {
-        Class target = method.isClassMethod ? object_getClass(cls) : cls;
-        class_addMethod(target, method.selector, (IMP)__nat_method_prep__, method.encoding.UTF8String);
+        Class targetCls = method.isClassMethod ? object_getClass(cls) : cls;
+        class_addMethod(targetCls, method.selector, (IMP)__nat_method_prep__, method.encoding.UTF8String);
 
-        _NATClassRegisterImpl(target, method);
+        method.associatedClass = targetCls;
+        _NATClassRegisterImpl(targetCls, method);
     }
 
     if ( nascentClass ) {
@@ -209,9 +211,16 @@ void _NATClassRegisterImpl(Class cls, NATMethodImplementation *impl)
 
 NATMethodImplementation* _NATClassLookupImpl(Class cls, SEL selector)
 {
-    CFMutableDictionaryRef argCache = (__bridge CFMutableDictionaryRef)(objc_getAssociatedObject(cls, kNATArgumentCacheKey));
+    NATMethodImplementation *impl = nil;
 
-    return (argCache != NULL) ? CFDictionaryGetValue(argCache, selector) : nil;
+    while ( impl == nil && cls != nil ) {
+        CFMutableDictionaryRef argCache = (__bridge CFMutableDictionaryRef)(objc_getAssociatedObject(cls, kNATArgumentCacheKey));
+        impl = (argCache != NULL) ? CFDictionaryGetValue(argCache, selector) : nil;
+
+        cls = class_getSuperclass(cls);
+    }
+
+    return impl;
 }
 
 void __nat_method_imp__(/* ... */)
@@ -226,9 +235,15 @@ void __nat_method_imp__(/* ... */)
     // Skip stack args saved by prologue
     args += 2 * kNATRegisterSize;
 
+    NATScope *currentScope = [NATScope currentScope];
+    NATExecutionContext *ctx = [NATExecutionContext currentContext];
+
+    [NATScope exitAll];
+    
     NATScope *scope = [NATScope enter];
 
-    NATMethodImplementation *imp = _NATClassLookupImpl(**(Class **)args, *(SEL *)(args + sizeof(id)));
+    Class senderClass = ctx.senderClass ?: **(Class **)args;
+    NATMethodImplementation *imp = _NATClassLookupImpl(senderClass, *(SEL *)(args + sizeof(id)));
 
     NSMethodSignature *signature = imp.signature;
     NATMethodDescriptor *descriptor = [NATMethodDescriptor descriptorForMethodSignature:signature];
@@ -242,7 +257,8 @@ void __nat_method_imp__(/* ... */)
         [scope addSymbol:[[NATSymbol alloc] initWithName:imp.argumentNames[i] value:argVal]];
     }
 
-    [imp.body execute];
+    [imp.body executeWithContext:[NATExecutionContext contextWithSender:*(__unsafe_unretained id *)args ofClass:imp.associatedClass]];
 
     [NATScope exit];
+    [NATScope setCurrentScope:currentScope];
 }

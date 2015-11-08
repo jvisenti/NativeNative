@@ -128,7 +128,7 @@
     [[NATScope currentScope] addSymbol:sym];
 
     NATMethod *method = [[NATMethod alloc] initWithSource:@"[self print]"];
-    NATValue *retVal = [method evaluate];
+    NATValue *retVal = [method evaluateInContext:nil];
 
     [NATScope exit];
 
@@ -144,7 +144,7 @@
     [[NATScope currentScope] addSymbol:sym];
 
     NATMethod *method = [[NATMethod alloc] initWithSource:@"[self stringFromInt:5]"];
-    NATValue *retVal = [method evaluate];
+    NATValue *retVal = [method evaluateInContext:nil];
 
     [NATScope exit];
 
@@ -159,7 +159,7 @@
     [[NATScope currentScope] addSymbol:sym];
 
     NATMethod *method = [[NATMethod alloc] initWithSource:@"[self numberFromFloat:[self randDouble]]"];
-    NATValue *retVal = [method evaluate];
+    NATValue *retVal = [method evaluateInContext:nil];
 
     NSLog(@"%f", [retVal.objectValue floatValue]);
 
@@ -176,7 +176,7 @@
     [[NATScope currentScope] addSymbol:sym];
 
     NATExpression *assignment = [NATExpression expressionWithSource:@"UIViewController *c = [self randDouble];"];
-    [assignment evaluate];
+    [assignment evaluateInContext:nil];
 
     XCTAssert([[NATScope currentScope] lookupSymbol:@"c"].value.type == NATTypeDouble);
 
@@ -218,7 +218,7 @@
     XCTAssertEqual(self.testObj, self.source);
 
     NATPropertyChain *propChain = [[NATPropertyChain alloc] initWithSource:@"self.source.length;"];
-    NATValue *result = propChain.evaluate;
+    NATValue *result = [propChain evaluateInContext:nil];
 
     XCTAssertEqual(result.longValue, self.source.length);
 
@@ -393,7 +393,7 @@
             program = [[NATProgram alloc] initWithSource:@"test.testProp2 = [[NATMemoryTest alloc] init];"];
             [program execute];
 
-            testProp2 = [[[NATPropertyChain alloc] initWithSource:@"test.testProp2"] evaluate].objectValue;
+            testProp2 = [[[NATPropertyChain alloc] initWithSource:@"test.testProp2"] evaluateInContext:nil].objectValue;
 
             XCTAssertNotNil(testProp2);
             

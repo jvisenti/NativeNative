@@ -184,16 +184,16 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
     [self invokeIMP:objc_msgSend];
 }
 
-- (void)invokeSuper
+- (void)invokeSuper:(Class)superclass
 {
     void *frame = malloc(_methodDescriptor.frameLength);
     memcpy(frame, _frame, _methodDescriptor.frameLength);
 
     struct objc_super spr;
     spr.receiver = *(__unsafe_unretained id *)frame;
-    spr.super_class = class_getSuperclass(**(Class **)frame);
+    spr.super_class = superclass;
 
-    *(struct objc_super **)frame = &spr;
+    *(void **)frame = &spr;
 
     [self invokeIMP:objc_msgSendSuper withFrame:&frame];
 

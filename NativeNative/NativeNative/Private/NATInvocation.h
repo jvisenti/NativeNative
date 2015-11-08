@@ -59,7 +59,7 @@
 - (void)retainArgumentsIfNeeded;
 
 - (void)invoke;
-- (void)invokeSuper;
+- (void)invokeSuper:(Class)superclass;
 - (void)invokeIMP:(IMP)imp;
 
 @end
