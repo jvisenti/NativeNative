@@ -8,11 +8,14 @@
 
 #import "NATExecutionContext.h"
 
-@class NATExecutionContext;
+@class NATTokenizer;
 
 @interface NATProgram : NSObject
 
 - (instancetype)initWithSource:(NSString *)source;
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
+
+- (instancetype)initWithStatements:(NSArray *)statements;
 
 /**
  *  Executes in the current scope.

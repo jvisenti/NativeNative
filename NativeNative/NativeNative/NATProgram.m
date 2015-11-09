@@ -19,16 +19,24 @@
 
 - (instancetype)initWithSource:(NSString *)source
 {
+    return [self initWithTokenizer:[[NATTokenizer alloc] initWithString:source]];
+}
+
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
+{
+    NSMutableArray *statements = [NSMutableArray array];
+    id<NATStatement> statement = nil;
+
+    while ( (statement = [NATStatement statementWithTokenizer:tokenizer]) ) {
+        [statements addObject:statement];
+    }
+
+    return [self initWithStatements:statements];
+}
+
+- (instancetype)initWithStatements:(NSArray *)statements
+{
     if ( (self = [super init]) ) {
-        NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:source];
-
-        NSMutableArray *statements = [NSMutableArray array];
-        id<NATStatement> statement = nil;
-
-        while ( (statement = [NATStatement statementWithTokenizer:tokenizer]) ) {
-            [statements addObject:statement];
-        }
-
         _statements = [statements copy];
     }
 

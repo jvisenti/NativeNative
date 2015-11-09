@@ -75,52 +75,41 @@
 
         expression = [[NATValue alloc] initWithBytes:&selector type:NATTypeSEL];
     }
-    else {
-        while ( (token = [tokenizer advanceExpression:kNATRegexAssignment]) != nil ||
-                (token = [tokenizer advanceUntil:kNATRegexLiteralTerminal]) != nil ) {
-
-            if ( [token nat_matches:kNATRegexAssignment] ) {
-                if ( [token nat_beginsWith:kNATRegexPropertyChain] ) {
-                    expression = [[NATPropertyChain alloc] initWithSource:token];
-                }
-                else {
-                    expression = [[NATAssignmentExpression alloc] initWithSource:token];
-                }
-
-                break;
-            }
-            else if ( [token nat_matches:kNATRegexPropertyChain] ) {
-                expression = [[NATPropertyChain alloc] initWithSource:token];
-                break;
-            }
-            else if ( [token nat_matches:kNATRegexSymName] ) {
-                if ( [token hasSuffix:@"."] ) {
-                    expression = [[NATSymbolExpression alloc] initWithName:[token substringToIndex:token.length - 1]];
-                    expression = [[NATPropertyChain alloc] initWithRootExpression:expression tokenizer:tokenizer];
-                }
-                else {
-                    expression = [[NATSymbolExpression alloc] initWithName:token];
-                }
-
-                break;
-            }
-            else if ( [token nat_matches:kNATRegexIntLiteral] ) {
-                long long value = 0;
-
-                if ( [token hasPrefix:@"0x"] ) {
-                    sscanf(token.UTF8String, "%llx", &value);
-                }
-                else {
-                    value = [token longLongValue];
-                }
-
-                expression = [[NATValue alloc] initWithBytes:&value type:NATTypeLongLong];
-            }
-            else if ( [token nat_matches:kNATRegexFloatLiteral] ) {
-                double value = [token doubleValue];
-                expression = [[NATValue alloc] initWithBytes:&value type:NATTypeDouble];
-            }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexAssignment]) ) {
+        if ( [token nat_beginsWith:kNATRegexPropertyChain] ) {
+            expression = [[NATPropertyChain alloc] initWithSource:token];
         }
+        else {
+            expression = [[NATAssignmentExpression alloc] initWithSource:token];
+        }
+    }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexPropertyChain]) ) {
+        expression = [[NATPropertyChain alloc] initWithSource:token];
+    }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexSymName]) ) {
+        if ( [token hasSuffix:@"."] ) {
+            expression = [[NATSymbolExpression alloc] initWithName:[token substringToIndex:token.length - 1]];
+            expression = [[NATPropertyChain alloc] initWithRootExpression:expression tokenizer:tokenizer];
+        }
+        else {
+            expression = [[NATSymbolExpression alloc] initWithName:token];
+        }
+    }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexFloatLiteral]) ) {
+        double value = [token doubleValue];
+        expression = [[NATValue alloc] initWithBytes:&value type:NATTypeDouble];
+    }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexIntLiteral]) ) {
+        long long value = 0;
+
+        if ( [token hasPrefix:@"0x"] ) {
+            sscanf(token.UTF8String, "%llx", &value);
+        }
+        else {
+            value = [token longLongValue];
+        }
+
+        expression = [[NATValue alloc] initWithBytes:&value type:NATTypeLongLong];
     }
 
     if ( [tokenizer nextChar] == '.' ) {
@@ -272,6 +261,11 @@
 @end
 
 @implementation NSObject (NATExpression)
+
+- (void)executeWithContext:(NATExecutionContext *)ctx
+{
+    [self evaluateInContext:ctx];
+}
 
 - (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
 {

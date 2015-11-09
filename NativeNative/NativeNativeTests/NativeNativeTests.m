@@ -357,6 +357,7 @@
 {
     __weak id obj = nil;
     __weak id obj2 = nil;
+    __weak id obj3 = nil;
 
     @autoreleasepool {
         [NATScope enter];
@@ -402,11 +403,18 @@
 
         XCTAssertNil(testProp2);
 
+        program = [[NATProgram alloc] initWithSource:@"NATMemoryTest *test2 = [NATMemoryTest new];"];
+        [program execute];
+
+        obj3 = [[NATScope currentScope] lookupSymbol:@"test2"].value.objectValue;
+        XCTAssertNotNil(obj3);
+
         [NATScope exit];
     }
 
     XCTAssertNil(obj);
     XCTAssertNil(obj2);
+    XCTAssertNil(obj3);
 }
 
 @end

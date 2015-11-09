@@ -58,16 +58,18 @@ void _NATDealloc(__unsafe_unretained id self, SEL _cmd);
 
         NSMutableArray *properties = [NSMutableArray array];
 
-        while ( tokenizer.hasTokens && [tokenizer advanceString:@"@end"] == nil ) {
+        while ( tokenizer.hasTokens && ![tokenizer advanceString:@"@end"] ) {
             // Only care about properties. Methods are created when Implementation is interpreted
-            if ( [tokenizer nextChar] == '@' ) {
+            if ( [tokenizer matchesString:@"@property"] ) {
                 [properties addObject:[self readProperty:tokenizer]];
+                [tokenizer advanceExpression:kNATRegexStatementTerminal];
+            }
+            else if ( [tokenizer advanceUntil:kNATRegexStatementTerminal] ) {
+                [tokenizer advanceExpression:kNATRegexStatementTerminal];
             }
             else {
-                [tokenizer advanceUntil:kNATRegexStatementTerminal];
+                break;
             }
-
-            [tokenizer advanceExpression:kNATRegexStatementTerminal];
         }
 
         _properties = (properties.count > 0) ? [properties copy] : nil;
@@ -344,6 +346,10 @@ void _NATDealloc(__unsafe_unretained id self, SEL _cmd)
             }
         }
     }
+
+    free(ivars);
+
+    // TODO: this causes infinite recursion for classes that inherit from runtime created classes
 
     // ARC automatically calls super when dealloc is implemented in code,
     // but when provided our own dealloc IMP we have to call through to super manually
