@@ -247,7 +247,7 @@ void __nat_method_imp__(/* ... */)
     NATScope *scope = [NATScope enter];
 
     Class senderClass = ctx.senderClass ?: **(Class **)args;
-    NATMethodImplementation *imp = _NATClassLookupImpl(senderClass, *(SEL *)(args + sizeof(id)));
+    NATMethodImplementation *imp = _NATClassLookupImpl(senderClass, *(SEL *)(args + kNATRegisterSize));
 
     NSMethodSignature *signature = imp.signature;
     NATMethodDescriptor *descriptor = [NATMethodDescriptor descriptorForMethodSignature:signature];

@@ -23,11 +23,11 @@
 @end
 
 @interface NATUnaryExpression : NSObject <NATExpression>
-- (instancetype)initWithOperator:(NATUnaryOperator)op operand:(NATExpression *)expr;
+- (instancetype)initWithOperator:(NATUnaryOperator *)op operand:(NATExpression *)expr;
 @end
 
 @interface NATBinaryExpression : NSObject <NATExpression>
-- (instancetype)initWithLHS:(NATExpression *)lhs operator:(NATBinaryOperator)op RHS:(NATExpression *)rhs;
+- (instancetype)initWithLHS:(NATExpression *)lhs operator:(NATBinaryOperator *)op RHS:(NATExpression *)rhs;
 @end
 
 @implementation NATExpression
@@ -40,12 +40,11 @@
 + (id<NATExpression>)expressionWithTokenizer:(NATTokenizer *)tokenizer
 {
     id<NATExpression> expression = nil;
-    NATUnaryOperator op = nil;
+    NATUnaryOperator *unaryOp = nil;
     NSString *token = nil;
 
-    // TODO; refactor operators
-    if ( [tokenizer nextChar] == '&' ) {
-        op = NATUnaryOperatorWithSource([tokenizer matchString:@"&"]);
+    if ( (token = [tokenizer advanceExpression:kNATRegexUnaryOperator]) ) {
+        unaryOp = [NATUnaryOperator operatorWithSource:token];
     }
 
     if ( [tokenizer nextChar] == '[' ) {
@@ -116,8 +115,8 @@
         expression = [[NATPropertyChain alloc] initWithRootExpression:expression tokenizer:tokenizer];
     }
 
-    if ( op != nil ) {
-        expression = [[NATUnaryExpression alloc] initWithOperator:op operand:expression];
+    if ( unaryOp != nil ) {
+        expression = [[NATUnaryExpression alloc] initWithOperator:unaryOp operand:expression];
     }
 
     // TODO: more expression types
@@ -215,11 +214,11 @@
 @end
 
 @implementation NATUnaryExpression {
-    NATUnaryOperator _operator;
+    NATUnaryOperator *_operator;
     NATExpression *_operand;
 }
 
-- (instancetype)initWithOperator:(NATUnaryOperator)op operand:(NATExpression *)expr
+- (instancetype)initWithOperator:(NATUnaryOperator *)op operand:(NATExpression *)expr
 {
     if ( (self = [super init]) ) {
         _operator = op;
@@ -231,18 +230,23 @@
 
 - (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
 {
-    return _operator([_operand evaluateInContext:ctx]);
+    return [_operator applyTo:[_operand evaluateInContext:ctx]];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@%@", _operator, _operand];
 }
 
 @end
 
 @implementation NATBinaryExpression {
-    NATBinaryOperator _operator;
+    NATBinaryOperator *_operator;
     NATExpression *_lhs;
     NATExpression *_rhs;
 }
 
-- (instancetype)initWithLHS:(NATExpression *)lhs operator:(NATBinaryOperator)op RHS:(NATExpression *)rhs
+- (instancetype)initWithLHS:(NATExpression *)lhs operator:(NATBinaryOperator *)op RHS:(NATExpression *)rhs
 {
     if ( (self = [super init]) ) {
         _lhs = lhs;
@@ -255,7 +259,12 @@
 
 - (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
 {
-    return _operator([_lhs evaluateInContext:ctx], [_rhs evaluateInContext:ctx]);
+    return [_operator applyTo:[_lhs evaluateInContext:ctx] and:[_rhs evaluateInContext:ctx]];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@ %@ %@", _lhs, _operator, _rhs];
 }
 
 @end

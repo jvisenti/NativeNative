@@ -13,8 +13,9 @@
 @interface NATProgram : NSObject
 
 - (instancetype)initWithSource:(NSString *)source;
-- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
 
+// TODO: make these private
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
 - (instancetype)initWithStatements:(NSArray *)statements;
 
 /**
