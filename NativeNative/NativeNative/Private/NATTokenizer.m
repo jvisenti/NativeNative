@@ -99,10 +99,6 @@ NS_INLINE void NATConsumeWhitespace(NSString *string, NSUInteger *idx)
             result = [_string substringWithRange:NSMakeRange(_index, match.range.location - _index)];
             _index = match.range.location;
         }
-        else if ( match == nil ) {
-            result = [_string substringFromIndex:_index];
-            _index = _string.length;
-        }
     }
 
     return result;
@@ -180,6 +176,23 @@ NS_INLINE void NATConsumeWhitespace(NSString *string, NSUInteger *idx)
         while ( [_string characterAtIndex:_index + idx] == [string characterAtIndex:idx] && ++idx < string.length ) {}
 
         if ( idx == string.length ) {
+            matches = YES;
+        }
+    }
+
+    return matches;
+}
+
+- (BOOL)matchesExpression:(NSRegularExpression *)expr
+{
+    BOOL matches = NO;
+
+    NATConsumeWhitespace(_string, &_index);
+
+    if ( self.hasTokens ) {
+        NSTextCheckingResult *match = [expr firstMatchInString:_string options:NSMatchingAnchored range:NSMakeRange(_index, _string.length - _index)];
+
+        if ( match != nil ) {
             matches = YES;
         }
     }

@@ -29,5 +29,6 @@
 
 // Checks for a match without advancing the tokenizer
 - (BOOL)matchesString:(NSString *)string;
+- (BOOL)matchesExpression:(NSRegularExpression *)expr;
 
 @end

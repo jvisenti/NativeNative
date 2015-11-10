@@ -23,11 +23,11 @@
 @end
 
 @interface NATUnaryExpression : NSObject <NATExpression>
-- (instancetype)initWithOperator:(NATUnaryOperator)op operand:(NATExpression *)expr;
+- (instancetype)initWithOperator:(NATUnaryOperator *)op operand:(NATExpression *)expr;
 @end
 
 @interface NATBinaryExpression : NSObject <NATExpression>
-- (instancetype)initWithLHS:(NATExpression *)lhs operator:(NATBinaryOperator)op RHS:(NATExpression *)rhs;
+- (instancetype)initWithLHS:(NATExpression *)lhs operator:(NATBinaryOperator *)op RHS:(NATExpression *)rhs;
 @end
 
 @implementation NATExpression
@@ -40,12 +40,11 @@
 + (id<NATExpression>)expressionWithTokenizer:(NATTokenizer *)tokenizer
 {
     id<NATExpression> expression = nil;
-    NATUnaryOperator op = nil;
+    NATUnaryOperator *unaryOp = nil;
     NSString *token = nil;
 
-    // TODO; refactor operators
-    if ( [tokenizer nextChar] == '&' ) {
-        op = NATUnaryOperatorWithSource([tokenizer matchString:@"&"]);
+    if ( (token = [tokenizer advanceExpression:kNATRegexUnaryOperator]) ) {
+        unaryOp = [NATUnaryOperator operatorWithSource:token];
     }
 
     if ( [tokenizer nextChar] == '[' ) {
@@ -75,60 +74,49 @@
 
         expression = [[NATValue alloc] initWithBytes:&selector type:NATTypeSEL];
     }
-    else {
-        while ( (token = [tokenizer advanceExpression:kNATRegexAssignment]) != nil ||
-                (token = [tokenizer advanceUntil:kNATRegexLiteralTerminal]) != nil ) {
-
-            if ( [token nat_matches:kNATRegexAssignment] ) {
-                if ( [token nat_beginsWith:kNATRegexPropertyChain] ) {
-                    expression = [[NATPropertyChain alloc] initWithSource:token];
-                }
-                else {
-                    expression = [[NATAssignmentExpression alloc] initWithSource:token];
-                }
-
-                break;
-            }
-            else if ( [token nat_matches:kNATRegexPropertyChain] ) {
-                expression = [[NATPropertyChain alloc] initWithSource:token];
-                break;
-            }
-            else if ( [token nat_matches:kNATRegexSymName] ) {
-                if ( [token hasSuffix:@"."] ) {
-                    expression = [[NATSymbolExpression alloc] initWithName:[token substringToIndex:token.length - 1]];
-                    expression = [[NATPropertyChain alloc] initWithRootExpression:expression tokenizer:tokenizer];
-                }
-                else {
-                    expression = [[NATSymbolExpression alloc] initWithName:token];
-                }
-
-                break;
-            }
-            else if ( [token nat_matches:kNATRegexIntLiteral] ) {
-                long long value = 0;
-
-                if ( [token hasPrefix:@"0x"] ) {
-                    sscanf(token.UTF8String, "%llx", &value);
-                }
-                else {
-                    value = [token longLongValue];
-                }
-
-                expression = [[NATValue alloc] initWithBytes:&value type:NATTypeLongLong];
-            }
-            else if ( [token nat_matches:kNATRegexFloatLiteral] ) {
-                double value = [token doubleValue];
-                expression = [[NATValue alloc] initWithBytes:&value type:NATTypeDouble];
-            }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexAssignment]) ) {
+        if ( [token nat_beginsWith:kNATRegexPropertyChain] ) {
+            expression = [[NATPropertyChain alloc] initWithSource:token];
         }
+        else {
+            expression = [[NATAssignmentExpression alloc] initWithSource:token];
+        }
+    }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexPropertyChain]) ) {
+        expression = [[NATPropertyChain alloc] initWithSource:token];
+    }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexSymName]) ) {
+        if ( [token hasSuffix:@"."] ) {
+            expression = [[NATSymbolExpression alloc] initWithName:[token substringToIndex:token.length - 1]];
+            expression = [[NATPropertyChain alloc] initWithRootExpression:expression tokenizer:tokenizer];
+        }
+        else {
+            expression = [[NATSymbolExpression alloc] initWithName:token];
+        }
+    }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexFloatLiteral]) ) {
+        double value = [token doubleValue];
+        expression = [[NATValue alloc] initWithBytes:&value type:NATTypeDouble];
+    }
+    else if ( (token = [tokenizer advanceExpression:kNATRegexIntLiteral]) ) {
+        long long value = 0;
+
+        if ( [token hasPrefix:@"0x"] ) {
+            sscanf(token.UTF8String, "%llx", &value);
+        }
+        else {
+            value = [token longLongValue];
+        }
+
+        expression = [[NATValue alloc] initWithBytes:&value type:NATTypeLongLong];
     }
 
     if ( [tokenizer nextChar] == '.' ) {
         expression = [[NATPropertyChain alloc] initWithRootExpression:expression tokenizer:tokenizer];
     }
 
-    if ( op != nil ) {
-        expression = [[NATUnaryExpression alloc] initWithOperator:op operand:expression];
+    if ( unaryOp != nil ) {
+        expression = [[NATUnaryExpression alloc] initWithOperator:unaryOp operand:expression];
     }
 
     // TODO: more expression types
@@ -226,11 +214,11 @@
 @end
 
 @implementation NATUnaryExpression {
-    NATUnaryOperator _operator;
+    NATUnaryOperator *_operator;
     NATExpression *_operand;
 }
 
-- (instancetype)initWithOperator:(NATUnaryOperator)op operand:(NATExpression *)expr
+- (instancetype)initWithOperator:(NATUnaryOperator *)op operand:(NATExpression *)expr
 {
     if ( (self = [super init]) ) {
         _operator = op;
@@ -242,18 +230,23 @@
 
 - (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
 {
-    return _operator([_operand evaluateInContext:ctx]);
+    return [_operator applyTo:[_operand evaluateInContext:ctx]];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@%@", _operator, _operand];
 }
 
 @end
 
 @implementation NATBinaryExpression {
-    NATBinaryOperator _operator;
+    NATBinaryOperator *_operator;
     NATExpression *_lhs;
     NATExpression *_rhs;
 }
 
-- (instancetype)initWithLHS:(NATExpression *)lhs operator:(NATBinaryOperator)op RHS:(NATExpression *)rhs
+- (instancetype)initWithLHS:(NATExpression *)lhs operator:(NATBinaryOperator *)op RHS:(NATExpression *)rhs
 {
     if ( (self = [super init]) ) {
         _lhs = lhs;
@@ -266,12 +259,22 @@
 
 - (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
 {
-    return _operator([_lhs evaluateInContext:ctx], [_rhs evaluateInContext:ctx]);
+    return [_operator applyTo:[_lhs evaluateInContext:ctx] and:[_rhs evaluateInContext:ctx]];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@ %@ %@", _lhs, _operator, _rhs];
 }
 
 @end
 
 @implementation NSObject (NATExpression)
+
+- (void)executeWithContext:(NATExecutionContext *)ctx
+{
+    [self evaluateInContext:ctx];
+}
 
 - (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
 {

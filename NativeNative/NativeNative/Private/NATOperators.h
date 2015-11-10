@@ -10,8 +10,18 @@
 
 @class NATValue;
 
-typedef NATValue* (^NATUnaryOperator)(NATValue *operand);
-typedef NATValue* (^NATBinaryOperator)(NATValue *lhs, NATValue *rhs);
+@interface NATUnaryOperator : NSObject
 
-NATUnaryOperator NATUnaryOperatorWithSource(NSString *source);
-NATBinaryOperator NATBinaryOperatorWithSource(NSString *source);
++ (NATUnaryOperator *)operatorWithSource:(NSString *)source;
+
+- (NATValue *)applyTo:(NATValue *)operand;
+
+@end
+
+@interface NATBinaryOperator : NSObject
+
++ (NATBinaryOperator *)operatorWithSource:(NSString *)source;
+
+- (NATValue *)applyTo:(NATValue *)op1 and:(NATValue *)op2;
+
+@end

@@ -13,6 +13,7 @@
 @property (nonatomic, weak) id sender;
 @property (strong, nonatomic) Class senderClass;
 
+// TODO: make these private
 + (NATExecutionContext *)currentContext;
 + (void)setCurrentContext:(NATExecutionContext *)context;
 

@@ -357,6 +357,7 @@
 {
     __weak id obj = nil;
     __weak id obj2 = nil;
+    __weak id obj3 = nil;
 
     @autoreleasepool {
         [NATScope enter];
@@ -402,11 +403,42 @@
 
         XCTAssertNil(testProp2);
 
+        program = [[NATProgram alloc] initWithSource:@"NATMemoryTest *test2 = [NATMemoryTest new];"];
+        [program execute];
+
+        obj3 = [[NATScope currentScope] lookupSymbol:@"test2"].value.objectValue;
+        XCTAssertNotNil(obj3);
+
         [NATScope exit];
     }
 
     XCTAssertNil(obj);
     XCTAssertNil(obj2);
+    XCTAssertNil(obj3);
+}
+
+- (void)testUnaryOperators
+{
+    int t1 = 25;
+    unsigned short t2 = 150;
+    float t3 = 3.14;
+    double t4 = 2.71;
+
+    NATValue *v1 = [[NATValue alloc] initWithBytes:&t1 type:NATTypeInt];
+    NATValue *v2 = [[NATValue alloc] initWithBytes:&t2 type:NATTypeUShort];
+    NATValue *v3 = [[NATValue alloc] initWithBytes:&t3 type:NATTypeFloat];
+    NATValue *v4 = [[NATValue alloc] initWithBytes:&t4 type:NATTypeDouble];
+
+    XCTAssertEqual([[NATUnaryOperator operatorWithSource:@"-"] applyTo:v1].intValue, -t1);
+    XCTAssertEqual([[NATUnaryOperator operatorWithSource:@"-"] applyTo:v2].shortValue, -t2);
+    XCTAssertEqual([[NATUnaryOperator operatorWithSource:@"-"] applyTo:v3].floatValue, -t3);
+    XCTAssertEqual([[NATUnaryOperator operatorWithSource:@"-"] applyTo:v4].doubleValue, -t4);
+
+    XCTAssertEqual([[NATUnaryOperator operatorWithSource:@"~"] applyTo:v1].intValue, ~t1);
+    XCTAssertEqual([[NATUnaryOperator operatorWithSource:@"~"] applyTo:v2].shortValue, ~t2);
+
+    XCTAssertEqual([[NATUnaryOperator operatorWithSource:@"+"] applyTo:v1].intValue, +t1);
+    XCTAssertEqual([[NATUnaryOperator operatorWithSource:@"+"] applyTo:v2].shortValue, +t2);
 }
 
 @end

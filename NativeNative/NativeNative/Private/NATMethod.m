@@ -8,6 +8,7 @@
 
 #import <dlfcn.h>
 #import <objc/runtime.h>
+#import <objc/message.h>
 
 #import "NATMethod.h"
 
@@ -24,6 +25,7 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     NSArray<id<NATExpression>> *_arguments;
 
     BOOL _sendSuper;
+    BOOL _requiresAutorelease;
 }
 
 - (instancetype)initWithSource:(NSString *)source
@@ -64,17 +66,14 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     SEL selector = NSSelectorFromString(methodName);
     NSAssert(selector != NULL, @"Failed to lookup selector: %@", methodName);
 
-
-    // TODO: potentially improve this
-    if ( [NSStringFromSelector(selector) hasPrefix:@"init"] ) {
-        NATMethod *method = [[NATMethod alloc] initWithSelector:selector arguments:args];
-        self = [self initWithSelector:NSSelectorFromString(@"autorelease") arguments:@[method]];
-    }
-    else {
-        self = [self initWithSelector:selector arguments:args];
+    if ( [NSStringFromSelector(selector) hasPrefix:@"init"] ||
+         selector == @selector(new) ||
+         selector == @selector(copy) ||
+         selector == @selector(copyWithZone:) ) {
+        _requiresAutorelease = YES;
     }
 
-    return self;
+    return [self initWithSelector:selector arguments:args];
 }
 
 - (instancetype)initWithSelector:(SEL)selector arguments:(NSArray<id<NATExpression>> *)arguments;
@@ -89,6 +88,8 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
 
 - (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
 {
+    NATValue *returnValue = nil;
+
     NATValue *targetValue = [(id<NATExpression>)_arguments[0] evaluateInContext:ctx];
     assert(targetValue == nil || targetValue.type == NATTypeObject || targetValue.type == NATTypeClass);
 
@@ -120,11 +121,15 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
             [invocation invoke];
         }
 
-        return invocation.returnValue;
+        returnValue = invocation.returnValue;
     }
-    else {
-        return nil;
+
+    // There is no ARC at runtime, so we have to fake it.
+    if ( returnValue.type == NATTypeObject && _requiresAutorelease ) {
+        ((void(*)(id, SEL))objc_msgSend)(returnValue.objectValue, sel_getUid("autorelease"));
     }
+
+    return returnValue;
 }
 
 - (NSString *)description

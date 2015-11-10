@@ -11,10 +11,13 @@
 #import "NATExpression.h"
 #import "NATInterfaceStatement.h"
 #import "NATImplementationStatement.h"
+#import "NATProgram.h"
+#import "NATValue.h"
+#import "NATScope.h"
 
-@interface NATExpressionStatement : NSObject <NATStatement>
+@interface NATIfStatement : NSObject <NATStatement>
 
-- (instancetype)initWithExpression:(NATExpression *)expression;
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
 
 @end
 
@@ -37,11 +40,16 @@
     else if ( [tokenizer matchesString:@"@implementation"] ) {
         statement = [[NATImplementationStatement alloc] initWithTokenizer:tokenizer];
     }
-    else if ( (token = [tokenizer advanceUntil:kNATRegexStatementTerminal]) ||
-              (token = [tokenizer advanceRemaining])) {
+    else if ( [tokenizer matchesString:@"if"] ) {
+        statement = [[NATIfStatement alloc] initWithTokenizer:tokenizer];
+    }
+    // TODO: this is a bad hack
+    else if ( [tokenizer nextChar] != '}' &&
+              [tokenizer nextChar] != ')' &&
+              (token = [tokenizer advanceUntil:kNATRegexStatementTerminal]) ) {
         [tokenizer advanceExpression:kNATRegexStatementTerminal];
 
-        statement = [[NATExpressionStatement alloc] initWithExpression:[NATExpression expressionWithSource:token]];
+        statement = [NATExpression expressionWithSource:token];
     }
 
     return statement;
@@ -54,14 +62,49 @@
 
 @end
 
-@implementation NATExpressionStatement {
-    NATExpression *_expression;
+@implementation NATIfStatement {
+    NATExpression *_condition;
+    NATProgram *_program;
+    NATProgram *_elseProgram;
 }
 
-- (instancetype)initWithExpression:(NATExpression *)expression
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
 {
     if ( (self = [super init]) ) {
-        _expression = expression;
+        [tokenizer matchString:@"if"];
+        [tokenizer matchChar:'('];
+
+        _condition = [NATExpression expressionWithTokenizer:tokenizer];
+
+        [tokenizer matchChar:')'];
+
+        if ( [tokenizer nextChar] == '{' ) {
+            [tokenizer advanceChar];
+            _program = [[NATProgram alloc] initWithTokenizer:tokenizer];
+            [tokenizer matchChar:'}'];
+        }
+        else {
+            NSString *statement = [tokenizer advanceUntil:kNATRegexStatementTerminal];
+            _program = [[NATProgram alloc] initWithSource:[statement stringByAppendingString:@";"]];
+            [tokenizer advanceExpression:kNATRegexStatementTerminal];
+        }
+
+        if ( [tokenizer advanceString:@"else"] ) {
+            if ( [tokenizer matchesString:@"if"] ) {
+                NATIfStatement *elseIf = [[NATIfStatement alloc] initWithTokenizer:tokenizer];
+                _elseProgram = [[NATProgram alloc] initWithStatements:@[elseIf]];
+            }
+            else if ( [tokenizer nextChar] == '{' ) {
+                [tokenizer advanceChar];
+                _elseProgram = [[NATProgram alloc] initWithTokenizer:tokenizer];
+                [tokenizer matchChar:'}'];
+            }
+            else {
+                NSString *statement = [tokenizer advanceUntil:kNATRegexStatementTerminal];
+                _elseProgram = [[NATProgram alloc] initWithSource:[statement stringByAppendingString:@";"]];
+                [tokenizer advanceExpression:kNATRegexStatementTerminal];
+            }
+        }
     }
 
     return self;
@@ -69,7 +112,16 @@
 
 - (void)executeWithContext:(NATExecutionContext *)ctx
 {
-    [_expression evaluateInContext:ctx];
+    [NATScope enter];
+
+    if ( [_condition evaluateInContext:ctx].boolValue ) {
+        [_program executeWithContext:ctx];
+    }
+    else {
+        [_elseProgram executeWithContext:ctx];
+    }
+
+    [NATScope exit];
 }
 
 @end

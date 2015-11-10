@@ -75,10 +75,15 @@ OBJC_EXPORT void __nat_method_imp__(/* ... */);
         while ( tokenizer.hasTokens ) {
             [tokenizer advanceUntil:kNATRegexMethodImplementation];
 
-            if ( tokenizer.hasTokens ) {
+            if ( [tokenizer matchesExpression:kNATRegexMethodImplementation] ) {
                 [methodImplementations addObject:[[NATMethodImplementation alloc] initWithTokenizer:tokenizer]];
             }
+            else {
+                break;
+            }
         }
+
+        [tokenizer matchString:@"@end"];
 
         _methodImplementations = [methodImplementations copy];
     }
@@ -182,8 +187,7 @@ OBJC_EXPORT void __nat_method_imp__(/* ... */);
 
         [tokenizer matchChar:'{'];
 
-        // TODO: this doesn't account for } inside the method body...
-        _body = [[NATProgram alloc] initWithSource:[tokenizer advanceUntilChar:'}']];
+        _body = [[NATProgram alloc] initWithTokenizer:tokenizer];
 
         [tokenizer matchChar:'}'];
     }
@@ -243,7 +247,7 @@ void __nat_method_imp__(/* ... */)
     NATScope *scope = [NATScope enter];
 
     Class senderClass = ctx.senderClass ?: **(Class **)args;
-    NATMethodImplementation *imp = _NATClassLookupImpl(senderClass, *(SEL *)(args + sizeof(id)));
+    NATMethodImplementation *imp = _NATClassLookupImpl(senderClass, *(SEL *)(args + kNATRegisterSize));
 
     NSMethodSignature *signature = imp.signature;
     NATMethodDescriptor *descriptor = [NATMethodDescriptor descriptorForMethodSignature:signature];

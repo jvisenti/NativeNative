@@ -13,8 +13,6 @@
 #import "NATTypes.h"
 #import "NATProperty.h"
 
-void _NATDealloc(__unsafe_unretained id self, SEL _cmd);
-
 @implementation NATInterfaceStatement {
     NSString *_className;
     NSString *_superclassName;
@@ -58,16 +56,18 @@ void _NATDealloc(__unsafe_unretained id self, SEL _cmd);
 
         NSMutableArray *properties = [NSMutableArray array];
 
-        while ( tokenizer.hasTokens && [tokenizer advanceString:@"@end"] == nil ) {
+        while ( tokenizer.hasTokens && ![tokenizer advanceString:@"@end"] ) {
             // Only care about properties. Methods are created when Implementation is interpreted
-            if ( [tokenizer nextChar] == '@' ) {
+            if ( [tokenizer matchesString:@"@property"] ) {
                 [properties addObject:[self readProperty:tokenizer]];
+                [tokenizer advanceExpression:kNATRegexStatementTerminal];
+            }
+            else if ( [tokenizer advanceUntil:kNATRegexStatementTerminal] ) {
+                [tokenizer advanceExpression:kNATRegexStatementTerminal];
             }
             else {
-                [tokenizer advanceUntil:kNATRegexStatementTerminal];
+                break;
             }
-
-            [tokenizer advanceExpression:kNATRegexStatementTerminal];
         }
 
         _properties = (properties.count > 0) ? [properties copy] : nil;
@@ -85,7 +85,45 @@ void _NATDealloc(__unsafe_unretained id self, SEL _cmd);
 {
     // TODO: swizzle existing dealloc
     SEL deallocSEL = sel_getUid("dealloc");
-    class_addMethod(cls, deallocSEL, (IMP)_NATDealloc, "v@:");
+
+    Class superclass = class_getSuperclass(cls);
+
+    IMP deallocIMP = imp_implementationWithBlock(^(__unsafe_unretained id self) {
+        unsigned int count = 0;
+        Ivar *ivars = class_copyIvarList(cls, &count);
+
+        for ( unsigned int i = 0; i < count; ++i ) {
+            Ivar ivar = ivars[i];
+
+            const char *name = ivar_getName(ivar);
+            const char *encoding = ivar_getTypeEncoding(ivar);
+
+            // Release retained properties
+            if ( encoding[0] == _C_ID ) {
+                // Skip leading _
+                NATProperty *prop = [cls nat_propertyForKey:[NSString stringWithUTF8String:name + 1]];
+
+                if ( prop == nil || !prop.isWeak ) {
+                    ptrdiff_t offset = ivar_getOffset(ivar);
+
+                    void *ptr = (__bridge void *)self + offset;
+
+                    if ( *(CFTypeRef *)ptr != NULL ) {
+                        CFRelease(*(CFTypeRef *)ptr);
+                    }
+                }
+            }
+        }
+
+        free(ivars);
+
+        // ARC automatically calls super when dealloc is implemented in code,
+        // but when provided our own dealloc IMP we have to call through to super manually
+        struct objc_super superStruct = (struct objc_super){ self, superclass };
+        ((void (*)(struct objc_super*, SEL))objc_msgSendSuper)(&superStruct, deallocSEL);
+    });
+
+    class_addMethod(cls, deallocSEL, deallocIMP, "v@:");
 
     objc_registerClassPair(cls);
 
@@ -313,40 +351,4 @@ void NATClassAddProperty(Class cls, NATProperty *property)
     class_addProperty(cls, property.name.UTF8String, attributes, count);
 
     free(attributes);
-}
-
-void _NATDealloc(__unsafe_unretained id self, SEL _cmd)
-{
-    Class cls = object_getClass(self);
-
-    unsigned int count = 0;
-    Ivar *ivars = class_copyIvarList(cls, &count);
-
-    for ( unsigned int i = 0; i < count; ++i ) {
-        Ivar ivar = ivars[i];
-
-        const char *name = ivar_getName(ivar);
-        const char *encoding = ivar_getTypeEncoding(ivar);
-
-        // Release retained properties
-        if ( encoding[0] == _C_ID ) {
-            // Skip leading _
-            NATProperty *prop = [cls nat_propertyForKey:[NSString stringWithUTF8String:name + 1]];
-
-            if ( prop == nil || !prop.isWeak ) {
-                ptrdiff_t offset = ivar_getOffset(ivar);
-
-                void *ptr = (__bridge void *)self + offset;
-
-                if ( *(CFTypeRef *)ptr != NULL ) {
-                    CFRelease(*(CFTypeRef *)ptr);
-                }
-            }
-        }
-    }
-
-    // ARC automatically calls super when dealloc is implemented in code,
-    // but when provided our own dealloc IMP we have to call through to super manually
-    struct objc_super superStruct = (struct objc_super){ self, class_getSuperclass(cls) };
-    ((void (*)(struct objc_super*, SEL))objc_msgSendSuper)(&superStruct, _cmd);
 }
