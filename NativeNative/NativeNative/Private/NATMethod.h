@@ -20,8 +20,8 @@
 
 @interface NATCFunction : NSObject <NATExpression>
 
-- (instancetype)initWithSource:(NSString *)source;
-- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
+- (instancetype)initWithSource:(NSString *)source typecast:(NSString *)typecast;
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer typecast:(NSString *)typecast;
 
 - (instancetype)initWithIMP:(IMP)imp arguments:(NSArray<id<NATExpression>> *)arguments returnType:(NSString *)returnType;
 

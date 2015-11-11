@@ -43,6 +43,8 @@
     NATUnaryOperator *unaryOp = nil;
     NSString *token = nil;
 
+    NSString *typecast = [tokenizer advanceExpression:kNATRegexTypeCast];
+
     if ( (token = [tokenizer advanceExpression:kNATRegexUnaryOperator]) ) {
         unaryOp = [NATUnaryOperator operatorWithSource:token];
     }
@@ -51,7 +53,7 @@
         expression = [[NATMethod alloc] initWithTokenizer:tokenizer];
     }
     else if ( (token = [tokenizer advanceExpression:kNATRegexCFunction]) != nil ) {
-        expression = [[NATCFunction alloc] initWithSource:token];
+        expression = [[NATCFunction alloc] initWithSource:token typecast:typecast];
     }
     else if ( (token = [tokenizer advanceExpression:kNATRegexStringLiteral]) != nil ) {
         if ( [token characterAtIndex:0] == '@' ) {
@@ -95,10 +97,12 @@
         }
     }
     else if ( (token = [tokenizer advanceExpression:kNATRegexFloatLiteral]) ) {
+        // TODO: account for typecast
         double value = [token doubleValue];
         expression = [[NATValue alloc] initWithBytes:&value type:NATTypeDouble];
     }
     else if ( (token = [tokenizer advanceExpression:kNATRegexIntLiteral]) ) {
+        // TODO: account for typecast
         long long value = 0;
 
         if ( [token hasPrefix:@"0x"] ) {

@@ -148,20 +148,19 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     NSArray<id<NATExpression>> *_arguments;
 }
 
-- (instancetype)initWithSource:(NSString *)source
+- (instancetype)initWithSource:(NSString *)source typecast:(NSString *)typecast
 {
-    return [self initWithTokenizer:[[NATTokenizer alloc] initWithString:source]];
+    return [self initWithTokenizer:[[NATTokenizer alloc] initWithString:source] typecast:typecast];
 }
 
-- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer typecast:(NSString *)typecast
 {
-    NSString *returnType = [tokenizer advanceExpression:kNATRegexTypeCast];
+    NSString *returnType =  typecast ?: [tokenizer advanceExpression:kNATRegexTypeCast];
     NSString *functionName = [tokenizer matchExpression:kNATRegexSymName];
     [tokenizer matchChar:'('];
 
     IMP imp = (IMP)[NATCFunction lookupSymbol:functionName];
     assert(imp != NULL);
-
 
     NSMutableArray *args = [NSMutableArray array];
 
