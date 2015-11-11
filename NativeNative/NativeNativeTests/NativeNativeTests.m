@@ -441,4 +441,40 @@
     XCTAssertEqual([[NATUnaryOperator operatorWithSource:@"+"] applyTo:v2].shortValue, +t2);
 }
 
+- (void)testConditionals
+{
+    [NATScope enter];
+
+    int value = 0;
+    NATSymbol *sym = [[NATSymbol alloc] initWithName:@"value" value:[[NATValue alloc] initWithBytes:&value type:NATTypeInt]];
+
+    [[NATScope currentScope] addSymbol:sym];
+
+    NATProgram *program = [[NATProgram alloc] initWithSource:@"\
+                           if  (  YES)  {   \
+                           int test = 25; \
+                           value = 1; } \
+                           else { \
+                                value = 2;\
+                           }"];
+
+    [program execute];
+
+    XCTAssertEqual(sym.value.intValue, 1);
+    XCTAssertNil([[NATScope currentScope] lookupSymbol:@"test"]);
+
+    program = [[NATProgram alloc] initWithSource:@"\
+                           if  (  NO)  {   \
+                           value = 1; } \
+                           else \
+                                value = 2;\
+                           "];
+
+    [program execute];
+
+    XCTAssertEqual(sym.value.intValue, 2);
+
+    [NATScope exit];
+}
+
 @end

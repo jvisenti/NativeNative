@@ -163,10 +163,28 @@
 
 - (instancetype)initWithSource:(NSString *)source
 {
+    BOOL typePresent = NO;
+    NSCharacterSet *whitespace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+
+    // Type information is present iff there are at least two whitespace-separated components before the '='
+    for ( NSUInteger i = 0; i < source.length; ++i ) {
+        if ( [whitespace characterIsMember:[source characterAtIndex:i]] ) {
+            while ( i + 1 < source.length && [whitespace characterIsMember:[source characterAtIndex:++i]] ) {}
+
+            if ( i < source.length && [source characterAtIndex:i] != '=' ) {
+                typePresent = YES;
+            }
+
+            break;
+        }
+    }
+
     NATTokenizer *tokenizer = [[NATTokenizer alloc] initWithString:source];
 
-    // TODO: maybe preserve type information
-    NATEncodeTypeFromTokenizer(tokenizer);
+    if (typePresent ) {
+        // TODO: maybe preserve type information
+        NATEncodeTypeFromTokenizer(tokenizer);
+    }
 
     NSString *symName = [tokenizer advanceExpression:kNATRegexSymName];
 
