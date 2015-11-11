@@ -123,7 +123,7 @@
     return expression;
 }
 
-- (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
+- (NATValue *)evaluate
 {
     NSAssert(NO, @"Invalid invocation of method %@ on abstract class %@.", NSStringFromSelector(_cmd), [self class]);
     return nil;
@@ -144,7 +144,7 @@
     return self;
 }
 
-- (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
+- (NATValue *)evaluate
 {
     return [[NATScope currentScope] lookupSymbol:_name].value;
 }
@@ -205,7 +205,7 @@
     return self;
 }
 
-- (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
+- (NATValue *)evaluate
 {
     BOOL addSymbol = NO;
     NATSymbol *symbol = [[NATScope currentScope] lookupSymbol:_symName];
@@ -215,7 +215,7 @@
         addSymbol = YES;
     }
 
-    symbol.value = [_expr evaluateInContext:ctx];
+    symbol.value = [_expr evaluate];
 
     if ( addSymbol ) {
         [[NATScope currentScope] addSymbol:symbol];
@@ -246,9 +246,9 @@
     return self;
 }
 
-- (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
+- (NATValue *)evaluate
 {
-    return [_operator applyTo:[_operand evaluateInContext:ctx]];
+    return [_operator applyTo:[_operand evaluate]];
 }
 
 - (NSString *)description
@@ -275,9 +275,9 @@
     return self;
 }
 
-- (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
+- (NATValue *)evaluate
 {
-    return [_operator applyTo:[_lhs evaluateInContext:ctx] and:[_rhs evaluateInContext:ctx]];
+    return [_operator applyTo:[_lhs evaluate] and:[_rhs evaluate]];
 }
 
 - (NSString *)description
@@ -291,10 +291,10 @@
 
 - (void)executeWithContext:(NATExecutionContext *)ctx
 {
-    [self evaluateInContext:ctx];
+    [self evaluate];
 }
 
-- (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
+- (NATValue *)evaluate
 {
     return [[NATValue alloc] initWithObject:self];
 }

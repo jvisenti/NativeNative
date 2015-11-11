@@ -86,11 +86,11 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     return self;
 }
 
-- (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
+- (NATValue *)evaluate
 {
     NATValue *returnValue = nil;
 
-    NATValue *targetValue = [(id<NATExpression>)_arguments[0] evaluateInContext:ctx];
+    NATValue *targetValue = [(id<NATExpression>)_arguments[0] evaluate];
     assert(targetValue == nil || targetValue.type == NATTypeObject || targetValue.type == NATTypeClass);
 
     id target = (targetValue.type == NATTypeObject) ? targetValue.objectValue : targetValue.classValue;
@@ -106,10 +106,11 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
         invocation.selector = _selector;
 
         for ( NSUInteger i = 2; i < invocation.methodSignature.numberOfArguments; ++i ) {
-            NATPrepareInvocation(invocation, [_arguments[i - 1] evaluateInContext:ctx], i);
+            NATPrepareInvocation(invocation, [_arguments[i - 1] evaluate], i);
         }
 
         if ( _sendSuper ) {
+            NATExecutionContext *ctx = [NATExecutionContext currentContext];
             Class superclass = ctx.senderClass ? class_getSuperclass(ctx.senderClass) : class_getSuperclass(object_getClass(target));
 
             // Send invocation within a new execution context
@@ -161,6 +162,7 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     IMP imp = (IMP)[NATCFunction lookupSymbol:functionName];
     assert(imp != NULL);
 
+
     NSMutableArray *args = [NSMutableArray array];
 
     while ( [tokenizer nextChar] != ')' ) {
@@ -189,14 +191,14 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     return self;
 }
 
-- (NATValue *)evaluateInContext:(NATExecutionContext *)ctx
+- (NATValue *)evaluate
 {
     NSMutableArray *argValues = [NSMutableArray array];
 
     NSMutableString *encoding = _returnType != nil ? [_returnType mutableCopy] : [NSMutableString stringWithUTF8String:@encode(void)];
 
     for ( NSUInteger i = 0; i < _arguments.count; ++i ) {
-        NATValue *value = [_arguments[i] evaluateInContext:ctx];
+        NATValue *value = [_arguments[i] evaluate];
 
         if ( value != nil ) {
             [encoding appendFormat:@"%s", value.encoding];

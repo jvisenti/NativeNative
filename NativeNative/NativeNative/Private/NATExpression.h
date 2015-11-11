@@ -12,7 +12,7 @@
 
 @protocol NATExpression <NATStatement>
 
-- (NATValue *)evaluateInContext:(NATExecutionContext *)ctx;
+- (NATValue *)evaluate;
 
 @end
 

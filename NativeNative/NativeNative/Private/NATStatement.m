@@ -15,14 +15,19 @@
 #import "NATValue.h"
 #import "NATScope.h"
 
-@interface NATCodeBlock : NSObject <NATStatement>
+@interface NATProgram (NATCodeBlocks)
 
-- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
-- (instancetype)initWithProgram:(NATProgram *)program;
++ (instancetype)nat_codeBlockWithTokenizer:(NATTokenizer *)tokenizer;
 
 @end
 
 @interface NATIfStatement : NSObject <NATStatement>
+
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
+
+@end
+
+@interface NATWhileStatement : NSObject <NATStatement>
 
 - (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
 
@@ -50,6 +55,9 @@
     else if ( [tokenizer matchesString:@"if"] ) {
         statement = [[NATIfStatement alloc] initWithTokenizer:tokenizer];
     }
+    else if ( [tokenizer matchesString:@"while"] ) {
+        statement = [[NATWhileStatement alloc] initWithTokenizer:tokenizer];
+    }
     // TODO: this is a bad hack
     else if ( [tokenizer nextChar] != '}' &&
               [tokenizer nextChar] != ')' &&
@@ -69,50 +77,32 @@
 
 @end
 
-@implementation NATCodeBlock {
-    NATProgram *_program;
-}
+@implementation NATProgram (NATCodeBlocks)
 
-- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
++ (instancetype)nat_codeBlockWithTokenizer:(NATTokenizer *)tokenizer
 {
     NATProgram *program = nil;
 
-    if ( (self = [super init]) ) {
-        if ( [tokenizer nextChar] == '{' ) {
-            [tokenizer advanceChar];
-            program = [[NATProgram alloc] initWithTokenizer:tokenizer];
-            [tokenizer matchChar:'}'];
-        }
-        else {
-            NSString *statement = [tokenizer advanceUntil:kNATRegexStatementTerminal];
-            program = [[NATProgram alloc] initWithSource:[statement stringByAppendingString:@";"]];
-            [tokenizer advanceExpression:kNATRegexStatementTerminal];
-        }
+    if ( [tokenizer nextChar] == '{' ) {
+        [tokenizer advanceChar];
+        program = [[NATProgram alloc] initWithTokenizer:tokenizer];
+        [tokenizer matchChar:'}'];
+    }
+    else {
+        NSString *statement = [tokenizer advanceUntil:kNATRegexStatementTerminal];
+        program = [[NATProgram alloc] initWithSource:[statement stringByAppendingString:@";"]];
+        [tokenizer advanceExpression:kNATRegexStatementTerminal];
     }
 
-    return [self initWithProgram:program];
-}
-
-- (instancetype)initWithProgram:(NATProgram *)program
-{
-    if ( (self = [super init]) ) {
-        _program = program;
-    }
-
-    return self;
-}
-
-- (void)executeWithContext:(NATExecutionContext *)ctx
-{
-    [_program executeWithContext:ctx];
+    return program;
 }
 
 @end
 
 @implementation NATIfStatement {
     NATExpression *_condition;
-    NATCodeBlock *_block;
-    NATCodeBlock *_elseBlock;
+    NATProgram *_program;
+    NATProgram *_elseProgram;
 }
 
 - (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
@@ -125,17 +115,15 @@
 
         [tokenizer matchChar:')'];
 
-        _block = [[NATCodeBlock alloc] initWithTokenizer:tokenizer];
+        _program = [NATProgram nat_codeBlockWithTokenizer:tokenizer];
 
         if ( [tokenizer advanceString:@"else"] ) {
             if ( [tokenizer matchesString:@"if"] ) {
                 NATIfStatement *elseIf = [[NATIfStatement alloc] initWithTokenizer:tokenizer];
-                NATProgram *elseProgram = [[NATProgram alloc] initWithStatements:@[elseIf]];
-
-                _elseBlock = [[NATCodeBlock alloc] initWithProgram:elseProgram];
+                _elseProgram = [[NATProgram alloc] initWithStatements:@[elseIf]];
             }
             else {
-                _elseBlock = [[NATCodeBlock alloc] initWithTokenizer:tokenizer];
+                _elseProgram = [NATProgram nat_codeBlockWithTokenizer:tokenizer];
             }
         }
     }
@@ -146,12 +134,47 @@
 - (void)executeWithContext:(NATExecutionContext *)ctx
 {
     // NOTE: -[NATProgram executeWithContext:] executes the program in a new scope
-    if ( [_condition evaluateInContext:ctx].boolValue ) {
-        [_block executeWithContext:ctx];
+    if ( [_condition evaluate].boolValue ) {
+        [_program executeWithContext:ctx];
     }
     else {
-        [_elseBlock executeWithContext:ctx];
+        [_elseProgram executeWithContext:ctx];
     }
+}
+
+@end
+
+@implementation NATWhileStatement {
+    NATExpression *_condition;
+    NATProgram *_program;
+}
+
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
+{
+    if ( (self = [super init]) ) {
+        [tokenizer matchString:@"while"];
+        [tokenizer matchChar:'('];
+
+        _condition = [NATExpression expressionWithTokenizer:tokenizer];
+
+        [tokenizer matchChar:')'];
+
+        _program = [NATProgram nat_codeBlockWithTokenizer:tokenizer];
+    }
+
+    return self;
+}
+
+- (void)executeWithContext:(NATExecutionContext *)ctx
+{
+    [NATScope enter];
+    [NATExecutionContext setCurrentContext:ctx];
+
+    while ( [_condition evaluate].boolValue ) {
+        [_program execute];
+    }
+
+    [NATScope exit];
 }
 
 @end
