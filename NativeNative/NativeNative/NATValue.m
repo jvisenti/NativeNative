@@ -280,11 +280,4 @@
     return description;
 }
 
-#pragma mark - NATExpression
-
-- (NATValue *)evaluate
-{
-    return self;
-}
-
 @end

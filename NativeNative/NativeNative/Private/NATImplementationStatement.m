@@ -231,10 +231,27 @@ void __nat_method_imp__(/* ... */)
 {
     void *args = NULL;
 
+#if TARGET_CPU_X86_64
     asm volatile (
                   "mov %%rbp, %[args]"
                   : [args]"=r"(args)
                   );
+#elif TARGET_CPU_X86
+    asm volatile (
+                  "mov %%ebp, %[args]"
+                  : [args]"=r"(args)
+                  );
+#elif TARGET_CPU_ARM64
+    asm volatile (
+                  "mov %[args], x29"
+                  : [args]"=r"(args)
+                  );
+#elif TARGET_CPU_ARM
+    asm volatile (
+                  "mov %[args], r7"
+                  : [args]"=r"(args)
+                  );
+#endif
 
     // Skip stack args saved by prologue
     args += 2 * kNATRegisterSize;
@@ -246,7 +263,7 @@ void __nat_method_imp__(/* ... */)
     
     NATScope *scope = [NATScope enter];
 
-    Class senderClass = ctx.senderClass ?: **(Class **)args;
+    Class senderClass = ctx.senderClass ?: object_getClass(*(__strong id *)args);
     NATMethodImplementation *imp = _NATClassLookupImpl(senderClass, *(SEL *)(args + kNATRegisterSize));
 
     NSMethodSignature *signature = imp.signature;

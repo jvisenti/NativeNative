@@ -6,7 +6,7 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-#import "NATValue.h"
+#import <NativeNative/NATValue.h>
 
 @class NATSymbol;
 

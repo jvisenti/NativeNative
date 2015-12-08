@@ -6,10 +6,9 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-#import "ViewController.h"
+#import <NativeNative/NativeNative.h>
 
-#import "NATScope.h"
-#import "NATProgram.h"
+#import "ViewController.h"
 
 @interface ViewController ()
 

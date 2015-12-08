@@ -6,10 +6,9 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-#import "NATTypes.h"
-#import "NATExpression.h"
+#import <NativeNative/NATTypes.h>
 
-@interface NATValue : NSObject <NATExpression>
+@interface NATValue : NSObject
 
 @property (nonatomic, readonly) NATType type;
 @property (nonatomic, readonly) const char *encoding NS_RETURNS_INNER_POINTER;

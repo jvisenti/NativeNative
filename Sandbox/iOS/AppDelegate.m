@@ -8,12 +8,10 @@
 
 #import "AppDelegate.h"
 
-#import "NATInvocation.h"
-
-static void test_function(int a, id  b)
-{
-    NSLog(@"Reached C! Printing %i, %@", a, b);
-}
+//static void test_function(int a, id  b)
+//{
+//    NSLog(@"Reached C! Printing %i, %@", a, b);
+//}
 
 @interface TestObj : NSObject
 @end

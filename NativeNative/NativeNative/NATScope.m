@@ -7,6 +7,7 @@
 //
 
 #import "NATScope.h"
+#import "NATValue.h"
 
 static NSString* const kNATCurrentScopeKey = @"_NATCurrentScope";
 
