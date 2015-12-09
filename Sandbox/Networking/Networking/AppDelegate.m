@@ -6,7 +6,7 @@
 //  Copyright © 2015 Raizlabs. All rights reserved.
 //
 
-@import NativeClient;
+#import <NativeClient/NativeClient.h>
 
 #import "AppDelegate.h"
 
@@ -17,8 +17,11 @@
 @implementation AppDelegate
 
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+#warning Replace with actual host
+    [NATClient startWithHost:@"localhost" port:8000 securely:NO];
+
     return YES;
 }
 

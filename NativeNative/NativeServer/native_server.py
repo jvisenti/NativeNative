@@ -26,19 +26,38 @@ class SocketServer(asyncore.dispatcher):
         connection = self.accept()
         if connection is not None:
             sock, addr = connection
-            sys.stdout.write('Connection from ' + repr(addr) + '\n')
-            self.connections.append(connection)
 
-    def broadcast(self, msg):
-        msg += "\r\n\r\n"
+            # Currently only support one connected device at a time
+            if len(self.connections) == 0:
+                sys.stdout.write('Connection from ' + repr(addr) + '\n')
+                self.connections.append(connection)
+
+    def disconnect(self):
+        for connection in list(self.connections):
+            sock, addr = connection
+
+            try:
+                sock.close()
+                sys.stdout.write('Closed connection with ' + repr(addr) + '\n')
+            except:
+                pass
+
+        self.connections = []
+
+    def send_program(self, data):
+        sys.stdout.write("Sending...\n")
+
+        data += "\r\n\r\n"
 
         for connection in list(self.connections):
             sock, addr = connection
 
             try:
-                sock.send(msg)
+                sock.send(data)
             except:
                 self.connections.remove(connection)
+
+        sys.stdout.write("Program sent!\n")
 
 
 class ServerThread(threading.Thread):
@@ -56,6 +75,7 @@ class ServerThread(threading.Thread):
         self.server.close()
         self.join()
 
+
 def open_file(filepath):
     if sys.platform.startswith('darwin'):
         subprocess.call(('open', filepath))
@@ -65,32 +85,59 @@ def open_file(filepath):
         subprocess.call(('xdg-open', filepath))
 
 
+def wait_for_connection(server):
+    print "Waiting for connections..."
+
+    while len(server.connections) == 0:
+        pass
+
+    print "\nAvailable Commands:"
+    print "\t[ENTER] - Send program. If editor is open, file contents will be sent."
+    print "\t[edit] - Open program editor."
+    print "\t[log] - Print connected device log."
+    print "\t[disconnect] - Close the current device connection."
+    print "\t[quit] - Close the server."
+    print ''
+
 if __name__ == '__main__':
     server_thread = ServerThread(8000)
     server_thread.start()
 
-    print "Waiting for connections..."
-
-    while len(server_thread.server.connections) == 0:
-        pass
+    wait_for_connection(server_thread.server)
 
     touch = open('.NATEditor.m', 'a')
     touch.close()
 
-    open_file('.NATEditor.m')
-
     quit = False
+    editor_open = False
+
     while not quit:
-        command = raw_input("Press [ENTER] to send, 'q' to quit: ").strip()
+        command = raw_input('Enter a command: ').strip()
 
-        if command == '':
-            print "Sending..."
-            with open('.NATEditor.m', 'r') as f:
-                server_thread.server.broadcast(f.read().strip())
-                print "Program sent!"
+        if command.lower() == 'edit':
+            open_file('.NATEditor.m')
 
-        elif command == 'q' or command == 'Q':
+        elif command.lower() == 'log':
+            print 'Logging not yet supported.'
+
+        elif command.lower() == 'disconnect':
+            server_thread.server.disconnect()
+            print ''
+            wait_for_connection(server_thread.server)
+
+        elif command.lower() == 'quit':
             quit = True
 
-    print "Quitting..."
+        elif not editor_open:
+            server_thread.server.send_program(command.encode())
+
+        elif command == '':
+            with open('.NATEditor.m', 'r') as f:
+                server_thread.server.send_program(f.read().strip())
+
+        print ''
+
+    print 'Quitting...'
     server_thread.stop()
+    print 'Server shutdown successfully.'
+    print ''
