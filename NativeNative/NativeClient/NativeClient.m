@@ -7,9 +7,9 @@
 //
 
 #import <NativeClient/NativeClient.h>
-#import <NativeClient/NATFileHandleInputStream.h>
 
 static NSInteger const kNATStreamBufferSize = 1024;
+static char* const kNATStreamProgramTerminal = "\r\n\r\n";
 
 @interface NATClient (NATStreamHandling) <NSStreamDelegate>
 
@@ -21,9 +21,9 @@ static NSInteger const kNATStreamBufferSize = 1024;
 
 @implementation NATClient {
     NSInputStream *_input;
-
-    NATFileHandleInputStream *_logStream;
     NSOutputStream *_output;
+
+    NSMutableData *_programData;
 }
 
 + (BOOL)startWithHost:(NSString *)host port:(NSInteger)port securely:(BOOL)secure
@@ -47,15 +47,11 @@ static NSInteger const kNATStreamBufferSize = 1024;
 {
     [self closeStreams];
 
-    _logStream = [[NATFileHandleInputStream alloc] initWithFileHandle:[NSFileHandle fileHandleWithStandardOutput]];
-
     NSInputStream *input = nil;
     NSOutputStream *output = nil;
     [NSStream getStreamsToHostWithName:host port:port inputStream:&input outputStream:&output];
 
     BOOL configured = YES;
-
-    [NSFileHandle fileHandleWithStandardOutput];
 
     if ( input == nil || input.streamError != nil ) {
         NATLog(@"%@ failed to configure input stream. Reason: %@", [self class], input.streamError);
@@ -88,6 +84,14 @@ static NSInteger const kNATStreamBufferSize = 1024;
     return configured;
 }
 
+- (void)executeProgramWithData:(NSData *)programData
+{
+    NSString *programString = [[NSString alloc] initWithData:programData encoding:NSUTF8StringEncoding];
+
+    NATProgram *program = [[NATProgram alloc] initWithSource:programString];
+    [program execute];
+}
+
 @end
 
 @implementation NATClient (NATStreamHandling)
@@ -95,7 +99,11 @@ static NSInteger const kNATStreamBufferSize = 1024;
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode
 {
     if ( eventCode == NSStreamEventErrorOccurred ) {
-        NATLog(@"%@ encountered stream error: %@. Aborting.", [self class], aStream.streamError);
+        NATLog(@"%@ encountered stream error: %@.", [self class], aStream.streamError);
+        [self closeStreams];
+    }
+    else if ( eventCode == NSStreamEventEndEncountered ) {
+        NATLog(@"%@ stream closed by remote host.", [self class]);
         [self closeStreams];
     }
     else if ( aStream == _input && eventCode == NSStreamEventHasBytesAvailable ) {
@@ -108,17 +116,40 @@ static NSInteger const kNATStreamBufferSize = 1024;
 
 - (void)read
 {
-    // TODO
+    uint8_t buffer[kNATStreamBufferSize + 1];
+    NSInteger len = [_input read:buffer maxLength:kNATStreamBufferSize];
+
+    // Ensure null character is present
+    buffer[len] = '\0';
+
+    if( len > 0 ) {
+        if ( _programData == nil ) {
+            _programData = [NSMutableData data];
+        }
+
+        char *terminal = strstr((const char *)buffer, kNATStreamProgramTerminal);
+
+        if ( terminal != NULL ) {
+            len = (NSInteger)(terminal - (const char *)buffer);
+        }
+
+        [_programData appendBytes:(const void *)buffer length:len];
+
+        if ( terminal != NULL ) {
+            char nullChar = '\0';
+            [_programData appendBytes:&nullChar length:sizeof(char)];
+
+            [self executeProgramWithData:_programData];
+            _programData = nil;
+        }
+
+        // TODO: might part of the next program be present after the terminal?
+    }
 }
 
 - (void)write
 {
-    uint8_t logBuffer[kNATStreamBufferSize];
-    NSUInteger logLen = [_logStream read:logBuffer maxLength:kNATStreamBufferSize];
-
-    if ( logLen > 0 ) {
-        [_output write:logBuffer maxLength:logLen];
-    }
+    // TODO
 }
 
 - (void)closeStreams
@@ -131,6 +162,8 @@ static NSInteger const kNATStreamBufferSize = 1024;
 
     _input = nil;
     _output = nil;
+
+    _programData = nil;
 }
 
 @end
