@@ -7,10 +7,10 @@ import sys, subprocess, os
 
 class SocketServer(asyncore.dispatcher):
 
-    def __init__(self, host, port):
+    def __init__(self, port):
         asyncore.dispatcher.__init__(self)
 
-        self.host = host
+        self.host = socket.gethostname()
         self.port = port
 
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,9 +42,9 @@ class SocketServer(asyncore.dispatcher):
 
 
 class ServerThread(threading.Thread):
-    def __init__(self, host, port):
+    def __init__(self, port):
         threading.Thread.__init__(self)
-        self.server = SocketServer(host, port)
+        self.server = SocketServer(port)
 
     def run(self):
         try:
@@ -66,7 +66,7 @@ def open_file(filepath):
 
 
 if __name__ == '__main__':
-    server_thread = ServerThread('localhost', 8888)
+    server_thread = ServerThread(8000)
     server_thread.start()
 
     print "Waiting for connections..."
