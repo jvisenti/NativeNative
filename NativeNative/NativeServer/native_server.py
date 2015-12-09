@@ -5,6 +5,34 @@
 import asyncore, socket, threading
 import sys, subprocess, os
 
+EDITOR_FILE = '.NATEditor.m'
+
+class ClientHandler(asyncore.dispatcher):
+
+    def __init__(self, sock, addr):
+        asyncore.dispatcher.__init__(self, sock)
+        self.addr = addr
+
+        ip, port = addr
+        self.log_file = '.NATLog-' + str(ip) + '.txt'
+
+    def sendall(self, data):
+        while data:
+            sent = self.send(data)
+            data = data[sent:]
+
+    def handle_read(self):
+        try:
+            log = self.recv(4096)
+
+            with open(self.log_file, 'a') as f:
+                f.write(log.encode())
+            open_file(self.log_file)
+
+        except:
+            pass
+
+
 class SocketServer(asyncore.dispatcher):
 
     def __init__(self, port):
@@ -24,21 +52,19 @@ class SocketServer(asyncore.dispatcher):
 
     def handle_accept(self):
         connection = self.accept()
-        if connection is not None:
+        if connection:
             sock, addr = connection
 
             # Currently only support one connected device at a time
             if len(self.connections) == 0:
                 sys.stdout.write('Connection from ' + repr(addr) + '\n')
-                self.connections.append(connection)
+                self.connections.append(ClientHandler(sock, addr))
 
     def disconnect(self):
         for connection in list(self.connections):
-            sock, addr = connection
-
             try:
-                sock.close()
-                sys.stdout.write('Closed connection with ' + repr(addr) + '\n')
+                connection.close()
+                sys.stdout.write('Closed connection with ' + repr(connection.addr) + '\n')
             except:
                 pass
 
@@ -50,10 +76,8 @@ class SocketServer(asyncore.dispatcher):
         data += "\r\n\r\n"
 
         for connection in list(self.connections):
-            sock, addr = connection
-
             try:
-                sock.send(data)
+                connection.sendall(data)
             except:
                 self.connections.remove(connection)
 
@@ -61,9 +85,9 @@ class SocketServer(asyncore.dispatcher):
 
 
 class ServerThread(threading.Thread):
-    def __init__(self, port):
+    def __init__(self, server):
         threading.Thread.__init__(self)
-        self.server = SocketServer(port)
+        self.server = server
 
     def run(self):
         try:
@@ -72,6 +96,7 @@ class ServerThread(threading.Thread):
             pass
 
     def stop(self):
+        self.server.disconnect()
         self.server.close()
         self.join()
 
@@ -95,18 +120,21 @@ def wait_for_connection(server):
     print "\t[ENTER] - Send program. If editor is open, file contents will be sent."
     print "\t[edit] - Open program editor."
     print "\t[log] - Print connected device log."
+    print "\t[snapshot] - View a snapshot of the connected device's screen."
     print "\t[disconnect] - Close the current device connection."
     print "\t[quit] - Close the server."
     print ''
 
 if __name__ == '__main__':
-    server_thread = ServerThread(8000)
+    server = SocketServer(8000)
+
+    server_thread = ServerThread(server)
     server_thread.start()
 
-    wait_for_connection(server_thread.server)
+    wait_for_connection(server)
 
-    touch = open('.NATEditor.m', 'a')
-    touch.close()
+    # Make sure editor file exists
+    open(EDITOR_FILE, 'a').close()
 
     quit = False
     editor_open = False
@@ -115,25 +143,28 @@ if __name__ == '__main__':
         command = raw_input('Enter a command: ').strip()
 
         if command.lower() == 'edit':
-            open_file('.NATEditor.m')
+            open_file(EDITOR_FILE)
 
         elif command.lower() == 'log':
             print 'Logging not yet supported.'
 
+        elif command.lower() == 'snapshot':
+            print 'Snapshotting not yet supported.'
+
         elif command.lower() == 'disconnect':
-            server_thread.server.disconnect()
+            server.disconnect()
             print ''
-            wait_for_connection(server_thread.server)
+            wait_for_connection(server)
 
         elif command.lower() == 'quit':
             quit = True
 
         elif not editor_open:
-            server_thread.server.send_program(command.encode())
+            server.send_program(command.encode())
 
         elif command == '':
-            with open('.NATEditor.m', 'r') as f:
-                server_thread.server.send_program(f.read().strip())
+            with open(EDITOR_FILE, 'r') as f:
+                server.send_program(f.read().strip())
 
         print ''
 

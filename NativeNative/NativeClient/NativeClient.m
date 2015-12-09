@@ -7,6 +7,7 @@
 //
 
 #import <NativeClient/NativeClient.h>
+#import <NativeClient/NATSystemLog.h>
 
 static NSInteger const kNATStreamBufferSize = 1024;
 static char* const kNATStreamProgramTerminal = "\r\n\r\n";
@@ -14,7 +15,7 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
 @interface NATClient (NATStreamHandling) <NSStreamDelegate>
 
 - (void)read;
-- (void)write;
+- (void)writeStream:(NSInputStream *)input toStream:(NSOutputStream *)output;
 - (void)closeStreams;
 
 @end
@@ -23,6 +24,7 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
     NSInputStream *_input;
     NSOutputStream *_output;
 
+    NSInputStream *_logStream;
     NSMutableData *_programData;
 }
 
@@ -73,9 +75,9 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
         [input scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
         [input open];
 
-        output.delegate = self;
-        [output scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
         [output open];
+
+        NATLog(@"%@ connected to host %@:%ld", [self class], host, (long)port);
     }
 
     _input = input;
@@ -86,10 +88,20 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
 
 - (void)executeProgramWithData:(NSData *)programData
 {
+    NSTimeInterval start = [[NSDate date] timeIntervalSince1970];
+
     NSString *programString = [[NSString alloc] initWithData:programData encoding:NSUTF8StringEncoding];
 
     NATProgram *program = [[NATProgram alloc] initWithSource:programString];
     [program execute];
+
+    NSString *appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+    NSArray *outputMessages = [NATSystemLog messagesForSender:appName after:start];
+
+    NSInputStream *logStream = [NSInputStream nat_inputStreamWithSystemMessages:outputMessages];
+    [logStream open];
+
+    [self writeStream:logStream toStream:_output];
 }
 
 @end
@@ -108,9 +120,6 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
     }
     else if ( aStream == _input && eventCode == NSStreamEventHasBytesAvailable ) {
         [self read];
-    }
-    else if ( aStream == _output && eventCode == NSStreamEventHasSpaceAvailable ) {
-        [self write];
     }
 }
 
@@ -142,14 +151,22 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
             [self executeProgramWithData:_programData];
             _programData = nil;
         }
-
-        // TODO: might part of the next program be present after the terminal?
     }
 }
 
-- (void)write
+- (void)writeStream:(NSInputStream *)input toStream:(NSOutputStream *)output
 {
-    // TODO
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        while ( input.hasBytesAvailable && output.streamStatus == NSStreamStatusOpen ) {
+            uint8_t buffer[kNATStreamBufferSize + 1];
+            NSInteger len = 0;
+
+            len = [input read:buffer maxLength:kNATStreamBufferSize];
+            [output write:buffer maxLength:len];
+        }
+
+        [input close];
+    });
 }
 
 - (void)closeStreams
@@ -162,6 +179,9 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
 
     _input = nil;
     _output = nil;
+
+    [_logStream close];
+    _logStream = nil;
 
     _programData = nil;
 }
