@@ -10,6 +10,7 @@
 
 NSRegularExpression *kNATRegexNewline = nil;
 NSRegularExpression *kNATRegexWhitespace = nil;
+NSRegularExpression *kNATRegexMultilineCommentTerminal = nil;
 
 NSRegularExpression *kNATRegexIntLiteral = nil;
 NSRegularExpression *kNATRegexFloatLiteral = nil;
@@ -39,8 +40,9 @@ void _NATRegexConfigure(void)
 {
     kNATRegexNewline = NAT_REGEX(@"[\n\r]+");
     kNATRegexWhitespace = NAT_REGEX(@"[\\s]+");
+    kNATRegexMultilineCommentTerminal = NAT_REGEX(@"\\*/");
 
-    kNATRegexIntLiteral = NAT_REGEX(@"(0x)?[\\d]+(L|LL|UL|ULL|LU|LLU)?");
+    kNATRegexIntLiteral = NAT_REGEX(@"(0x)?[\\dabcdefABCDEF]+(L|LL|UL|ULL|LU|LLU)?");
     kNATRegexFloatLiteral = NAT_REGEX(@"[\\d]*\\.[\\d]+f?");
     kNATRegexStringLiteral = NAT_REGEX(@"@?\"([^\"]|[^\\\"])*\"");
     kNATRegexSelectorLiteral = NAT_REGEX(@"@selector\\([^ \\)]+\\)");

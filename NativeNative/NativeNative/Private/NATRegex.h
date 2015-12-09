@@ -10,6 +10,7 @@
 
 OBJC_EXTERN NSRegularExpression *kNATRegexNewline;
 OBJC_EXTERN NSRegularExpression *kNATRegexWhitespace;
+OBJC_EXTERN NSRegularExpression *kNATRegexMultilineCommentTerminal;
 
 OBJC_EXTERN NSRegularExpression *kNATRegexIntLiteral;
 OBJC_EXTERN NSRegularExpression *kNATRegexFloatLiteral;

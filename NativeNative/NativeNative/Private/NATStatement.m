@@ -45,6 +45,17 @@
     id<NATStatement> statement = nil;
     NSString *token = nil;
 
+    // Consume comments
+    do {
+        if ( (token = [tokenizer advanceString:@"//"]) ) {
+            [tokenizer advanceUntilChar:'\n'];
+        }
+        else if ( (token = [tokenizer advanceString:@"/*"]) ) {
+            [tokenizer advanceUntil:kNATRegexMultilineCommentTerminal];
+            [tokenizer matchExpression:kNATRegexMultilineCommentTerminal];
+        }
+    } while ( token != nil );
+
     // TODO: more types of statements...
     if ( [tokenizer matchesString:@"@interface"] ) {
         statement = [[NATInterfaceStatement alloc] initWithTokenizer:tokenizer];

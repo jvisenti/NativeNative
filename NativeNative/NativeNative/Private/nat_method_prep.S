@@ -92,14 +92,10 @@ ___nat_method_prep__:
     sub     sp, sp, #208            /* allocate stack space */
     mov     x29, sp                 /* finalize local stack frame */
 
-    str     x0, [sp, #0]
-    str     x1, [sp, #8]
-    str     x2, [sp, #16]
-    str     x3, [sp, #24]
-    str     x4, [sp, #32]
-    str     x5, [sp, #40]
-    str     x6, [sp, #48]
-    str     x7, [sp, #56]
+    stp     x0, x1, [sp, #0]
+    stp     x2, x3, [sp, #16]
+    stp     x4, x5, [sp, #32]
+    stp     x6, x7, [sp, #48]
     str     x8, [sp, #64]
 
     str     q0, [sp, #80]
@@ -134,6 +130,5 @@ ___nat_method_prep__:
 /* void ___nat_method_prep__(id self, SEL _cmd, ...) */
 ___nat_method_prep__:
     // TODO
-    ret
 
 #endif

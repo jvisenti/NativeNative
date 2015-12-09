@@ -16,6 +16,8 @@
 		D4445C0F1BDDA0400093B2B7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D4445C0E1BDDA0400093B2B7 /* main.m */; };
 		D49B02B31C1758AB00BCF79D /* NativeNative.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D49B02B21C1758AB00BCF79D /* NativeNative.framework */; };
 		D49B02B41C1758AB00BCF79D /* NativeNative.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D49B02B21C1758AB00BCF79D /* NativeNative.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D49B02B71C175F6000BCF79D /* NativeClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D49B02B61C175F6000BCF79D /* NativeClient.framework */; };
+		D49B02B81C175F6000BCF79D /* NativeClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D49B02B61C175F6000BCF79D /* NativeClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,6 +36,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D49B02B81C175F6000BCF79D /* NativeClient.framework in Embed Frameworks */,
 				D49B02B41C1758AB00BCF79D /* NativeNative.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -54,7 +57,8 @@
 		D42155AD1BE113CE00835A42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D4445C0B1BDDA0400093B2B7 /* Assembly */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Assembly; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4445C0E1BDDA0400093B2B7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D49B02B21C1758AB00BCF79D /* NativeNative.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NativeNative.framework; path = "../../../Library/Developer/Xcode/DerivedData/NATSandbox-erarehrtymwrdoenaxchvspenriu/Build/Products/Debug-iphoneos/NativeNative.framework"; sourceTree = "<group>"; };
+		D49B02B21C1758AB00BCF79D /* NativeNative.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NativeNative.framework; path = "$(TARGET_BUILD_DIR)/NativeNative.framework"; sourceTree = "<group>"; };
+		D49B02B61C175F6000BCF79D /* NativeClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NativeClient.framework; path = "$(TARGET_BUILD_DIR)/NativeClient.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D49B02B71C175F6000BCF79D /* NativeClient.framework in Frameworks */,
 				D49B02B31C1758AB00BCF79D /* NativeNative.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -103,6 +108,7 @@
 		D4445C021BDDA0400093B2B7 = {
 			isa = PBXGroup;
 			children = (
+				D49B02B61C175F6000BCF79D /* NativeClient.framework */,
 				D49B02B21C1758AB00BCF79D /* NativeNative.framework */,
 				D4445C0D1BDDA0400093B2B7 /* Assembly */,
 				D421559B1BE113CE00835A42 /* iOS */,

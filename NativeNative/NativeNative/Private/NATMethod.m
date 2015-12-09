@@ -90,10 +90,7 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
 {
     NATValue *returnValue = nil;
 
-    NATValue *targetValue = [(id<NATExpression>)_arguments[0] evaluate];
-    assert(targetValue == nil || targetValue.type == NATTypeObject || targetValue.type == NATTypeClass);
-
-    id target = (targetValue.type == NATTypeObject) ? targetValue.objectValue : targetValue.classValue;
+    id target = [(id<NATExpression>)_arguments[0] evaluate].objectValue;
 
     if ( target != nil ) {
         NSMethodSignature *methodSig = [target methodSignatureForSelector:_selector];
@@ -160,7 +157,7 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     [tokenizer matchChar:'('];
 
     IMP imp = (IMP)[NATCFunction lookupSymbol:functionName];
-    assert(imp != NULL);
+    NSAssert(imp, @"Failed to lookup C function %@", functionName);
 
     NSMutableArray *args = [NSMutableArray array];
 

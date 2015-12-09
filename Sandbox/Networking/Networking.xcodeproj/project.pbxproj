@@ -13,7 +13,26 @@
 		D47150721C1739AD00DCE243 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D47150701C1739AD00DCE243 /* Main.storyboard */; };
 		D47150741C1739AD00DCE243 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D47150731C1739AD00DCE243 /* Assets.xcassets */; };
 		D47150771C1739AD00DCE243 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D47150751C1739AD00DCE243 /* LaunchScreen.storyboard */; };
+		D4DA5DE31C18748600AE22B4 /* NativeNative.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D49B02BB1C17685500BCF79D /* NativeNative.framework */; };
+		D4DA5DE41C18748600AE22B4 /* NativeNative.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D49B02BB1C17685500BCF79D /* NativeNative.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D4DA5DE51C18748600AE22B4 /* NativeClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D49B02B91C17685300BCF79D /* NativeClient.framework */; };
+		D4DA5DE61C18748600AE22B4 /* NativeClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D49B02B91C17685300BCF79D /* NativeClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D4DA5DE71C18748600AE22B4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D4DA5DE61C18748600AE22B4 /* NativeClient.framework in Embed Frameworks */,
+				D4DA5DE41C18748600AE22B4 /* NativeNative.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		D47150641C1739AD00DCE243 /* Networking.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Networking.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -26,6 +45,8 @@
 		D47150731C1739AD00DCE243 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D47150761C1739AD00DCE243 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D47150781C1739AD00DCE243 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D49B02B91C17685300BCF79D /* NativeClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NativeClient.framework; path = "$(TARGET_BUILD_DIR)/NativeClient.framework"; sourceTree = "<group>"; };
+		D49B02BB1C17685500BCF79D /* NativeNative.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NativeNative.framework; path = "$(TARGET_BUILD_DIR)/NativeNative.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +54,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4DA5DE51C18748600AE22B4 /* NativeClient.framework in Frameworks */,
+				D4DA5DE31C18748600AE22B4 /* NativeNative.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +65,8 @@
 		D471505B1C1739AD00DCE243 = {
 			isa = PBXGroup;
 			children = (
+				D49B02BB1C17685500BCF79D /* NativeNative.framework */,
+				D49B02B91C17685300BCF79D /* NativeClient.framework */,
 				D47150661C1739AD00DCE243 /* Networking */,
 				D47150651C1739AD00DCE243 /* Products */,
 			);
@@ -89,6 +114,7 @@
 				D47150601C1739AD00DCE243 /* Sources */,
 				D47150611C1739AD00DCE243 /* Frameworks */,
 				D47150621C1739AD00DCE243 /* Resources */,
+				D4DA5DE71C18748600AE22B4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -261,6 +287,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/$(TARGET_BUILD_DIR)",
+				);
 				INFOPLIST_FILE = Networking/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.Networking;
@@ -272,6 +302,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/$(TARGET_BUILD_DIR)",
+				);
 				INFOPLIST_FILE = Networking/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.Networking;
@@ -298,6 +332,7 @@
 				D471507D1C1739AD00DCE243 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -70,10 +70,7 @@
     NATMethod *methodChain = nil;
 
     if ( _segmentNames.count > 0 ) {
-        NATValue *targetValue = [_rootExpression evaluate];
-
-        id target = (targetValue.type == NATTypeObject) ? targetValue.objectValue : targetValue.classValue;
-        assert(target != nil);
+        id target = [_rootExpression evaluate].objectValue;
 
         NSUInteger getterCount = (_assignment == nil) ? _segmentNames.count : (_segmentNames.count - 1);
 
@@ -91,7 +88,7 @@
             }
 
             NATProperty *property = [[target class] nat_propertyForKey:[_segmentNames lastObject]];
-            NSAssert(!property.isReadonly, @"Error: assignment to readonly property.");
+            NSAssert(!property.isReadonly, @"Assignment to readonly property.");
 
             SEL setter = property.setter;
 
@@ -106,7 +103,7 @@
                 free(name);
             }
 
-            NSAssert(setter != nil, @"Error: assignment to nonexistent property.");
+            NSAssert(setter != nil, @"Assignment to nonexistent property.");
 
             methodChain = [[NATMethod alloc] initWithSelector:setter arguments:@[target, _assignment]];
         }

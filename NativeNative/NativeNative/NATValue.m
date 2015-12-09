@@ -122,7 +122,7 @@
 
 - (id)objectValue
 {
-    return _type == NATTypeObject ? *(const id *)_value : nil;
+    return *(__unsafe_unretained id *)_value;
 }
 
 - (Class)classValue
