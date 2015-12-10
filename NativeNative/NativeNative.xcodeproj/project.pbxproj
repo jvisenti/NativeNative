@@ -31,6 +31,9 @@
 		D474D3021BDBF67700042911 /* NATRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = D474D3001BDBF67700042911 /* NATRegex.m */; };
 		D4961A2B1BEF8CC20065E055 /* NATExecutionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = D4961A291BEF8CC20065E055 /* NATExecutionContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D4961A2C1BEF8CC20065E055 /* NATExecutionContext.m in Sources */ = {isa = PBXBuildFile; fileRef = D4961A2A1BEF8CC20065E055 /* NATExecutionContext.m */; };
+		D497975D1C18D59100FD225F /* NATSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = D497975B1C18D59100FD225F /* NATSnapshot.h */; };
+		D497975E1C18D59100FD225F /* NATSnapshot.m in Sources */ = {isa = PBXBuildFile; fileRef = D497975C1C18D59100FD225F /* NATSnapshot.m */; };
+		D49797601C18D91100FD225F /* NATContentTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = D497975F1C18D8A300FD225F /* NATContentTypes.h */; };
 		D49B02A41C17501900BCF79D /* NATValue+NATExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = D49B02A21C17501900BCF79D /* NATValue+NATExpression.h */; };
 		D49B02A51C17501900BCF79D /* NATValue+NATExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = D49B02A31C17501900BCF79D /* NATValue+NATExpression.m */; };
 		D49B02AC1C17505E00BCF79D /* NATScope.h in Headers */ = {isa = PBXBuildFile; fileRef = D49B02A61C17505E00BCF79D /* NATScope.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -105,6 +108,9 @@
 		D474D3001BDBF67700042911 /* NATRegex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATRegex.m; sourceTree = "<group>"; };
 		D4961A291BEF8CC20065E055 /* NATExecutionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATExecutionContext.h; sourceTree = "<group>"; };
 		D4961A2A1BEF8CC20065E055 /* NATExecutionContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATExecutionContext.m; sourceTree = "<group>"; };
+		D497975B1C18D59100FD225F /* NATSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATSnapshot.h; sourceTree = "<group>"; };
+		D497975C1C18D59100FD225F /* NATSnapshot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATSnapshot.m; sourceTree = "<group>"; };
+		D497975F1C18D8A300FD225F /* NATContentTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATContentTypes.h; sourceTree = "<group>"; };
 		D49B02A21C17501900BCF79D /* NATValue+NATExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NATValue+NATExpression.h"; sourceTree = "<group>"; };
 		D49B02A31C17501900BCF79D /* NATValue+NATExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NATValue+NATExpression.m"; sourceTree = "<group>"; };
 		D49B02A61C17505E00BCF79D /* NATScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATScope.h; sourceTree = "<group>"; };
@@ -260,8 +266,11 @@
 		D47150501C1717EF00DCE243 /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				D497975F1C18D8A300FD225F /* NATContentTypes.h */,
 				D4BBB35F1C1895F60090D70E /* NATSystemLog.h */,
 				D4BBB3601C1895F60090D70E /* NATSystemLog.m */,
+				D497975B1C18D59100FD225F /* NATSnapshot.h */,
+				D497975C1C18D59100FD225F /* NATSnapshot.m */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -301,7 +310,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D497975D1C18D59100FD225F /* NATSnapshot.h in Headers */,
 				D4BBB3611C1895F60090D70E /* NATSystemLog.h in Headers */,
+				D49797601C18D91100FD225F /* NATContentTypes.h in Headers */,
 				D471504B1C1717DD00DCE243 /* NativeClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -469,6 +480,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D497975E1C18D59100FD225F /* NATSnapshot.m in Sources */,
 				D47150521C17196700DCE243 /* NativeClient.m in Sources */,
 				D4BBB3621C1895F60090D70E /* NATSystemLog.m in Sources */,
 			);

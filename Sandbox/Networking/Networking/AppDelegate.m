@@ -19,7 +19,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [NATClient startWithHost:@"Robs-MacBook-Pro-2.local" port:8000 securely:NO];
+#warning Replace with actual host
+    [NATClient startWithHost:@"localhost" port:8000 securely:NO];
 
     return YES;
 }

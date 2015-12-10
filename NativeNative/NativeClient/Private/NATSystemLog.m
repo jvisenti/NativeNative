@@ -8,7 +8,8 @@
 
 #import <asl.h>
 
-#import "NATSystemLog.h"
+#import <NativeClient/NATSystemLog.h>
+#import <NativeClient/NATContentTypes.h>
 
 @interface NATSystemMessage ()
 
@@ -31,11 +32,13 @@
         asl_set_query(query, ASL_KEY_SENDER, sender.UTF8String, ASL_QUERY_OP_EQUAL);
     }
 
-    uint64_t sec = (uint64_t)timestamp;
-    uint64_t nsec = (timestamp - sec) * NSEC_PER_SEC;
+    if ( timestamp > 0.0 ) {
+        uint64_t sec = (uint64_t)timestamp;
+        uint64_t nsec = (timestamp - sec) * NSEC_PER_SEC;
 
-    asl_set_query(query, ASL_KEY_TIME, [@(sec) stringValue].UTF8String, ASL_QUERY_OP_GREATER_EQUAL);
-    asl_set_query(query, ASL_KEY_TIME_NSEC, [@(nsec) stringValue].UTF8String, ASL_QUERY_OP_GREATER);
+        asl_set_query(query, ASL_KEY_TIME, [@(sec) stringValue].UTF8String, ASL_QUERY_OP_GREATER_EQUAL);
+        asl_set_query(query, ASL_KEY_TIME_NSEC, [@(nsec) stringValue].UTF8String, ASL_QUERY_OP_GREATER);
+    }
 
     NSArray *messages = [self messagesForQuery:query];
 
@@ -121,9 +124,14 @@
 {
     NSMutableData *logData = [NSMutableData data];
 
+    [logData appendBytes:kNATContentTypeLog length:strlen(kNATContentTypeLog)];
+    [logData appendBytes:kNATContentTypeTerminal length:strlen(kNATContentTypeTerminal)];
+
     for ( NATSystemMessage *message in messages ) {
         [logData appendBytes:message.messageDescription.UTF8String length:message.messageDescription.length];
     }
+
+    [logData appendBytes:kNATContentTerminal length:strlen(kNATContentTerminal)];
 
     return [NSInputStream inputStreamWithData:logData];
 }

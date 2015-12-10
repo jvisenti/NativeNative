@@ -7,14 +7,22 @@ import sys, subprocess, os
 
 EDITOR_FILE = '.NATEditor.m'
 
+LOG_TYPE = 'LOG'
+IMAGE_TYPE = 'IMG'
+
+CONTENT_TYPE_TERMINAL = "\r\n"
+CONTENT_TERMINAL = "\r\n\r\n"
+
 class ClientHandler(asyncore.dispatcher):
 
     def __init__(self, sock, addr):
         asyncore.dispatcher.__init__(self, sock)
         self.addr = addr
 
-        ip, port = addr
-        self.log_file = '.NATLog-' + str(ip) + '.txt'
+        self.current_read_type = None
+        self.data = ''
+
+        self.reading = False
 
     def sendall(self, data):
         while data:
@@ -22,15 +30,43 @@ class ClientHandler(asyncore.dispatcher):
             data = data[sent:]
 
     def handle_read(self):
-        try:
-            log = self.recv(4096)
+        self.reading = True
+        self.process_data(self.recv(4096))
 
-            with open(self.log_file, 'a') as f:
-                f.write(log.encode())
-            open_file(self.log_file)
+    def process_data(self, data):
+        if not data:
+            return
 
-        except:
+        if not self.current_read_type:
+            idx = data.find(CONTENT_TYPE_TERMINAL)
+            self.current_read_type = data[:idx]
+            data = data[(idx + len(CONTENT_TYPE_TERMINAL)):]
+
+        end = data.find(CONTENT_TERMINAL)
+
+        if end == -1:
+            self.data += data
+        else:
+            self.data += data[:end]
+            self.finalize_read()
+
+            next_idx = end + len(CONTENT_TERMINAL)
+
+            if next_idx < len(data):
+                self.process_data(data[next_idx:])
+            else:
+                self.reading = False
+
+    def finalize_read(self):
+        if self.current_read_type == LOG_TYPE:
+            sys.stdout.write(self.data.encode())
+
+        elif self.current_read_type == IMAGE_TYPE:
+            # TODO: show image
             pass
+
+        self.data = ''
+        self.current_read_type = None
 
 
 class SocketServer(asyncore.dispatcher):
@@ -70,18 +106,19 @@ class SocketServer(asyncore.dispatcher):
 
         self.connections = []
 
-    def send_program(self, data):
-        sys.stdout.write("Sending...\n")
-
+    def send_program(self, data, wait=True):
         data += "\r\n\r\n"
 
         for connection in list(self.connections):
             try:
                 connection.sendall(data)
+                connection.reading = True
+
+                while connection.reading:
+                    pass
+
             except:
                 self.connections.remove(connection)
-
-        sys.stdout.write("Program sent!\n")
 
 
 class ServerThread(threading.Thread):
@@ -146,10 +183,10 @@ if __name__ == '__main__':
             open_file(EDITOR_FILE)
 
         elif command.lower() == 'log':
-            print 'Logging not yet supported.'
+            server.send_program(LOG_TYPE.encode())
 
         elif command.lower() == 'snapshot':
-            print 'Snapshotting not yet supported.'
+            server.send_program(IMAGE_TYPE.encode())
 
         elif command.lower() == 'disconnect':
             server.disconnect()
@@ -161,10 +198,12 @@ if __name__ == '__main__':
 
         elif not editor_open:
             server.send_program(command.encode())
+            print 'Done.'
 
         elif command == '':
             with open(EDITOR_FILE, 'r') as f:
                 server.send_program(f.read().strip())
+            print 'Done.'
 
         print ''
 

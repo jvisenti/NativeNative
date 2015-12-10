@@ -8,9 +8,10 @@
 
 #import <NativeClient/NativeClient.h>
 #import <NativeClient/NATSystemLog.h>
+#import <NativeClient/NATSnapshot.h>
+#import <NativeClient/NATContentTypes.h>
 
-static NSInteger const kNATStreamBufferSize = 1024;
-static char* const kNATStreamProgramTerminal = "\r\n\r\n";
+static NSInteger const kNATStreamBufferSize = 4096;
 
 @interface NATClient (NATStreamHandling) <NSStreamDelegate>
 
@@ -24,13 +25,23 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
     NSInputStream *_input;
     NSOutputStream *_output;
 
-    NSInputStream *_logStream;
     NSMutableData *_programData;
+
+    dispatch_queue_t _outputQueue;
 }
 
 + (BOOL)startWithHost:(NSString *)host port:(NSInteger)port securely:(BOOL)secure
 {
     return [[self sharedInstance] configureWithHost:host port:port securely:secure];
+}
+
+- (instancetype)init
+{
+    if ( (self = [super init]) ) {
+        _outputQueue = dispatch_queue_create("com.native-client.output", DISPATCH_QUEUE_SERIAL);
+    }
+    
+    return self;
 }
 
 #pragma mark - private methods
@@ -88,20 +99,46 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
 
 - (void)executeProgramWithData:(NSData *)programData
 {
-    NSTimeInterval start = [[NSDate date] timeIntervalSince1970];
-
     NSString *programString = [[NSString alloc] initWithData:programData encoding:NSUTF8StringEncoding];
 
-    NATProgram *program = [[NATProgram alloc] initWithSource:programString];
-    [program execute];
+    if ( [programString isEqualToString:[NSString stringWithUTF8String:kNATContentTypeLog]] ) {
+        [self sendSystemLogs];
+    }
+    else if ( [programString isEqualToString:[NSString stringWithUTF8String:kNATContentTypeImage]] ) {
+        [self sendSnapshot];
+    }
+    else {
+        NSTimeInterval start = [[NSDate date] timeIntervalSince1970];
 
-    NSString *appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
-    NSArray *outputMessages = [NATSystemLog messagesForSender:appName after:start];
+        NATProgram *program = [[NATProgram alloc] initWithSource:programString];
+        [program execute];
+
+        NSString *appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
+        NSArray *outputMessages = [NATSystemLog messagesForSender:appName after:start];
+
+        NSInputStream *logStream = [NSInputStream nat_inputStreamWithSystemMessages:outputMessages];
+        [logStream open];
+
+        [self writeStream:logStream toStream:_output];
+    }
+}
+
+- (void)sendSystemLogs
+{
+    NSArray *outputMessages = [NATSystemLog allMessages];
 
     NSInputStream *logStream = [NSInputStream nat_inputStreamWithSystemMessages:outputMessages];
     [logStream open];
 
     [self writeStream:logStream toStream:_output];
+}
+
+- (void)sendSnapshot
+{
+    NATSnapshot *snapshot = [NATSnapshot snapshot];
+    NSInputStream *imageStream = [NSInputStream nat_inputStreamWithSnapshot:snapshot];
+
+    [self writeStream:imageStream toStream:_output];
 }
 
 @end
@@ -136,7 +173,7 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
             _programData = [NSMutableData data];
         }
 
-        char *terminal = strstr((const char *)buffer, kNATStreamProgramTerminal);
+        char *terminal = strstr((const char *)buffer, kNATContentTerminal);
 
         if ( terminal != NULL ) {
             len = (NSInteger)(terminal - (const char *)buffer);
@@ -145,9 +182,6 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
         [_programData appendBytes:(const void *)buffer length:len];
 
         if ( terminal != NULL ) {
-            char nullChar = '\0';
-            [_programData appendBytes:&nullChar length:sizeof(char)];
-
             [self executeProgramWithData:_programData];
             _programData = nil;
         }
@@ -156,7 +190,7 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
 
 - (void)writeStream:(NSInputStream *)input toStream:(NSOutputStream *)output
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(_outputQueue, ^{
         while ( input.hasBytesAvailable && output.streamStatus == NSStreamStatusOpen ) {
             uint8_t buffer[kNATStreamBufferSize + 1];
             NSInteger len = 0;
@@ -179,9 +213,6 @@ static char* const kNATStreamProgramTerminal = "\r\n\r\n";
 
     _input = nil;
     _output = nil;
-
-    [_logStream close];
-    _logStream = nil;
 
     _programData = nil;
 }
