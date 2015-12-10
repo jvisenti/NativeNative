@@ -21,6 +21,12 @@
 
 @end
 
+@interface NATReturnStatement : NSObject <NATStatement>
+
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
+
+@end
+
 @interface NATIfStatement : NSObject <NATStatement>
 
 - (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer;
@@ -69,6 +75,9 @@
     else if ( [tokenizer matchesString:@"while"] ) {
         statement = [[NATWhileStatement alloc] initWithTokenizer:tokenizer];
     }
+    else if ( [tokenizer matchesString:@"return"] ) {
+        statement = [[NATReturnStatement alloc] initWithTokenizer:tokenizer];
+    }
     // TODO: this is a bad hack
     else if ( [tokenizer nextChar] != '}' &&
               [tokenizer nextChar] != ')' &&
@@ -81,9 +90,10 @@
     return statement;
 }
 
-- (void)executeWithContext:(NATExecutionContext *)ctx
+- (NATValue *)executeWithContext:(NATExecutionContext *)ctx stop:(BOOL *)stop
 {
     NSAssert(NO, @"Invalid invocation of method %@ on abstract class %@.", NSStringFromSelector(_cmd), [self class]);
+    return nil;
 }
 
 @end
@@ -106,6 +116,31 @@
     }
 
     return program;
+}
+
+@end
+
+@implementation NATReturnStatement {
+    NATExpression *_expression;
+}
+
+- (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
+{
+    if ( (self = [super init]) ) {
+        [tokenizer matchString:@"return"];
+
+        _expression = [NATExpression expressionWithSource:[tokenizer advanceUntil:kNATRegexStatementTerminal]];
+
+        [tokenizer advanceExpression:kNATRegexStatementTerminal];
+    }
+
+    return self;
+}
+
+- (NATValue *)executeWithContext:(NATExecutionContext *)ctx stop:(BOOL *)stop
+{
+    *stop = YES;
+    return [_expression evaluate];
 }
 
 @end
@@ -142,7 +177,7 @@
     return self;
 }
 
-- (void)executeWithContext:(NATExecutionContext *)ctx
+- (NATValue *)executeWithContext:(NATExecutionContext *)ctx stop:(BOOL *)stop
 {
     // NOTE: -[NATProgram executeWithContext:] executes the program in a new scope
     if ( [_condition evaluate].boolValue ) {
@@ -151,6 +186,8 @@
     else {
         [_elseProgram executeWithContext:ctx];
     }
+
+    return nil;
 }
 
 @end
@@ -176,7 +213,7 @@
     return self;
 }
 
-- (void)executeWithContext:(NATExecutionContext *)ctx
+- (NATValue *)executeWithContext:(NATExecutionContext *)ctx stop:(BOOL *)stop
 {
     [NATScope enter];
     [NATExecutionContext setCurrentContext:ctx];
@@ -186,6 +223,8 @@
     }
 
     [NATScope exit];
+
+    return nil;
 }
 
 @end

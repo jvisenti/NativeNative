@@ -130,7 +130,7 @@
     [[self nascentClasses] removeObjectForKey:NSStringFromClass(cls)];
 }
 
-- (void)executeWithContext:(NATExecutionContext *)ctx
+- (NATValue *)executeWithContext:(NATExecutionContext *)ctx stop:(BOOL *)stop
 {
     const char *className = _className.UTF8String;
 
@@ -177,6 +177,8 @@
 
         [cls nat_synthesizeProperty:property];
     }
+
+    return nil;
 }
 
 #pragma mark - private methods

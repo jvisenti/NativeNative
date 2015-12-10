@@ -72,6 +72,7 @@
 
 NSUInteger const kNATRegisterSize = NAT_REG_SIZE;
 NSUInteger const kNATStackOffset = NAT_STACK_OFFSET;
+NSUInteger const kNATReturnBufferLength = NAT_RET_BUFFER_LEN;
 
 @implementation NATMethodDescriptor {
     NATArgInfo *_args;

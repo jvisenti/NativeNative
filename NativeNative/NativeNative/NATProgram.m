@@ -43,12 +43,21 @@
     return self;
 }
 
-- (void)execute
+- (NATValue *)execute
 {
-    [_statements makeObjectsPerformSelector:@selector(executeWithContext:) withObject:nil];
+    NATExecutionContext *context = [NATExecutionContext currentContext];
+
+    BOOL stop = NO;
+    NATValue *ret = nil;
+
+    for ( NSUInteger i = 0; i < _statements.count && !stop; ++i ) {
+        ret = [_statements[i] executeWithContext:context stop:&stop];
+    }
+
+    return ret;
 }
 
-- (void)executeWithContext:(NATExecutionContext *)ctx
+- (NATValue *)executeWithContext:(NATExecutionContext *)ctx
 {
     [NATScope enter];
 
@@ -59,9 +68,11 @@
         [[NATScope currentScope] addSymbol:selfSym];
     }
 
-    [_statements makeObjectsPerformSelector:@selector(executeWithContext:) withObject:ctx];
+    NATValue *ret = [self execute];
 
     [NATScope exit];
+
+    return ret;
 }
 
 @end

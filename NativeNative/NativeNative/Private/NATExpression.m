@@ -293,9 +293,9 @@
 
 @implementation NSObject (NATExpression)
 
-- (void)executeWithContext:(NATExecutionContext *)ctx
+- (NATValue *)executeWithContext:(NATExecutionContext *)ctx stop:(BOOL *)stop
 {
-    [self evaluate];
+    return [self evaluate];
 }
 
 - (NATValue *)evaluate

@@ -9,9 +9,11 @@
 #import "NATTokenizer.h"
 #import "NATExecutionContext.h"
 
+@class NATValue;
+
 @protocol NATStatement <NSObject>
 
-- (void)executeWithContext:(NATExecutionContext *)ctx;
+- (NATValue *)executeWithContext:(NATExecutionContext *)ctx stop:(BOOL *)stop;
 
 @end
 

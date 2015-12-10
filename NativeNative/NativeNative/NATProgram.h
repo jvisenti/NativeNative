@@ -7,6 +7,7 @@
 //
 
 #import <NativeNative/NATExecutionContext.h>
+#import <NativeNative/NATValue.h>
 
 @class NATTokenizer;
 
@@ -21,7 +22,7 @@
 /**
  *  Executes in the current scope.
  */
-- (void)execute;
+- (NATValue *)execute;
 
 /**
  *  Creates a new scope to execute in with the given context.
@@ -29,6 +30,6 @@
  *
  *  @param ctx The context for program execution.
  */
-- (void)executeWithContext:(NATExecutionContext *)ctx;
+- (NATValue *)executeWithContext:(NATExecutionContext *)ctx;
 
 @end

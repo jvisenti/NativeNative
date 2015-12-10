@@ -91,7 +91,7 @@ OBJC_EXPORT void __nat_method_imp__(/* ... */);
     return self;
 }
 
-- (void)executeWithContext:(NATExecutionContext *)ctx
+- (NATValue *)executeWithContext:(NATExecutionContext *)ctx stop:(BOOL *)stop
 {
     const char *className = _className.UTF8String;
 
@@ -120,6 +120,8 @@ OBJC_EXPORT void __nat_method_imp__(/* ... */);
     if ( nascentClass ) {
         [NATInterfaceStatement finalizeNascentClass:cls];
     }
+
+    return nil;
 }
 
 #pragma mark - private methods
@@ -230,6 +232,7 @@ NATMethodImplementation* _NATClassLookupImpl(Class cls, SEL selector)
 void __nat_method_imp__(/* ... */)
 {
     void *args = NULL;
+    void *ret = NULL;
 
 #if TARGET_CPU_X86_64
     asm volatile (
@@ -256,6 +259,12 @@ void __nat_method_imp__(/* ... */)
     // Skip stack args saved by prologue
     args += 2 * kNATRegisterSize;
 
+    // Save return location
+    ret = args;
+
+    // Skip stack space allocated for return values
+    args += kNATReturnBufferLength;
+
     NATScope *currentScope = [NATScope currentScope];
     NATExecutionContext *ctx = [NATExecutionContext currentContext];
 
@@ -278,7 +287,8 @@ void __nat_method_imp__(/* ... */)
         [scope addSymbol:[[NATSymbol alloc] initWithName:imp.argumentNames[i] value:argVal]];
     }
 
-    [imp.body executeWithContext:[NATExecutionContext contextWithSender:*(__unsafe_unretained id *)args ofClass:imp.associatedClass]];
+    NATValue *retVal = [imp.body executeWithContext:[NATExecutionContext contextWithSender:*(__unsafe_unretained id *)args ofClass:imp.associatedClass]];
+    [retVal getValue:ret];
 
     [NATScope exit];
     [NATScope setCurrentScope:currentScope];
