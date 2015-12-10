@@ -35,6 +35,9 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
 
 - (instancetype)initWithTokenizer:(NATTokenizer *)tokenizer
 {
+    BOOL sendSuper = NO;
+    BOOL autorelease = NO;
+
     [tokenizer matchChar:'['];
 
     NSMutableArray *args = [NSMutableArray array];
@@ -43,7 +46,7 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
     if ( [tokenizer matchesString:@"super "] ) {
         [tokenizer advanceString:@"super"];
 
-        _sendSuper = YES;
+        sendSuper = YES;
         [args addObject:[NATExpression expressionWithSource:@"self"]];
     }
     else {
@@ -70,10 +73,15 @@ void NATPrepareInvocation(NATInvocation *invocation, NATValue *value, NSUInteger
          selector == @selector(new) ||
          selector == @selector(copy) ||
          selector == @selector(copyWithZone:) ) {
-        _requiresAutorelease = YES;
+        autorelease = YES;
     }
 
-    return [self initWithSelector:selector arguments:args];
+    if ( (self = [self initWithSelector:selector arguments:args]) ) {
+        _sendSuper = sendSuper;
+        _requiresAutorelease = autorelease;
+    }
+
+    return self;
 }
 
 - (instancetype)initWithSelector:(SEL)selector arguments:(NSArray<id<NATExpression>> *)arguments;

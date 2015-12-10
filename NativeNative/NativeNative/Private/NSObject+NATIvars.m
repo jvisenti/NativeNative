@@ -19,13 +19,7 @@
     Ivar ivar = class_getInstanceVariable(object_getClass(self), ivarName.UTF8String);
 
     if ( ivar != NULL ) {
-        if ( ownership == NATOwnershipPolicyWeak ) {
-            __weak id value = objc_loadWeak((__autoreleasing id *)((__bridge void *)self + ivar_getOffset(ivar)));
-            ptr = &value;
-        }
-        else {
-            ptr = (char *)(__bridge void *)self + ivar_getOffset(ivar);
-        }
+        ptr = (char *)(__bridge void *)self + ivar_getOffset(ivar);
     }
 
     return ptr;
