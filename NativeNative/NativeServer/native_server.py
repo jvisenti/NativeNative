@@ -4,6 +4,7 @@
  
 import asyncore, socket, threading
 import sys, subprocess, os
+import readline
 
 EDITOR_FILE = '.NATEditor.m'
 SNAPSHOT_FILE = '.NATSnapshot.jpg'
@@ -177,6 +178,9 @@ if __name__ == '__main__':
     quit = False
     editor_open = False
 
+    readline.parse_and_bind('tab: complete')
+    readline.parse_and_bind('set editing-mode vi')
+
     while not quit:
         command = raw_input('Enter a command: ').strip()
 
@@ -204,6 +208,7 @@ if __name__ == '__main__':
             print 'Done.'
 
         else:
+            command += ';'
             server.send_program(command.encode())
             print 'Done.'
 
