@@ -61,7 +61,7 @@ class ClientHandler(asyncore.dispatcher):
 
     def finalize_read(self):
         if self.current_read_type == LOG_TYPE:
-            sys.stdout.write(self.data.encode())
+            sys.stdout.write(self.data.encode('utf-8'))
 
         elif self.current_read_type == IMAGE_TYPE:
             open(SNAPSHOT_FILE, 'w').write(self.data)
@@ -189,10 +189,10 @@ if __name__ == '__main__':
             open_file(EDITOR_FILE)
 
         elif command.lower() == 'log':
-            server.send_program(LOG_TYPE.encode())
+            server.send_program(LOG_TYPE.encode('utf-8'))
 
         elif command.lower() == 'snapshot':
-            server.send_program(IMAGE_TYPE.encode())
+            server.send_program(IMAGE_TYPE.encode('utf-8'))
 
         elif command.lower() == 'disconnect':
             server.disconnect()
@@ -209,7 +209,7 @@ if __name__ == '__main__':
 
         else:
             command += ';'
-            server.send_program(command.encode())
+            server.send_program(command.encode('utf-8'))
             print 'Done.'
 
         print ''

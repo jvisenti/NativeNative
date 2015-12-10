@@ -21,6 +21,8 @@
 #define NAT_STRUCTS_BY_REF  0
 #define NAT_RET_BUFFER_LEN  48
 
+#define NAT_STACK_OFFSET NAT_SIMD_START + NAT_MAX_SIMD_AREA
+
 #elif TARGET_CPU_X86
 
 // TODO:
@@ -34,6 +36,8 @@
 #define NAT_STRUCTS_BY_REF  0
 #define NAT_RET_BUFFER_LEN  0
 
+#define NAT_STACK_OFFSET NAT_MAX_REG_AREA
+
 #elif TARGET_CPU_ARM64
 
 #define NAT_REG_SIZE        8
@@ -44,6 +48,8 @@
 #define NAT_MAX_REG_STRUCT  16
 #define NAT_STRUCTS_BY_REF  1
 #define NAT_RET_BUFFER_LEN  NAT_SIMD_START + NAT_MAX_SIMD_AREA
+
+#define NAT_STACK_OFFSET NAT_SIMD_START + NAT_MAX_SIMD_AREA
 
 #elif TARGET_CPU_ARM
 
@@ -58,12 +64,14 @@
 #define NAT_STRUCTS_BY_REF  0
 #define NAT_RET_BUFFER_LEN  0
 
+#define NAT_STACK_OFFSET NAT_MAX_REG_AREA
+
 #endif
 
 #define NAT_SIMD_SIZE       16
 
 NSUInteger const kNATRegisterSize = NAT_REG_SIZE;
-NSUInteger const kNATStackOffset = NAT_SIMD_START + NAT_MAX_SIMD_AREA;
+NSUInteger const kNATStackOffset = NAT_STACK_OFFSET;
 
 @implementation NATMethodDescriptor {
     NATArgInfo *_args;

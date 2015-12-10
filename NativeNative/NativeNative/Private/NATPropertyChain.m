@@ -72,40 +72,42 @@
     if ( _segmentNames.count > 0 ) {
         id target = [_rootExpression evaluate].objectValue;
 
-        NSUInteger getterCount = (_assignment == nil) ? _segmentNames.count : (_segmentNames.count - 1);
+        if ( target != nil ) {
+            NSUInteger getterCount = (_assignment == nil) ? _segmentNames.count : (_segmentNames.count - 1);
 
-        for ( NSUInteger i = 0; i < getterCount; ++i ) {
-            SEL getter = NSSelectorFromString(_segmentNames[i]);
-            assert(getter != nil);
+            for ( NSUInteger i = 0; i < getterCount; ++i ) {
+                SEL getter = NSSelectorFromString(_segmentNames[i]);
+                assert(getter != nil);
 
-            id getterTarget = (methodChain != nil) ? methodChain : target;
-            methodChain = [[NATMethod alloc] initWithSelector:getter arguments:@[getterTarget]];
-        }
-
-        if ( _assignment != nil ) {
-            if ( methodChain != nil ) {
-                target = [methodChain evaluate].objectValue;
+                id getterTarget = (methodChain != nil) ? methodChain : target;
+                methodChain = [[NATMethod alloc] initWithSelector:getter arguments:@[getterTarget]];
             }
 
-            NATProperty *property = [[target class] nat_propertyForKey:[_segmentNames lastObject]];
-            NSAssert(!property.isReadonly, @"Assignment to readonly property.");
+            if ( _assignment != nil ) {
+                if ( methodChain != nil ) {
+                    target = [methodChain evaluate].objectValue;
+                }
 
-            SEL setter = property.setter;
+                NATProperty *property = [[target class] nat_propertyForKey:[_segmentNames lastObject]];
+                NSAssert(!property.isReadonly, @"Assignment to readonly property.");
 
-            // NOTE: setter dot syntax will work on any "set" method with one argument.
-            //       also, "properties" declared in categories may not be properties at all.
-            if ( setter == nil ) {
-                char *name = strdup([_segmentNames lastObject].UTF8String);
-                name[0] = toupper(name[0]);
+                SEL setter = property.setter;
 
-                setter = NSSelectorFromString([NSString stringWithFormat:@"set%s:", name]);
+                // NOTE: setter dot syntax will work on any "set" method with one argument.
+                //       also, "properties" declared in categories may not be properties at all.
+                if ( setter == nil ) {
+                    char *name = strdup([_segmentNames lastObject].UTF8String);
+                    name[0] = toupper(name[0]);
 
-                free(name);
+                    setter = NSSelectorFromString([NSString stringWithFormat:@"set%s:", name]);
+
+                    free(name);
+                }
+                
+                NSAssert(setter != nil, @"Assignment to nonexistent property.");
+                
+                methodChain = [[NATMethod alloc] initWithSelector:setter arguments:@[target, _assignment]];
             }
-
-            NSAssert(setter != nil, @"Assignment to nonexistent property.");
-
-            methodChain = [[NATMethod alloc] initWithSelector:setter arguments:@[target, _assignment]];
         }
     }
 

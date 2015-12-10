@@ -18,6 +18,8 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
     NATMethodDescriptor *_methodDescriptor;
 
     void *_frame;
+    size_t _frameLen; // at least methodDescriptor.frameLength
+
     void *_returnBuffer;
 }
 
@@ -58,7 +60,8 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
         _methodSignature = sig;
         _methodDescriptor = [NATMethodDescriptor descriptorForMethodSignature:sig];
 
-        _frame = calloc(_methodDescriptor.frameLength, 1);
+        _frameLen = MAX(_methodDescriptor.frameLength, kNATStackOffset);
+        _frame = calloc(_frameLen, 1);
         _returnBuffer = calloc(_methodDescriptor.returnBufferLength, 1);
     }
 
@@ -186,8 +189,8 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
 
 - (void)invokeSuper:(Class)superclass
 {
-    void *frame = malloc(_methodDescriptor.frameLength);
-    memcpy(frame, _frame, _methodDescriptor.frameLength);
+    void *frame = malloc(_frameLen);
+    memcpy(frame, _frame, _frameLen);
 
     struct objc_super spr;
     spr.receiver = *(__unsafe_unretained id *)frame;
