@@ -6,6 +6,7 @@ import asyncore, socket, threading
 import sys, subprocess, os
 
 EDITOR_FILE = '.NATEditor.m'
+SNAPSHOT_FILE = '.NATSnapshot.jpg'
 
 LOG_TYPE = 'LOG'
 IMAGE_TYPE = 'IMG'
@@ -62,8 +63,8 @@ class ClientHandler(asyncore.dispatcher):
             sys.stdout.write(self.data.encode())
 
         elif self.current_read_type == IMAGE_TYPE:
-            # TODO: show image
-            pass
+            open(SNAPSHOT_FILE, 'w').write(self.data)
+            open_file(SNAPSHOT_FILE)
 
         self.data = ''
         self.current_read_type = None
@@ -155,7 +156,7 @@ def wait_for_connection(server):
 
     print "\nAvailable Commands:"
     print "\t[ENTER] - Send program. If editor is open, file contents will be sent."
-    print "\t[edit] - Open program editor."
+    print "\t[editor] - Open program editor."
     print "\t[log] - Print connected device log."
     print "\t[snapshot] - View a snapshot of the connected device's screen."
     print "\t[disconnect] - Close the current device connection."
@@ -179,7 +180,8 @@ if __name__ == '__main__':
     while not quit:
         command = raw_input('Enter a command: ').strip()
 
-        if command.lower() == 'edit':
+        if command.lower() == 'editor':
+            editor_open = True
             open_file(EDITOR_FILE)
 
         elif command.lower() == 'log':
@@ -196,13 +198,13 @@ if __name__ == '__main__':
         elif command.lower() == 'quit':
             quit = True
 
-        elif not editor_open:
-            server.send_program(command.encode())
-            print 'Done.'
-
-        elif command == '':
+        elif editor_open and command == '':
             with open(EDITOR_FILE, 'r') as f:
                 server.send_program(f.read().strip())
+            print 'Done.'
+
+        else:
+            server.send_program(command.encode())
             print 'Done.'
 
         print ''

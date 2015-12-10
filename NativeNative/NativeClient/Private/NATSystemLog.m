@@ -34,13 +34,15 @@
 
     if ( timestamp > 0.0 ) {
         uint64_t sec = (uint64_t)timestamp;
-        uint64_t nsec = (timestamp - sec) * NSEC_PER_SEC;
-
         asl_set_query(query, ASL_KEY_TIME, [@(sec) stringValue].UTF8String, ASL_QUERY_OP_GREATER_EQUAL);
-        asl_set_query(query, ASL_KEY_TIME_NSEC, [@(nsec) stringValue].UTF8String, ASL_QUERY_OP_GREATER);
     }
 
-    NSArray *messages = [self messagesForQuery:query];
+    NSMutableArray *messages = [self messagesForQuery:query];
+
+    // Still have to filter on nanoseconds...
+    [messages filterUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NATSystemMessage *msg, NSDictionary<NSString *,id> * _Nullable bindings) {
+        return (msg.timestamp > timestamp);
+    }]];
 
     asl_release(query);
 
@@ -49,7 +51,7 @@
 
 #pragma mark - private methods
 
-+ (NSArray *)messagesForQuery:(aslmsg)query
++ (NSMutableArray *)messagesForQuery:(aslmsg)query
 {
     aslresponse result = asl_search(NULL, query);
     aslmsg message = NULL;
@@ -64,7 +66,7 @@
 
     asl_release(result);
 
-    return [messages copy];
+    return messages;
 }
 
 @end
@@ -133,7 +135,7 @@
 
     [logData appendBytes:kNATContentTerminal length:strlen(kNATContentTerminal)];
 
-    return [NSInputStream inputStreamWithData:logData];
+    return [self inputStreamWithData:logData];
 }
 
 @end

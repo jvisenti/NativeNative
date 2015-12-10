@@ -15,7 +15,7 @@
 
 @interface NATSnapshot ()
 
-@property (nonatomic, readonly) NSData *pngData;
+@property (nonatomic, readonly) NSData *imageData;
 
 @end
 
@@ -35,7 +35,7 @@
 
     UIGraphicsEndImageContext();
 
-    return [[self alloc] initWithPNGData:UIImagePNGRepresentation(image)];
+    return [[self alloc] initWithImageData:UIImageJPEGRepresentation(image, 1.0f)];
 #else
     return nil;
 #endif
@@ -43,10 +43,10 @@
 
 #pragma mark - private methods
 
-- (instancetype)initWithPNGData:(NSData *)pngData;
+- (instancetype)initWithImageData:(NSData *)imageData;
 {
     if ( (self = [super init]) ) {
-        _pngData = pngData;
+        _imageData = imageData;
     }
 
     return self;
@@ -64,7 +64,7 @@
     [outputData appendBytes:kNATContentTypeTerminal length:strlen(kNATContentTypeTerminal)];
 
     if ( snapshot != nil ) {
-        [outputData appendData:snapshot.pngData];
+        [outputData appendData:snapshot.imageData];
     }
 
     [outputData appendBytes:kNATContentTerminal length:strlen(kNATContentTerminal)];

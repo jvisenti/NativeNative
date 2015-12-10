@@ -128,7 +128,6 @@ static NSInteger const kNATStreamBufferSize = 4096;
     NSArray *outputMessages = [NATSystemLog allMessages];
 
     NSInputStream *logStream = [NSInputStream nat_inputStreamWithSystemMessages:outputMessages];
-    [logStream open];
 
     [self writeStream:logStream toStream:_output];
 }
@@ -136,6 +135,7 @@ static NSInteger const kNATStreamBufferSize = 4096;
 - (void)sendSnapshot
 {
     NATSnapshot *snapshot = [NATSnapshot snapshot];
+
     NSInputStream *imageStream = [NSInputStream nat_inputStreamWithSnapshot:snapshot];
 
     [self writeStream:imageStream toStream:_output];
@@ -191,6 +191,10 @@ static NSInteger const kNATStreamBufferSize = 4096;
 - (void)writeStream:(NSInputStream *)input toStream:(NSOutputStream *)output
 {
     dispatch_async(_outputQueue, ^{
+        if ( input.streamStatus == NSStreamStatusNotOpen ) {
+            [input open];
+        }
+        
         while ( input.hasBytesAvailable && output.streamStatus == NSStreamStatusOpen ) {
             uint8_t buffer[kNATStreamBufferSize + 1];
             NSInteger len = 0;
