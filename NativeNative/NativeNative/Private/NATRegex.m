@@ -35,8 +35,9 @@ NSRegularExpression *kNATRegexMethodImplementation = nil;
 
 #define NAT_REGEX(pattern) [NSRegularExpression regularExpressionWithPattern:pattern options:kNilOptions error:NULL]
 
-void _NATRegexConfigure(void) __attribute__((constructor));
-void _NATRegexConfigure(void)
+@implementation NSString (NATExtensions)
+
++ (void)load
 {
     kNATRegexNewline = NAT_REGEX(@"[\n\r]+");
     kNATRegexWhitespace = NAT_REGEX(@"[\\s]+");
@@ -62,8 +63,6 @@ void _NATRegexConfigure(void)
 
     kNATRegexMethodImplementation = NAT_REGEX(@"[+-][\\s]*\\(");
 }
-
-@implementation NSString (NATExtensions)
 
 - (BOOL)nat_matches:(NSRegularExpression *)expr
 {
