@@ -8,15 +8,20 @@ ENUMS_DIR="Enums"
 GENERATED_DIR="${ENUMS_DIR}/Generated"
 GLOBAL_HEADER="${ENUMS_DIR}/NATEnums.h"
 
+# Ignore deprecated or unsupported frameworks
+IGNORED_FRAMEWORKS=" CoreTelephony MetalPerformanceShaders "
+
 mkdir -p "${GENERATED_DIR}"
 
 touch "${GLOBAL_HEADER}"
 
-find $FRAMEWORK_DIR/WebKit.framework -maxdepth 0 | while read framework; do
+find $FRAMEWORK_DIR/*.framework -maxdepth 0 | while read framework; do
 
 framework_name=$(basename ${framework%.*})
 header="${GENERATED_DIR}/${framework_name}+NATEnums.h"
 implementation="${GENERATED_DIR}/${framework_name}+NATEnums.m"
+
+[[ $IGNORED_FRAMEWORKS != *"${framework_name} "* ]] || continue
 
 echo -n "Processing ${framework_name}... "
 
@@ -30,10 +35,13 @@ cat >"${header}" <<EOF
 @end
 EOF
 
+# Most umbrella headers share a name with the framework, but some don't
+[[ $framework_name == OpenGLES ]] && framework_header='EAGL' || framework_header="${framework_name}"
+
 cat >"${implementation}" <<EOF
 // Registers NATSymbols for enums defined in ${framework_name}
 
-#import <${framework_name}/${framework_name}.h>
+#import <${framework_name}/${framework_header}.h>
 #import <NativeNative/NATScope.h>
 
 @implementation NSObject (${framework_name}Enums)
@@ -42,16 +50,16 @@ cat >"${implementation}" <<EOF
 EOF
 
 # Matches the first line of an NS enum definition block
-ENUM_DEF_REGEX="NS_(ENUM|OPTIONS)[[:space:]]*\([[:space:]]*[[:alnum:][:space:]_]+[[:space:]]*,[[:space:]]*[[:alnum:]]+[[:space:]]*\)"
-ENUM_BLOCK_REGEX="typedef[[:space:]]*${ENUM_DEF_REGEX}[^\{]*\{[^\;]*\;"
+ENUM_DEF_REGEX="NS_(ENUM|OPTIONS)[[:space:]]*\([[:space:]]*[[:alnum:][:space:]_]+[[:space:]]*,[[:space:]]*[[:alnum:]_]+[[:space:]]*\)"
+ENUM_BLOCK_REGEX="(${PREPROCESSOR_TAG_REGEX}[[:space:]]*)*typedef[[:space:]]*${ENUM_DEF_REGEX}[^\{]*\{[^\;]*\;"
 
 # Extract all enum definition blocks by:
-# 1) Stripping single-line comments and preprocessor #if/#else/etc
+# 1) Stripping '//' comments and preprocessor #if/#else/etc
 # 2) Replacing trailing commas with custom separator
-# 2) Stripping all newlines
-# 3) Stripping all multi-line comments
+# 2) Converting newlines to spaces
+# 3) Stripping all '/*' comments
 # 4) Matching enum block regex
-find $framework/Headers/*.h -exec sed -E 's/(\/\/|#).*$//g;s/\/\*.*\*\///g' {} + 2> /dev/null | sed -E 's/,[[:space:]]*$/:/g' | tr -d "\n\r" | sed -E 's/\/\*([^*]|(\*+[^*\/]))*\*+\///g' | grep -E -o "${ENUM_BLOCK_REGEX}" | {
+find $framework/Headers/*.h -exec sed -E 's/(\/\/|#).*$//g' {} + 2> /dev/null | sed -E 's/,([[:space:]]*(\/\*.*)?)$/:\1/g' | tr '\n' ' ' | sed -E 's/\/\*([^*]|(\*+[^*\/]))*\*+\///g' | grep -E -o "${ENUM_BLOCK_REGEX}" | {
     while read -d ';' enum; do
         available_versions=$(enum_available_versions_ios "${enum}")
 
@@ -124,9 +132,8 @@ find $framework/Headers/*.h -exec sed -E 's/(\/\/|#).*$//g;s/\/\*.*\*\///g' {} +
 
     echo -e "generated ${count} enums, (skipped ${skipped:=0}),(expected total ${expected_count:=0})" | column -t -s','
 
-    if [[ $((count + skipped)) -ne $expected_count ]]; then
-        echo -e "\tWARNING: Generated count does not match expected count!"
-    fi
+    # Print warning if processed count doesn't match expected count
+    [[ $((count + skipped)) -eq $expected_count ]] || echo -e "\tWARNING: Generated count does not match expected count!"
 }
 
 done

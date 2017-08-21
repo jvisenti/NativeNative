@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PREPROCESSOR_TAG_REGEX="[[:upper:]_]+_[[:upper:]_]+(\([^\)]*\))?"
+PREPROCESSOR_TAG_REGEX="[[:upper:]_]+_[[:upper:]_]+(\(([^\)]|[[:alpha:]]+\([^\)]*\))*\))?"
 
 __VERSION_MIN_REGEX=".*\(([^\)]*)\).*"
 __VERSION_MAX_REGEX=".*\(.*,([^\)]*)\).*"
@@ -23,21 +23,30 @@ function __max_version_ios {
 }
 
 function tag_available_versions_ios {
-    if [[ $1 =~ (WATCHOS_ONLY|TVOS_ONLY|IOS_PROHIBITED|IOS_UNAVAILABLE) ]]; then
+    # Legacy style API availability macros
+    if [[ $1 =~ (WATCHOS_ONLY|TVOS_ONLY|IOS_PROHIBITED|IOS_UNAVAILABLE|_AVAILABLE_MAC) ]]; then
         echo 'none'
-    elif [[ $1 =~ (IOS_DEPRECATED|DEPRECATED_IOS) ]]; then
-        echo `__min_version_ios "$1"` `__max_version_ios "$1"`
     elif [[ $1 =~ (AVAILABLE_IOS|IOS_AVAILABLE) ]]; then
         echo `__min_version_ios "$1"`
-    elif [[ $1 =~ ENUM_AVAILABLE ]]; then
+    elif [[ $1 =~ (ENUM|NS)_AVAILABLE ]]; then
         echo `__max_version_ios "$1"`
+    elif [[ $1 =~ (IOS_DEPRECATED|DEPRECATED_IOS) ]]; then
+        echo `__min_version_ios "$1"` `__max_version_ios "$1"`
+
+    # macOS 10.12 and iOS 10 style API availability macros
+    elif [[ $1 =~ API_UNAVAILABLE ]]; then
+        [[ $1 =~ ios\([^\)]*\) ]] && echo 'none'
+    elif [[ $1 =~ API_AVAILABLE ]]; then
+        [[ $1 =~ ios\([^\)]*\) ]] && echo `__min_version_ios "${BASH_REMATCH}"` || echo 'none'
+    elif [[ $1 =~ API_DEPRECATED ]]; then
+        [[ $1 =~ ios\([^\)]*\) ]] && echo `__min_version_ios "${BASH_REMATCH}"` `__max_version_ios "${BASH_REMATCH}"`
     fi
 }
 
 function enum_available_versions_ios {
     local enum="$1"
 
-    echo "${enum#*\}}" | grep -E -o "${PREPROCESSOR_TAG_REGEX}" | {
+    echo "${enum%%typedef*} ${enum#*\}}" | grep -E -o "${PREPROCESSOR_TAG_REGEX}" | {
         while read tag; do
             local version=$(tag_available_versions_ios "$tag")
             [[ -z $version ]] || break
