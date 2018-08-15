@@ -477,4 +477,15 @@
     [NATScope exit];
 }
 
+- (void)testEnums
+{
+    NATSymbol *sym = [[NATScope currentScope] lookupSymbol:@"UIViewAnimationCurveEaseOut"];
+    XCTAssertNotNil(sym);
+    XCTAssertEqual(sym.value.longValue, (long)UIViewAnimationCurveEaseOut);
+
+    sym = [[NATScope currentScope] lookupSymbol:@"UIUserInterfaceIdiomTV"];
+    XCTAssertNotNil(sym);
+    XCTAssertEqual(sym.value.longValue, (long)UIUserInterfaceIdiomTV);
+}
+
 @end

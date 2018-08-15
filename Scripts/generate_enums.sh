@@ -8,8 +8,14 @@ ENUMS_DIR="Enums"
 GENERATED_DIR="${ENUMS_DIR}/Generated"
 GLOBAL_HEADER="${ENUMS_DIR}/NATEnums.h"
 
-# Ignore deprecated or unsupported frameworks
-IGNORED_FRAMEWORKS=" CoreTelephony MetalPerformanceShaders "
+# Ignore deprecated or uncommon yet difficult to parse frameworks
+IGNORED_FRAMEWORKS=" CoreTelephony Metal MetalPerformanceShaders PassKit "
+
+# Ignore unsupported cases that are difficult to detect as unavailable
+IGNORED_ENUMS=" SCNTessellationSmoothingMode "
+
+# Ignore unsupported cases that are difficult to detect as unavailable
+IGNORED_CASES=" NSNumberFormatterBehavior10_0 NSDateFormatterBehavior10_0 NSPointerFunctionsZeroingWeakMemory NSItemProviderRepresentationVisibilityGroup "
 
 mkdir -p "${GENERATED_DIR}"
 
@@ -54,12 +60,12 @@ ENUM_DEF_REGEX="NS_(ENUM|OPTIONS)[[:space:]]*\([[:space:]]*[[:alnum:][:space:]_]
 ENUM_BLOCK_REGEX="(${PREPROCESSOR_TAG_REGEX}[[:space:]]*)*typedef[[:space:]]*${ENUM_DEF_REGEX}[^\{]*\{[^\;]*\;"
 
 # Extract all enum definition blocks by:
-# 1) Stripping '//' comments and preprocessor #if/#else/etc
+# 1) Stripping '//' comments and preprocessor directives #if/#else/etc
 # 2) Replacing trailing commas with custom separator
 # 2) Converting newlines to spaces
 # 3) Stripping all '/*' comments
 # 4) Matching enum block regex
-find $framework/Headers/*.h -exec sed -E 's/(\/\/|#).*$//g' {} + 2> /dev/null | sed -E 's/,([[:space:]]*(\/\*.*)?)$/:\1/g' | tr '\n' ' ' | sed -E 's/\/\*([^*]|(\*+[^*\/]))*\*+\///g' | grep -E -o "${ENUM_BLOCK_REGEX}" | {
+find $framework/Headers/*.h -exec sed -E 's/(\/\/|#if|#else|#elif|#endif).*$//g' {} + 2> /dev/null | sed -E 's/,([[:space:]]*(\/\*.*)?)$/:\1/g' | tr '\n' ' ' | sed -E 's/\/\*([^*]|(\*+[^*\/]))*\*+\///g' | grep -E -o "${ENUM_BLOCK_REGEX}" | {
     while read -d ';' enum; do
         available_versions=$(enum_available_versions_ios "${enum}")
 
@@ -80,6 +86,12 @@ find $framework/Headers/*.h -exec sed -E 's/(\/\/|#).*$//g' {} + 2> /dev/null | 
             continue
         fi
 
+        # Skip ignored enums
+        if [[ $IGNORED_ENUMS == *"${enum_name} "* ]]; then
+            ((skipped++))
+            continue
+        fi
+
         # Extract definition block body between curly braces
         body="${enum#*{}"
         body="${body%\}*}"
@@ -90,7 +102,7 @@ find $framework/Headers/*.h -exec sed -E 's/(\/\/|#).*$//g' {} + 2> /dev/null | 
 
         # Keep track of registered cases
         registered_cases=""
-        
+
         for index in "${!enum_cases[@]}"; do
             enum_case=${enum_cases[$index]}
 
@@ -103,6 +115,9 @@ find $framework/Headers/*.h -exec sed -E 's/(\/\/|#).*$//g' {} + 2> /dev/null | 
             enum_case=$(echo "${enum_case}" | sed -E "s/${PREPROCESSOR_TAG_REGEX}//g;s/[[:space:]]*//g")
 
             case_name=${enum_case%=*}
+
+            # Skip ignored cases
+            [[ $IGNORED_CASES != *"${case_name} "* ]] || continue
 
             # Skip case if already registered (e.g. due to per target compilation)
             [[ $registered_cases == *$case_name* ]] && continue

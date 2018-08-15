@@ -3,8 +3,8 @@ set -e
 
 PREPROCESSOR_TAG_REGEX="[[:upper:]_]+_[[:upper:]_]+(\(([^\)]|[[:alpha:]]+\([^\)]*\))*\))?"
 
-__VERSION_MIN_REGEX=".*\(([^\)]*)\).*"
-__VERSION_MAX_REGEX=".*\(.*,([^\)]*)\).*"
+__VERSION_MIN_REGEX="[^(]*\(([^)]*)\).*"
+__VERSION_MAX_REGEX="[^(]*\(.*,([^)]*)\).*"
 
 function __version_ios {
     if [[ $1 =~ NA ]]; then
@@ -35,8 +35,8 @@ function tag_available_versions_ios {
 
     # macOS 10.12 and iOS 10 style API availability macros
     elif [[ $1 =~ API_UNAVAILABLE ]]; then
-        [[ $1 =~ ios\([^\)]*\) ]] && echo 'none'
-    elif [[ $1 =~ API_AVAILABLE ]]; then
+        [[ $1 =~ ios ]] && echo 'none'
+    elif [[ $1 =~ (API_AVAILABLE|MP_API) ]]; then
         [[ $1 =~ ios\([^\)]*\) ]] && echo `__min_version_ios "${BASH_REMATCH}"` || echo 'none'
     elif [[ $1 =~ API_DEPRECATED ]]; then
         [[ $1 =~ ios\([^\)]*\) ]] && echo `__min_version_ios "${BASH_REMATCH}"` `__max_version_ios "${BASH_REMATCH}"`
@@ -65,15 +65,37 @@ function open_available_ios {
     [[ $1 != 'all' ]] || return 0
 
     local versions=($1)
-    local min="#if __IPHONE_OS_VERSION_MAX_ALLOWED >= ${versions[0]}"
 
-    if [[ ${#versions[@]} -eq 2 ]]; then
-        echo "${min} && (NAT_DEPRECATED_ENUMS || __IPHONE_OS_VERSION_MAX_ALLOWED < ${versions[1]})" >> "$2"
+    if [[ "${versions[0]}" =~ ^1?. ]]; then
+        local major="${BASH_REMATCH}"
+    fi
+
+    local minor="${versions[0]:2:1}"
+
+    if [[ $major -ge 11 ]]; then
+        echo "if (@available(iOS ${major}.${minor}, *)) {" >> "$2"
     else
-        echo "${min}" >> "$2"
+        local min="#if __IPHONE_OS_VERSION_MAX_ALLOWED >= ${versions[0]}"
+        if [[ ${#versions[@]} -eq 2 ]]; then
+            echo "${min} && (NAT_DEPRECATED_ENUMS || __IPHONE_OS_VERSION_MAX_ALLOWED < ${versions[1]})" >> "$2"
+        else
+            echo "${min}" >> "$2"
+        fi
     fi
 }
 
 function close_available_ios {
-    [[ $1 == 'all' ]] || echo '#endif' >> "$2"
+    [[ $1 != 'all' ]] || return 0
+
+    local versions=($1)
+
+    if [[ "${versions[0]}" =~ ^1?. ]]; then
+        local major="${BASH_REMATCH}"
+    fi
+
+    if [[ $major -ge 11 ]]; then
+        echo '}' >> "$2"
+    else
+        echo '#endif' >> "$2"
+    fi
 }

@@ -63,9 +63,3 @@
 - (void)invokeIMP:(IMP)imp;
 
 @end
-
-@interface NATInvocation (NATUnavailable)
-
-- (instancetype)init UNAVAILABLE_ATTRIBUTE;
-
-@end
