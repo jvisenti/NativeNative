@@ -1,0 +1,787 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D40569511BD84BEC00EC02D5 /* NativeNative.h in Headers */ = {isa = PBXBuildFile; fileRef = D40569501BD84BEC00EC02D5 /* NativeNative.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D405696C1BD8537100EC02D5 /* NativeNativeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D405696B1BD8537100EC02D5 /* NativeNativeTests.m */; };
+		D405696E1BD8537100EC02D5 /* NativeNative.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D405694D1BD84BEC00EC02D5 /* NativeNative.framework */; };
+		D4205EF21BE9543A007F83F4 /* NSObject+NATIvars.h in Headers */ = {isa = PBXBuildFile; fileRef = D4205EF01BE9543A007F83F4 /* NSObject+NATIvars.h */; };
+		D4205EF31BE9543A007F83F4 /* NSObject+NATIvars.m in Sources */ = {isa = PBXBuildFile; fileRef = D4205EF11BE9543A007F83F4 /* NSObject+NATIvars.m */; };
+		D432C8501BDC1A900043AB45 /* NATExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = D432C84E1BDC1A900043AB45 /* NATExpression.h */; };
+		D432C8511BDC1A900043AB45 /* NATExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = D432C84F1BDC1A900043AB45 /* NATExpression.m */; };
+		D432C8541BDC1DE80043AB45 /* NATOperators.h in Headers */ = {isa = PBXBuildFile; fileRef = D432C8521BDC1DE80043AB45 /* NATOperators.h */; };
+		D432C8551BDC1DE80043AB45 /* NATOperators.m in Sources */ = {isa = PBXBuildFile; fileRef = D432C8531BDC1DE80043AB45 /* NATOperators.m */; };
+		D4445C1C1BDEF8E30093B2B7 /* NATInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = D4445C1A1BDEF8E30093B2B7 /* NATInvocation.h */; };
+		D4445C1D1BDEF8E30093B2B7 /* NATInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = D4445C1B1BDEF8E30093B2B7 /* NATInvocation.m */; };
+		D45477661BE3F81100DF16BD /* NATProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = D45477641BE3F81100DF16BD /* NATProgram.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D45477671BE3F81100DF16BD /* NATProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477651BE3F81100DF16BD /* NATProgram.m */; };
+		D45477B01BE4FCF500DF16BD /* NATProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = D45477AE1BE4FCF500DF16BD /* NATProperty.h */; };
+		D45477B11BE4FCF500DF16BD /* NATProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477AF1BE4FCF500DF16BD /* NATProperty.m */; };
+		D45477B41BE5691300DF16BD /* NATPropertyChain.h in Headers */ = {isa = PBXBuildFile; fileRef = D45477B21BE5691300DF16BD /* NATPropertyChain.h */; };
+		D45477B51BE5691300DF16BD /* NATPropertyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = D45477B31BE5691300DF16BD /* NATPropertyChain.m */; };
+		D471504B1C1717DD00DCE243 /* NativeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = D471504A1C1717DD00DCE243 /* NativeClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D47150521C17196700DCE243 /* NativeClient.m in Sources */ = {isa = PBXBuildFile; fileRef = D47150511C17196700DCE243 /* NativeClient.m */; };
+		D474D2FE1BDBF5D500042911 /* NATTokenizer.m in Sources */ = {isa = PBXBuildFile; fileRef = D474D2FD1BDBF5D500042911 /* NATTokenizer.m */; };
+		D474D3011BDBF67700042911 /* NATRegex.h in Headers */ = {isa = PBXBuildFile; fileRef = D474D2FF1BDBF67700042911 /* NATRegex.h */; };
+		D474D3021BDBF67700042911 /* NATRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = D474D3001BDBF67700042911 /* NATRegex.m */; };
+		D4961A2B1BEF8CC20065E055 /* NATExecutionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = D4961A291BEF8CC20065E055 /* NATExecutionContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D4961A2C1BEF8CC20065E055 /* NATExecutionContext.m in Sources */ = {isa = PBXBuildFile; fileRef = D4961A2A1BEF8CC20065E055 /* NATExecutionContext.m */; };
+		D497975D1C18D59100FD225F /* NATSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = D497975B1C18D59100FD225F /* NATSnapshot.h */; };
+		D497975E1C18D59100FD225F /* NATSnapshot.m in Sources */ = {isa = PBXBuildFile; fileRef = D497975C1C18D59100FD225F /* NATSnapshot.m */; };
+		D49797601C18D91100FD225F /* NATContentTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = D497975F1C18D8A300FD225F /* NATContentTypes.h */; };
+		D49B02A41C17501900BCF79D /* NATValue+NATExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = D49B02A21C17501900BCF79D /* NATValue+NATExpression.h */; };
+		D49B02A51C17501900BCF79D /* NATValue+NATExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = D49B02A31C17501900BCF79D /* NATValue+NATExpression.m */; };
+		D49B02AC1C17505E00BCF79D /* NATScope.h in Headers */ = {isa = PBXBuildFile; fileRef = D49B02A61C17505E00BCF79D /* NATScope.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D49B02AD1C17505E00BCF79D /* NATScope.m in Sources */ = {isa = PBXBuildFile; fileRef = D49B02A71C17505E00BCF79D /* NATScope.m */; };
+		D49B02AE1C17505E00BCF79D /* NATTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = D49B02A81C17505E00BCF79D /* NATTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D49B02AF1C17505E00BCF79D /* NATTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = D49B02A91C17505E00BCF79D /* NATTypes.m */; };
+		D49B02B01C17505E00BCF79D /* NATValue.h in Headers */ = {isa = PBXBuildFile; fileRef = D49B02AA1C17505E00BCF79D /* NATValue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D49B02B11C17505E00BCF79D /* NATValue.m in Sources */ = {isa = PBXBuildFile; fileRef = D49B02AB1C17505E00BCF79D /* NATValue.m */; };
+		D4A058AF1BE664CE00DD9234 /* NATStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = D4A058AD1BE664CE00DD9234 /* NATStrings.h */; };
+		D4A058B01BE664CE00DD9234 /* NATStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = D4A058AE1BE664CE00DD9234 /* NATStrings.m */; };
+		D4A058B31BE6DFD200DD9234 /* NATInterfaceStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = D4A058B11BE6DFD200DD9234 /* NATInterfaceStatement.h */; };
+		D4A058B41BE6DFD200DD9234 /* NATInterfaceStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = D4A058B21BE6DFD200DD9234 /* NATInterfaceStatement.m */; };
+		D4B3E7A31BDAC50C009E6507 /* NATMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B3E7A11BDAC50C009E6507 /* NATMethod.h */; };
+		D4B3E7A41BDAC50C009E6507 /* NATMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B3E7A21BDAC50C009E6507 /* NATMethod.m */; };
+		D4B3E7AF1BDAD5CE009E6507 /* NATTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B3E7AD1BDAD5CE009E6507 /* NATTokenizer.h */; };
+		D4BBB3611C1895F60090D70E /* NATSystemLog.h in Headers */ = {isa = PBXBuildFile; fileRef = D4BBB35F1C1895F60090D70E /* NATSystemLog.h */; };
+		D4BBB3621C1895F60090D70E /* NATSystemLog.m in Sources */ = {isa = PBXBuildFile; fileRef = D4BBB3601C1895F60090D70E /* NATSystemLog.m */; };
+		D4BC80551BEE3D1A00E64908 /* nat_method_prep.S in Sources */ = {isa = PBXBuildFile; fileRef = D4BC80541BEE3D1A00E64908 /* nat_method_prep.S */; };
+		D4BDAAF52123F96C00474A45 /* UIKit+NATEnums.m in Sources */ = {isa = PBXBuildFile; fileRef = D4BDAA702123F96C00474A45 /* UIKit+NATEnums.m */; };
+		D4BDAB402123F96C00474A45 /* UIKit+NATEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = D4BDAABB2123F96C00474A45 /* UIKit+NATEnums.h */; };
+		D4BDAB552123F96C00474A45 /* NATEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = D4BDAAD02123F96C00474A45 /* NATEnums.h */; };
+		D4BDAB582123FA0D00474A45 /* Foundation+NATEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = D4BDAB562123FA0D00474A45 /* Foundation+NATEnums.h */; };
+		D4BDAB592123FA0D00474A45 /* Foundation+NATEnums.m in Sources */ = {isa = PBXBuildFile; fileRef = D4BDAB572123FA0D00474A45 /* Foundation+NATEnums.m */; };
+		D4C895091BE2F68B0003404F /* nat_invoking.S in Sources */ = {isa = PBXBuildFile; fileRef = D4C895081BE2F68B0003404F /* nat_invoking.S */; };
+		D4C8950C1BE2F6A00003404F /* NATMethodDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = D4C8950A1BE2F6A00003404F /* NATMethodDescriptor.h */; };
+		D4C8950D1BE2F6A00003404F /* NATMethodDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C8950B1BE2F6A00003404F /* NATMethodDescriptor.m */; };
+		D4D854991BE3C4F900E3683D /* NATStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D854971BE3C4F900E3683D /* NATStatement.h */; };
+		D4D8549A1BE3C4F900E3683D /* NATStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D854981BE3C4F900E3683D /* NATStatement.m */; };
+		D4FDBEA61BEBA47B00AF932D /* NATImplementationStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = D4FDBEA41BEBA47B00AF932D /* NATImplementationStatement.h */; };
+		D4FDBEA71BEBA47B00AF932D /* NATImplementationStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = D4FDBEA51BEBA47B00AF932D /* NATImplementationStatement.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D405696F1BD8537100EC02D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D40569441BD84BEC00EC02D5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D405694C1BD84BEC00EC02D5;
+			remoteInfo = NativeNative;
+		};
+		D49B02981C173B5600BCF79D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D40569441BD84BEC00EC02D5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D405694C1BD84BEC00EC02D5;
+			remoteInfo = NativeNative;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		D405694D1BD84BEC00EC02D5 /* NativeNative.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NativeNative.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D40569501BD84BEC00EC02D5 /* NativeNative.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NativeNative.h; sourceTree = "<group>"; };
+		D40569521BD84BEC00EC02D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D40569691BD8537100EC02D5 /* NativeNativeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NativeNativeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D405696B1BD8537100EC02D5 /* NativeNativeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NativeNativeTests.m; sourceTree = "<group>"; };
+		D405696D1BD8537100EC02D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D4205EF01BE9543A007F83F4 /* NSObject+NATIvars.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+NATIvars.h"; sourceTree = "<group>"; };
+		D4205EF11BE9543A007F83F4 /* NSObject+NATIvars.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+NATIvars.m"; sourceTree = "<group>"; };
+		D432C84E1BDC1A900043AB45 /* NATExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATExpression.h; sourceTree = "<group>"; };
+		D432C84F1BDC1A900043AB45 /* NATExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATExpression.m; sourceTree = "<group>"; };
+		D432C8521BDC1DE80043AB45 /* NATOperators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATOperators.h; sourceTree = "<group>"; };
+		D432C8531BDC1DE80043AB45 /* NATOperators.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATOperators.m; sourceTree = "<group>"; };
+		D4445C1A1BDEF8E30093B2B7 /* NATInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATInvocation.h; sourceTree = "<group>"; };
+		D4445C1B1BDEF8E30093B2B7 /* NATInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATInvocation.m; sourceTree = "<group>"; };
+		D45477641BE3F81100DF16BD /* NATProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATProgram.h; sourceTree = "<group>"; };
+		D45477651BE3F81100DF16BD /* NATProgram.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATProgram.m; sourceTree = "<group>"; };
+		D45477AE1BE4FCF500DF16BD /* NATProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATProperty.h; sourceTree = "<group>"; };
+		D45477AF1BE4FCF500DF16BD /* NATProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATProperty.m; sourceTree = "<group>"; };
+		D45477B21BE5691300DF16BD /* NATPropertyChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATPropertyChain.h; sourceTree = "<group>"; };
+		D45477B31BE5691300DF16BD /* NATPropertyChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATPropertyChain.m; sourceTree = "<group>"; };
+		D47150481C1717DD00DCE243 /* NativeClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NativeClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D471504A1C1717DD00DCE243 /* NativeClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NativeClient.h; sourceTree = "<group>"; };
+		D471504C1C1717DD00DCE243 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D47150511C17196700DCE243 /* NativeClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NativeClient.m; sourceTree = "<group>"; };
+		D474D2FD1BDBF5D500042911 /* NATTokenizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATTokenizer.m; sourceTree = "<group>"; };
+		D474D2FF1BDBF67700042911 /* NATRegex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATRegex.h; sourceTree = "<group>"; };
+		D474D3001BDBF67700042911 /* NATRegex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATRegex.m; sourceTree = "<group>"; };
+		D4961A291BEF8CC20065E055 /* NATExecutionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATExecutionContext.h; sourceTree = "<group>"; };
+		D4961A2A1BEF8CC20065E055 /* NATExecutionContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATExecutionContext.m; sourceTree = "<group>"; };
+		D497975B1C18D59100FD225F /* NATSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATSnapshot.h; sourceTree = "<group>"; };
+		D497975C1C18D59100FD225F /* NATSnapshot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATSnapshot.m; sourceTree = "<group>"; };
+		D497975F1C18D8A300FD225F /* NATContentTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATContentTypes.h; sourceTree = "<group>"; };
+		D49B02A21C17501900BCF79D /* NATValue+NATExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NATValue+NATExpression.h"; sourceTree = "<group>"; };
+		D49B02A31C17501900BCF79D /* NATValue+NATExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NATValue+NATExpression.m"; sourceTree = "<group>"; };
+		D49B02A61C17505E00BCF79D /* NATScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATScope.h; sourceTree = "<group>"; };
+		D49B02A71C17505E00BCF79D /* NATScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATScope.m; sourceTree = "<group>"; };
+		D49B02A81C17505E00BCF79D /* NATTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATTypes.h; sourceTree = "<group>"; };
+		D49B02A91C17505E00BCF79D /* NATTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATTypes.m; sourceTree = "<group>"; };
+		D49B02AA1C17505E00BCF79D /* NATValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATValue.h; sourceTree = "<group>"; };
+		D49B02AB1C17505E00BCF79D /* NATValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATValue.m; sourceTree = "<group>"; };
+		D4A058AD1BE664CE00DD9234 /* NATStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATStrings.h; sourceTree = "<group>"; };
+		D4A058AE1BE664CE00DD9234 /* NATStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATStrings.m; sourceTree = "<group>"; };
+		D4A058B11BE6DFD200DD9234 /* NATInterfaceStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATInterfaceStatement.h; sourceTree = "<group>"; };
+		D4A058B21BE6DFD200DD9234 /* NATInterfaceStatement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATInterfaceStatement.m; sourceTree = "<group>"; };
+		D4B3E7A11BDAC50C009E6507 /* NATMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATMethod.h; sourceTree = "<group>"; };
+		D4B3E7A21BDAC50C009E6507 /* NATMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATMethod.m; sourceTree = "<group>"; };
+		D4B3E7AD1BDAD5CE009E6507 /* NATTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATTokenizer.h; sourceTree = "<group>"; };
+		D4BBB35F1C1895F60090D70E /* NATSystemLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATSystemLog.h; sourceTree = "<group>"; };
+		D4BBB3601C1895F60090D70E /* NATSystemLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATSystemLog.m; sourceTree = "<group>"; };
+		D4BC80541BEE3D1A00E64908 /* nat_method_prep.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = nat_method_prep.S; sourceTree = "<group>"; };
+		D4BDAA702123F96C00474A45 /* UIKit+NATEnums.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIKit+NATEnums.m"; sourceTree = "<group>"; };
+		D4BDAABB2123F96C00474A45 /* UIKit+NATEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIKit+NATEnums.h"; sourceTree = "<group>"; };
+		D4BDAAD02123F96C00474A45 /* NATEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATEnums.h; sourceTree = "<group>"; };
+		D4BDAB562123FA0D00474A45 /* Foundation+NATEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Foundation+NATEnums.h"; sourceTree = "<group>"; };
+		D4BDAB572123FA0D00474A45 /* Foundation+NATEnums.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Foundation+NATEnums.m"; sourceTree = "<group>"; };
+		D4C895081BE2F68B0003404F /* nat_invoking.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = nat_invoking.S; sourceTree = "<group>"; };
+		D4C8950A1BE2F6A00003404F /* NATMethodDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATMethodDescriptor.h; sourceTree = "<group>"; };
+		D4C8950B1BE2F6A00003404F /* NATMethodDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATMethodDescriptor.m; sourceTree = "<group>"; };
+		D4D854971BE3C4F900E3683D /* NATStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATStatement.h; sourceTree = "<group>"; };
+		D4D854981BE3C4F900E3683D /* NATStatement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATStatement.m; sourceTree = "<group>"; };
+		D4FDBEA41BEBA47B00AF932D /* NATImplementationStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATImplementationStatement.h; sourceTree = "<group>"; };
+		D4FDBEA51BEBA47B00AF932D /* NATImplementationStatement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATImplementationStatement.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D40569491BD84BEC00EC02D5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D40569661BD8537100EC02D5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D405696E1BD8537100EC02D5 /* NativeNative.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D47150441C1717DD00DCE243 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D40569431BD84BEC00EC02D5 = {
+			isa = PBXGroup;
+			children = (
+				D405694F1BD84BEC00EC02D5 /* NativeNative */,
+				D405696A1BD8537100EC02D5 /* NativeNativeTests */,
+				D47150491C1717DD00DCE243 /* NativeClient */,
+				D405694E1BD84BEC00EC02D5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D405694E1BD84BEC00EC02D5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D405694D1BD84BEC00EC02D5 /* NativeNative.framework */,
+				D40569691BD8537100EC02D5 /* NativeNativeTests.xctest */,
+				D47150481C1717DD00DCE243 /* NativeClient.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D405694F1BD84BEC00EC02D5 /* NativeNative */ = {
+			isa = PBXGroup;
+			children = (
+				D40569501BD84BEC00EC02D5 /* NativeNative.h */,
+				D40569521BD84BEC00EC02D5 /* Info.plist */,
+				D45477641BE3F81100DF16BD /* NATProgram.h */,
+				D45477651BE3F81100DF16BD /* NATProgram.m */,
+				D4961A291BEF8CC20065E055 /* NATExecutionContext.h */,
+				D4961A2A1BEF8CC20065E055 /* NATExecutionContext.m */,
+				D49B02A61C17505E00BCF79D /* NATScope.h */,
+				D49B02A71C17505E00BCF79D /* NATScope.m */,
+				D49B02A81C17505E00BCF79D /* NATTypes.h */,
+				D49B02A91C17505E00BCF79D /* NATTypes.m */,
+				D49B02AA1C17505E00BCF79D /* NATValue.h */,
+				D49B02AB1C17505E00BCF79D /* NATValue.m */,
+				D40569581BD84C2100EC02D5 /* Private */,
+			);
+			path = NativeNative;
+			sourceTree = "<group>";
+		};
+		D40569581BD84C2100EC02D5 /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				D4BDAA4A2123F96C00474A45 /* Enums */,
+				D474D2FF1BDBF67700042911 /* NATRegex.h */,
+				D474D3001BDBF67700042911 /* NATRegex.m */,
+				D4B3E7AD1BDAD5CE009E6507 /* NATTokenizer.h */,
+				D474D2FD1BDBF5D500042911 /* NATTokenizer.m */,
+				D4A058AD1BE664CE00DD9234 /* NATStrings.h */,
+				D4A058AE1BE664CE00DD9234 /* NATStrings.m */,
+				D432C84E1BDC1A900043AB45 /* NATExpression.h */,
+				D432C84F1BDC1A900043AB45 /* NATExpression.m */,
+				D432C8521BDC1DE80043AB45 /* NATOperators.h */,
+				D432C8531BDC1DE80043AB45 /* NATOperators.m */,
+				D4D854971BE3C4F900E3683D /* NATStatement.h */,
+				D4D854981BE3C4F900E3683D /* NATStatement.m */,
+				D4A058B11BE6DFD200DD9234 /* NATInterfaceStatement.h */,
+				D4A058B21BE6DFD200DD9234 /* NATInterfaceStatement.m */,
+				D4FDBEA41BEBA47B00AF932D /* NATImplementationStatement.h */,
+				D4FDBEA51BEBA47B00AF932D /* NATImplementationStatement.m */,
+				D4B3E7A11BDAC50C009E6507 /* NATMethod.h */,
+				D4B3E7A21BDAC50C009E6507 /* NATMethod.m */,
+				D45477AE1BE4FCF500DF16BD /* NATProperty.h */,
+				D45477AF1BE4FCF500DF16BD /* NATProperty.m */,
+				D45477B21BE5691300DF16BD /* NATPropertyChain.h */,
+				D45477B31BE5691300DF16BD /* NATPropertyChain.m */,
+				D49B02A21C17501900BCF79D /* NATValue+NATExpression.h */,
+				D49B02A31C17501900BCF79D /* NATValue+NATExpression.m */,
+				D4205EF01BE9543A007F83F4 /* NSObject+NATIvars.h */,
+				D4205EF11BE9543A007F83F4 /* NSObject+NATIvars.m */,
+				D4445C1A1BDEF8E30093B2B7 /* NATInvocation.h */,
+				D4445C1B1BDEF8E30093B2B7 /* NATInvocation.m */,
+				D4C8950A1BE2F6A00003404F /* NATMethodDescriptor.h */,
+				D4C8950B1BE2F6A00003404F /* NATMethodDescriptor.m */,
+				D4C895081BE2F68B0003404F /* nat_invoking.S */,
+				D4BC80541BEE3D1A00E64908 /* nat_method_prep.S */,
+			);
+			path = Private;
+			sourceTree = "<group>";
+		};
+		D405696A1BD8537100EC02D5 /* NativeNativeTests */ = {
+			isa = PBXGroup;
+			children = (
+				D405696B1BD8537100EC02D5 /* NativeNativeTests.m */,
+				D405696D1BD8537100EC02D5 /* Info.plist */,
+			);
+			path = NativeNativeTests;
+			sourceTree = "<group>";
+		};
+		D47150491C1717DD00DCE243 /* NativeClient */ = {
+			isa = PBXGroup;
+			children = (
+				D471504A1C1717DD00DCE243 /* NativeClient.h */,
+				D47150511C17196700DCE243 /* NativeClient.m */,
+				D471504C1C1717DD00DCE243 /* Info.plist */,
+				D47150501C1717EF00DCE243 /* Private */,
+			);
+			path = NativeClient;
+			sourceTree = "<group>";
+		};
+		D47150501C1717EF00DCE243 /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				D497975F1C18D8A300FD225F /* NATContentTypes.h */,
+				D4BBB35F1C1895F60090D70E /* NATSystemLog.h */,
+				D4BBB3601C1895F60090D70E /* NATSystemLog.m */,
+				D497975B1C18D59100FD225F /* NATSnapshot.h */,
+				D497975C1C18D59100FD225F /* NATSnapshot.m */,
+			);
+			path = Private;
+			sourceTree = "<group>";
+		};
+		D4BDAA4A2123F96C00474A45 /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				D4BDAA4B2123F96C00474A45 /* Generated */,
+				D4BDAAD02123F96C00474A45 /* NATEnums.h */,
+			);
+			name = Enums;
+			path = ../../../Scripts/Enums;
+			sourceTree = "<group>";
+		};
+		D4BDAA4B2123F96C00474A45 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				D4BDAB562123FA0D00474A45 /* Foundation+NATEnums.h */,
+				D4BDAB572123FA0D00474A45 /* Foundation+NATEnums.m */,
+				D4BDAABB2123F96C00474A45 /* UIKit+NATEnums.h */,
+				D4BDAA702123F96C00474A45 /* UIKit+NATEnums.m */,
+			);
+			path = Generated;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D405694A1BD84BEC00EC02D5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D432C8501BDC1A900043AB45 /* NATExpression.h in Headers */,
+				D4B3E7AF1BDAD5CE009E6507 /* NATTokenizer.h in Headers */,
+				D4C8950C1BE2F6A00003404F /* NATMethodDescriptor.h in Headers */,
+				D4FDBEA61BEBA47B00AF932D /* NATImplementationStatement.h in Headers */,
+				D49B02AE1C17505E00BCF79D /* NATTypes.h in Headers */,
+				D45477B41BE5691300DF16BD /* NATPropertyChain.h in Headers */,
+				D45477661BE3F81100DF16BD /* NATProgram.h in Headers */,
+				D49B02B01C17505E00BCF79D /* NATValue.h in Headers */,
+				D4BDAB582123FA0D00474A45 /* Foundation+NATEnums.h in Headers */,
+				D474D3011BDBF67700042911 /* NATRegex.h in Headers */,
+				D4BDAB552123F96C00474A45 /* NATEnums.h in Headers */,
+				D49B02A41C17501900BCF79D /* NATValue+NATExpression.h in Headers */,
+				D4A058B31BE6DFD200DD9234 /* NATInterfaceStatement.h in Headers */,
+				D4205EF21BE9543A007F83F4 /* NSObject+NATIvars.h in Headers */,
+				D4D854991BE3C4F900E3683D /* NATStatement.h in Headers */,
+				D49B02AC1C17505E00BCF79D /* NATScope.h in Headers */,
+				D432C8541BDC1DE80043AB45 /* NATOperators.h in Headers */,
+				D45477B01BE4FCF500DF16BD /* NATProperty.h in Headers */,
+				D4445C1C1BDEF8E30093B2B7 /* NATInvocation.h in Headers */,
+				D4961A2B1BEF8CC20065E055 /* NATExecutionContext.h in Headers */,
+				D40569511BD84BEC00EC02D5 /* NativeNative.h in Headers */,
+				D4BDAB402123F96C00474A45 /* UIKit+NATEnums.h in Headers */,
+				D4B3E7A31BDAC50C009E6507 /* NATMethod.h in Headers */,
+				D4A058AF1BE664CE00DD9234 /* NATStrings.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D47150451C1717DD00DCE243 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D497975D1C18D59100FD225F /* NATSnapshot.h in Headers */,
+				D4BBB3611C1895F60090D70E /* NATSystemLog.h in Headers */,
+				D49797601C18D91100FD225F /* NATContentTypes.h in Headers */,
+				D471504B1C1717DD00DCE243 /* NativeClient.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D405694C1BD84BEC00EC02D5 /* NativeNative */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D40569551BD84BEC00EC02D5 /* Build configuration list for PBXNativeTarget "NativeNative" */;
+			buildPhases = (
+				D40569481BD84BEC00EC02D5 /* Sources */,
+				D40569491BD84BEC00EC02D5 /* Frameworks */,
+				D405694A1BD84BEC00EC02D5 /* Headers */,
+				D405694B1BD84BEC00EC02D5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NativeNative;
+			productName = NativeNative;
+			productReference = D405694D1BD84BEC00EC02D5 /* NativeNative.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D40569681BD8537100EC02D5 /* NativeNativeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D40569711BD8537100EC02D5 /* Build configuration list for PBXNativeTarget "NativeNativeTests" */;
+			buildPhases = (
+				D40569651BD8537100EC02D5 /* Sources */,
+				D40569661BD8537100EC02D5 /* Frameworks */,
+				D40569671BD8537100EC02D5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D40569701BD8537100EC02D5 /* PBXTargetDependency */,
+			);
+			name = NativeNativeTests;
+			productName = NativeNativeTests;
+			productReference = D40569691BD8537100EC02D5 /* NativeNativeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D47150471C1717DD00DCE243 /* NativeClient */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D471504F1C1717DD00DCE243 /* Build configuration list for PBXNativeTarget "NativeClient" */;
+			buildPhases = (
+				D47150431C1717DD00DCE243 /* Sources */,
+				D47150441C1717DD00DCE243 /* Frameworks */,
+				D47150451C1717DD00DCE243 /* Headers */,
+				D47150461C1717DD00DCE243 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D49B02991C173B5600BCF79D /* PBXTargetDependency */,
+			);
+			name = NativeClient;
+			productName = NativeClient;
+			productReference = D47150481C1717DD00DCE243 /* NativeClient.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D40569441BD84BEC00EC02D5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0940;
+				ORGANIZATIONNAME = Raizlabs;
+				TargetAttributes = {
+					D405694C1BD84BEC00EC02D5 = {
+						CreatedOnToolsVersion = 7.0.1;
+					};
+					D40569681BD8537100EC02D5 = {
+						CreatedOnToolsVersion = 7.0.1;
+						DevelopmentTeam = LDU94L55N4;
+					};
+					D47150471C1717DD00DCE243 = {
+						CreatedOnToolsVersion = 7.1;
+					};
+				};
+			};
+			buildConfigurationList = D40569471BD84BEC00EC02D5 /* Build configuration list for PBXProject "NativeNative" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = D40569431BD84BEC00EC02D5;
+			productRefGroup = D405694E1BD84BEC00EC02D5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D405694C1BD84BEC00EC02D5 /* NativeNative */,
+				D40569681BD8537100EC02D5 /* NativeNativeTests */,
+				D47150471C1717DD00DCE243 /* NativeClient */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D405694B1BD84BEC00EC02D5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D40569671BD8537100EC02D5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D47150461C1717DD00DCE243 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D40569481BD84BEC00EC02D5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D474D3021BDBF67700042911 /* NATRegex.m in Sources */,
+				D49B02AF1C17505E00BCF79D /* NATTypes.m in Sources */,
+				D45477671BE3F81100DF16BD /* NATProgram.m in Sources */,
+				D432C8511BDC1A900043AB45 /* NATExpression.m in Sources */,
+				D4A058B01BE664CE00DD9234 /* NATStrings.m in Sources */,
+				D4BDAB592123FA0D00474A45 /* Foundation+NATEnums.m in Sources */,
+				D4205EF31BE9543A007F83F4 /* NSObject+NATIvars.m in Sources */,
+				D49B02A51C17501900BCF79D /* NATValue+NATExpression.m in Sources */,
+				D474D2FE1BDBF5D500042911 /* NATTokenizer.m in Sources */,
+				D4445C1D1BDEF8E30093B2B7 /* NATInvocation.m in Sources */,
+				D4D8549A1BE3C4F900E3683D /* NATStatement.m in Sources */,
+				D4A058B41BE6DFD200DD9234 /* NATInterfaceStatement.m in Sources */,
+				D49B02B11C17505E00BCF79D /* NATValue.m in Sources */,
+				D4C8950D1BE2F6A00003404F /* NATMethodDescriptor.m in Sources */,
+				D45477B11BE4FCF500DF16BD /* NATProperty.m in Sources */,
+				D4B3E7A41BDAC50C009E6507 /* NATMethod.m in Sources */,
+				D4C895091BE2F68B0003404F /* nat_invoking.S in Sources */,
+				D49B02AD1C17505E00BCF79D /* NATScope.m in Sources */,
+				D432C8551BDC1DE80043AB45 /* NATOperators.m in Sources */,
+				D4961A2C1BEF8CC20065E055 /* NATExecutionContext.m in Sources */,
+				D4FDBEA71BEBA47B00AF932D /* NATImplementationStatement.m in Sources */,
+				D45477B51BE5691300DF16BD /* NATPropertyChain.m in Sources */,
+				D4BC80551BEE3D1A00E64908 /* nat_method_prep.S in Sources */,
+				D4BDAAF52123F96C00474A45 /* UIKit+NATEnums.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D40569651BD8537100EC02D5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D405696C1BD8537100EC02D5 /* NativeNativeTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D47150431C1717DD00DCE243 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D497975E1C18D59100FD225F /* NATSnapshot.m in Sources */,
+				D47150521C17196700DCE243 /* NativeClient.m in Sources */,
+				D4BBB3621C1895F60090D70E /* NATSystemLog.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D40569701BD8537100EC02D5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D405694C1BD84BEC00EC02D5 /* NativeNative */;
+			targetProxy = D405696F1BD8537100EC02D5 /* PBXContainerItemProxy */;
+		};
+		D49B02991C173B5600BCF79D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D405694C1BD84BEC00EC02D5 /* NativeNative */;
+			targetProxy = D49B02981C173B5600BCF79D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		D40569531BD84BEC00EC02D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		D40569541BD84BEC00EC02D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		D40569561BD84BEC00EC02D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = NativeNative/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.NativeNative;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		D40569571BD84BEC00EC02D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = NativeNative/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.NativeNative;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		D40569721BD8537100EC02D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = LDU94L55N4;
+				INFOPLIST_FILE = NativeNativeTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.NativeNativeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D40569731BD8537100EC02D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = LDU94L55N4;
+				INFOPLIST_FILE = NativeNativeTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.NativeNativeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		D471504D1C1717DD00DCE243 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = NativeClient/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.NativeClient;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		D471504E1C1717DD00DCE243 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = NativeClient/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.NativeClient;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D40569471BD84BEC00EC02D5 /* Build configuration list for PBXProject "NativeNative" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D40569531BD84BEC00EC02D5 /* Debug */,
+				D40569541BD84BEC00EC02D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D40569551BD84BEC00EC02D5 /* Build configuration list for PBXNativeTarget "NativeNative" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D40569561BD84BEC00EC02D5 /* Debug */,
+				D40569571BD84BEC00EC02D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D40569711BD8537100EC02D5 /* Build configuration list for PBXNativeTarget "NativeNativeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D40569721BD8537100EC02D5 /* Debug */,
+				D40569731BD8537100EC02D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D471504F1C1717DD00DCE243 /* Build configuration list for PBXNativeTarget "NativeClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D471504D1C1717DD00DCE243 /* Debug */,
+				D471504E1C1717DD00DCE243 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D40569441BD84BEC00EC02D5 /* Project object */;
+}
