@@ -16,6 +16,7 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
+*IDEWorkspaceChecks.plist
 
 # NativeServer
 .NATEditor.m

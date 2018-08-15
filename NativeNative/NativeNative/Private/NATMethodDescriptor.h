@@ -3,7 +3,7 @@
 //  NativeNative
 //
 //  Created by Rob Visentin on 10/27/15.
-//  Copyright © 2015 Raizlabs. All rights reserved.
+//  Copyright © 2018 Brockenhaus Studio. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -36,7 +36,7 @@ OBJC_EXTERN NSUInteger const kNATRegisterSize;
 // TODO: not sure if this is variable by method...
 OBJC_EXTERN NSUInteger const kNATReturnBufferLength;
 
-#define NAT_ALIGN(v, a) (((v + (a - 1)) / (a)) * (a))
+#define NAT_ALIGN(v, a) ((a) == 0 ? v : ((v + (a - 1)) / (a)) * (a))
 #define NAT_ALIGN_16(v) ((v) + 0xF & ~0xF)
 
 @interface NATMethodDescriptor : NSObject

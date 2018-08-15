@@ -3,7 +3,7 @@
 //  Assembly
 //
 //  Created by Rob Visentin on 11/5/15.
-//  Copyright © 2015 Raizlabs. All rights reserved.
+//  Copyright © 2018 Brockenhaus Studio. All rights reserved.
 //
 
 #import <objc/runtime.h>
@@ -23,7 +23,7 @@ void _NATClassRegisterImpl(Class cls, NATMethodImplementation *impl);
 NATMethodImplementation* _NATClassLookupImpl(Class cls, SEL selector);
 
 OBJC_EXTERN void __nat_method_prep__(id self, SEL _cmd, ...);
-OBJC_EXPORT void __nat_method_imp__(/* ... */);
+OBJC_EXPORT void __nat_method_imp__(void /* ... */);
 
 @interface NATMethodImplementation : NSObject
 

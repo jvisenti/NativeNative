@@ -3,7 +3,7 @@
 //  NativeNativeTests
 //
 //  Created by Rob Visentin on 10/21/15.
-//  Copyright © 2015 Raizlabs. All rights reserved.
+//  Copyright © 2018 Brockenhaus Studio. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>

@@ -660,7 +660,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.NativeNative;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brockenhaus-studio.NativeNative";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -678,7 +678,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.NativeNative;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brockenhaus-studio.NativeNative";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -690,7 +690,7 @@
 				DEVELOPMENT_TEAM = LDU94L55N4;
 				INFOPLIST_FILE = NativeNativeTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.NativeNativeTests;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brockenhaus-studio.NativeNativeTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -701,7 +701,7 @@
 				DEVELOPMENT_TEAM = LDU94L55N4;
 				INFOPLIST_FILE = NativeNativeTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.NativeNativeTests;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brockenhaus-studio.NativeNativeTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -718,7 +718,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.NativeClient;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brockenhaus-studio.NativeClient";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -736,7 +736,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.raizlabs.NativeClient;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brockenhaus-studio.NativeClient";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};

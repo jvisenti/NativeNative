@@ -3,14 +3,14 @@
 //  NativeNative
 //
 //  Created by Rob Visentin on 10/30/15.
-//  Copyright © 2015 Raizlabs. All rights reserved.
+//  Copyright © 2018 Brockenhaus Studio. All rights reserved.
 //
 
 #import "NATProgram.h"
 
+#import "NativeNative.h"
 #import "NATTokenizer.h"
 #import "NATStatement.h"
-
 #import "NATScope.h"
 
 @implementation NATProgram {
@@ -50,8 +50,13 @@
     BOOL stop = NO;
     NATValue *ret = nil;
 
-    for ( NSUInteger i = 0; i < _statements.count && !stop; ++i ) {
-        ret = [_statements[i] executeWithContext:context stop:&stop];
+    @try {
+        for ( NSUInteger i = 0; i < _statements.count && !stop; ++i ) {
+            ret = [_statements[i] executeWithContext:context stop:&stop];
+        }
+    }
+    @catch ( NSException *e ) {
+        NATLog(@"Execution exception: %@", e);
     }
 
     return ret;
