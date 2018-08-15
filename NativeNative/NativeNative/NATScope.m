@@ -16,6 +16,22 @@ static NSString* const kNATCurrentScopeKey = @"_NATCurrentScope";
     NSMutableDictionary *_symbolTable;
 }
 
++ (void)load
+{
+    NATScope *globalScope = [self globalScope];
+
+    BOOL yes = YES;
+    BOOL no = NO;
+
+    [globalScope addSymbol:[[NATSymbol alloc] initWithName:@"YES" value:[[NATValue alloc] initWithBytes:&yes type:NATTypeBool]]];
+    [globalScope addSymbol:[[NATSymbol alloc] initWithName:@"true" value:[[NATValue alloc] initWithBytes:&yes type:NATTypeBool]]];
+    [globalScope addSymbol:[[NATSymbol alloc] initWithName:@"TRUE" value:[[NATValue alloc] initWithBytes:&yes type:NATTypeBool]]];
+
+    [globalScope addSymbol:[[NATSymbol alloc] initWithName:@"NO" value:[[NATValue alloc] initWithBytes:&no type:NATTypeBool]]];
+    [globalScope addSymbol:[[NATSymbol alloc] initWithName:@"false" value:[[NATValue alloc] initWithBytes:&no type:NATTypeBool]]];
+    [globalScope addSymbol:[[NATSymbol alloc] initWithName:@"FALSE" value:[[NATValue alloc] initWithBytes:&no type:NATTypeBool]]];
+}
+
 + (NATScope *)globalScope
 {
     static NATScope *s_GlobalScope = nil;

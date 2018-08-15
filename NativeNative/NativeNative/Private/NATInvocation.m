@@ -42,6 +42,7 @@ OBJC_EXTERN void __nat_invoking__(IMP imp, void *args, size_t bytes, void *ret);
 - (instancetype)init
 {
     @throw @"-[NATInvocation init] is unavailable. Use -initWithMethodSignature: instead.";
+    return [self initWithMethodSignature:nil];
 }
 
 - (instancetype)initWithTarget:(id)target selector:(SEL)selector
